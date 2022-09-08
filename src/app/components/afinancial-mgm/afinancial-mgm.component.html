@@ -1,0 +1,204 @@
+<p-growl [value]="hmsgs" life="6000">
+</p-growl>
+<div *ngIf="loading">
+  <p-dialog [(visible)]="loading" responsive="true" [resizable]="false" width="300" [rtl]="true" [showHeader]="false"
+    styleClass="ui-dialog">
+    <loadingCmp [loading]="loading" spinnerStyleClass="spinnerClassBlack"></loadingCmp>
+  </p-dialog>
+</div>
+<div class="ui-g ui-g-pad ui-g-reponsive dashboard ">
+  <div class="ui-g-12">
+    <div class="toolbarstyle ui-toolbar ui-widget ui-widget-header ui-corner-all ui-helper-clearfix">
+      <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+        <div class="ui-grid-row">
+          <div class="ui-grid-col-5 headerLabel">
+            <img src="../../assets/images/transaction.png" style="vertical-align: middle;" /> {{activeLabel}}
+            <span class="totalFilteredClass" *ngIf="totalRecords">
+              {{shared.totalNumberLabel}} : {{totalRecords}}
+            </span>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+    
+    <p-card>
+
+      <form [formGroup]="filterForm" (ngSubmit)="onSubmitFilterform()">
+
+        <div class="ui-grid ui-grid-responsive  farsi-font" style="padding:0px!important">
+          <div class="ui-grid-row">
+            <div class="ui-grid-col-3">
+              <label>
+                <i class="fa fa-info-circle font-icon-style"></i>
+                {{shared.availableLabel}}
+              </label>
+            </div>
+            <div class="ui-grid-col-1">
+              <p-checkbox [(ngModel)]="available" binary="true" formControlName="available"></p-checkbox>
+            </div>
+            <div class="ui-grid-col-2">
+              <label>
+                <i class="fa fa-dot-circle-o font-icon-style"></i>
+                {{shared.periodTimeLabelx}}
+              </label>
+            </div>
+            <div class="ui-grid-col-3">
+
+              <dp-date-picker [(ngModel)]="reportStartDate" mode="daytime" [config]="datePickerConfig"
+                theme="dp-material" [ngModelOptions]="{standalone: true}">
+              </dp-date-picker>
+            </div>
+
+            <div class="ui-grid-col-3">
+
+              <dp-date-picker [(ngModel)]="reportStopDate" mode="daytime" [config]="datePickerConfig"
+                theme="dp-material" [ngModelOptions]="{standalone: true}">
+              </dp-date-picker>
+            </div>
+            <div class="ui-grid-col-3">
+              <label for="code">
+                <i class="fa fa-info-circle font-icon-style"></i>
+
+                {{shared.workerCodeLabel}}
+              </label>
+            </div>
+            <div class="ui-grid-col-3">
+              <input pInputText id="code" [(ngModel)]="selectedCode" type="text" size="30" formControlName="code"
+                class="width100p" [attr.disabled]="available ? '' : null"/>
+            </div>
+            <div class="ui-grid-col-1"></div>
+            <div class="ui-grid-col-2">
+              <label for="firstname">
+                <i class="fa fa-info-circle font-icon-style"></i>
+
+                {{shared.firstNameLabel}}
+              </label>
+            </div>
+            <div class="ui-grid-col-2">
+              <input pInputText id="firstname" [(ngModel)]="selectedFirstName" type="text" size="30"
+                formControlName="firstName" class="width100p" [attr.disabled]="available ? '' : null"/>
+            </div>
+            <div class="ui-grid-col-1"></div>
+            <div class="ui-grid-col-3">
+              <label for="lastName">
+                <i class="fa fa-info-circle font-icon-style"></i>
+
+                {{shared.lastNameLabel}}
+              </label>
+            </div>
+            <div class="ui-grid-col-2">
+              <input pInputText id="lastName" [(ngModel)]="selectedLastName" type="text" size="30"
+                formControlName="lastName" class="width100p" [attr.disabled]="available ? '' : null"/>
+            </div>
+          </div>
+
+          <div class="ui-grid-row">
+
+
+
+          </div>
+
+        </div>
+        <div align="center" style="padding:4px">
+          <button type="submit" pButton icon="fa-search" label="{{shared.showFilter}}" class="ui-button turquoise-btn"
+            style="padding-left: 30px;padding-right:30px;margin:10px;border-radius: 5px"></button>
+        </div>
+
+      </form>
+</p-card>
+    <div *ngIf="accountantReportResult?.workers" align="center" style="width:100%">
+      <p-dataTable [value]="accountantReportResult?.workers" [rows]="defaultPageSize" [paginator]="true"
+        [emptyMessage]="shared.emptyListMsg"  [loading]="dataTableLoading" loadingIcon="fa-spinner">
+        <p-headerColumnGroup>
+          <p-row>
+            <p-column [sortable]="true" [header]="shared.workerCodeLabel" [style]="{'width':'20%'}" [filter]="true"></p-column>
+            <p-column [sortable]="true" [header]="shared.firstNameLabel" [style]="{'width':'20%'}" [filter]="true"></p-column>
+            <p-column [sortable]="true" [header]="shared.lastNameLabel" [style]="{'width':'20%'}" [filter]="true"></p-column>
+            <p-column [sortable]="true" [header]="shared.mobileLabel" [style]="{'width':'20%'}" [filter]="true"></p-column>
+            <p-column [header]="shared.showTransactionList" [style]="{'width':'20%'}"></p-column>
+
+          </p-row>
+        </p-headerColumnGroup>
+        <p-column field="code" styleClass="ltrDirection"></p-column>
+        <p-column field="firstName"></p-column>
+        <p-column field="lastName"></p-column>
+        <p-column field="mobileNumber"></p-column>
+
+        <p-column [style]="{'text-align':'center'}">
+          <ng-template let-col let-worker="rowData" pTemplate="body">
+            <button type="button" class="orange-btn" pButton icon="fa-info-circle"
+              (click)="showTransactiontDetail(worker)">
+            </button>
+          </ng-template>
+        </p-column>
+
+      </p-dataTable>
+
+    </div>
+    <div *ngIf="displayTransactionView">
+      <p-dialog [(visible)]="displayTransactionView" [resizable]="false" [closable]="false" [responsive]="true"
+        [modal]="true" [positionTop]="0" [width]="1150" [header]="transactionListHeader">
+        <p-header>
+          <div style="float:left">
+            <button type="button" pButton icon="fa-file-excel-o"  style="background:none;border:none" iconPos="left" pTooltip="Excel"
+              (click)="exportExcel()"></button>
+            <button type="button" pButton icon="fa fa-close" style="background:none;border:none"
+              (click)="closeTransactionDetail()"></button>
+          </div>
+
+        </p-header>
+        <p-dataTable [value]="selectedWorkerAccountantReports" [rows]="defaultPageSize" [paginator]="true"
+          [emptyMessage]="shared.emptyListMsg"  [loading]="dataTableLoading" [alwaysShowPaginator]="false"
+          loadingIcon="fa-spinner" #idt>
+          <p-headerColumnGroup>
+            <p-row>
+              <p-column [sortable]="true" [header]="shared.timeLabel" [style]="{'width':'12%'}"></p-column>
+              <p-column [sortable]="true" [header]="shared.docLabel" [style]="{'width':'12%'}"></p-column>
+              <p-column [sortable]="true" [header]="shared.requestCodeLabel" [style]="{'width':'12%'}"></p-column>
+              <p-column [sortable]="true" [header]="shared.docNumberLabel" [style]="{'width':'6%'}"></p-column>
+              <p-column [sortable]="true" [header]="shared.cacheLabel" [style]="{'width':'6%'}"></p-column>
+              <p-column [sortable]="true" [header]="shared.userCreditLabel" [style]="{'width':'6%'}"></p-column>
+              <p-column [sortable]="true" [header]="shared.discountCodeLabel" [style]="{'width':'6%'}"></p-column>
+              <p-column [sortable]="true" [header]="shared.commisionLabel" [style]="{'width':'6%'}"></p-column>
+              <p-column [sortable]="true" [header]="shared.expertShareLabel" [style]="{'width':'6%'}"></p-column>
+              <p-column [sortable]="true" [header]="shared.incCreditValueLabel" [style]="{'width':'7%'}"></p-column>
+              <p-column [sortable]="true" [header]="shared.reckoningValueLabel" [style]="{'width':'7%'}"></p-column>
+              <p-column [sortable]="true" [header]="shared.creditLabel" [style]="{'width':'7%'}"></p-column>
+
+            </p-row>
+          </p-headerColumnGroup>
+          <p-column field="timeStamp"></p-column>
+          <p-column>
+            <ng-template let-col let-report="rowData" pTemplate="body">
+
+              <div *ngIf="report.repType == 1">
+                {{shared.doc1Label}}
+              </div>
+              <div *ngIf="report.repType == 2">
+                {{shared.doc2Label}}
+              </div>
+              <div *ngIf="report.repType == 3">
+                {{shared.doc3Label}}
+              </div>
+            </ng-template>
+          </p-column>
+          <p-column field="requestCode" styleClass="ltrDirection"></p-column>
+          <p-column field="accountantNumber"></p-column>
+          <p-column field="naghdi"></p-column>
+          <p-column field="credit"></p-column>
+          <p-column field="discount"></p-column>
+          <p-column field="commision"></p-column>
+          <p-column field="daramad"></p-column>
+          <p-column field="ownIncrement"></p-column>
+          <p-column field="tasvie"></p-column>
+          <p-column field="balance"></p-column>
+
+        </p-dataTable>
+      </p-dialog>
+    </div>
+
+
+
+  </div>

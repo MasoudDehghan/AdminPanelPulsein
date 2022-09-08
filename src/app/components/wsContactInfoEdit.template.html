@@ -1,0 +1,130 @@
+<p-growl [value]="msgs" life="3000"></p-growl>
+
+<p-panel header=" {{shared.registeredPhoneNumberList}}">
+    <p-dataTable [value]="selectedWorkStation.workStationPhones" [emptyMessage]="shared.emptyPhoneListMsg">
+        <p-column field="number" header="{{shared.numberLabel}}" [style]="{'width':'45%'}">
+        </p-column>
+        <p-column field="phoneType.name" header="{{shared.typeLabel}}" [style]="{'width':'45%'}">
+        </p-column>
+        <p-column header="{{shared.delLabelFa}}" [style]="{'width':'10%'}" *ngIf="editMode">
+            <ng-template let-col let-workStationPhone="rowData" pTemplate="body">
+                <i class="fa fa-close" style="color:red;cursor:pointer" (click)="removeWorkStationPhone2(selectedWorkStation,workStationPhone)"></i>
+            </ng-template>
+        </p-column>
+        <p-footer>
+            <div *ngIf="editMode">
+                <button type="button" pButton icon="fa-add" label="{{shared.addLabel}}" class="ui-button turquoise-btn" (click)="showPhoneDialogToAdd()"></button>
+            </div>
+        </p-footer>
+    </p-dataTable>
+</p-panel>
+
+<br/>
+<form [formGroup]="contactEditForm" (ngSubmit)="onSubmitContactform()">
+    <p-panel id="iContactPanelID" [style]="{'width':'95%'}">
+
+        <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+            <div class="ui-grid-row">
+                <div class="{{editMode ? 'ui-grid-col-4':'ui-grid-col-5'}}">
+                    <label for="eweb">
+                                       <i class="fa fa-globe font-icon-style"></i>
+                                    {{shared.webLabel}}                               
+                                </label>
+                </div>
+                <div *ngIf="editMode" class="ui-grid-col-8">
+                    <input pInputText id="eweb" [(ngModel)]="selectedWorkStation.website" type="text" size="30" formControlName="website" class="latinFontStyle"
+                    />
+                </div>
+                <div *ngIf="!editMode" class="ui-grid-col-7 textPlaceHolderStyle ltrDirection">
+                    {{selectedWorkStation?.website}}
+                </div>
+
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-12">
+                    <div class="ui-message ui-messages-error ui-corner-all errorMsgStyle" *ngIf="contactEditForm.controls['website'].touched && contactEditForm.controls['website'].hasError('pattern')">
+                        {{shared.invalidWebURLMsg}}
+                    </div>
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="{{editMode ? 'ui-grid-col-4':'ui-grid-col-5'}}">
+                    <label for="eemail">
+                                    <i class="fa fa-envelope font-icon-style"></i>
+                                    {{shared.emailLabel}}                               
+                                </label>
+                </div>
+                <div *ngIf="editMode" class="ui-grid-col-8">
+                    <input pInputText id="eemail" [(ngModel)]="selectedWorkStation.email" type="text" size="30" formControlName="email" class="latinFontStyle"
+                    />
+                </div>
+                <div *ngIf="!editMode" class="ui-grid-col-7 textPlaceHolderStyle ltrDirection">
+                    {{selectedWorkStation?.email}}
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-12">
+                    <div class="ui-message ui-messages-error ui-corner-all errorMsgStyle" *ngIf="contactEditForm.controls['email'].touched && contactEditForm.controls['email'].hasError('pattern')">
+                        {{shared.invalidEmailMsg}}
+                    </div>
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="{{editMode ? 'ui-grid-col-4':'ui-grid-col-5'}}">
+                    <label for="etelegram">
+                                    <i class="fa fa-telegram font-icon-style"></i>
+                                    {{shared.telegramLabel}}                               
+                                </label>
+                </div>
+                <div *ngIf="editMode" class="ui-grid-col-8">
+                    <input pInputText id="etelegram" [(ngModel)]="selectedWorkStation.telegram" type="text" size="30" formControlName="telegram"
+                        minlength="2" maxlength="20" class="latinFontStyle" />
+                </div>
+                <div *ngIf="!editMode" class="ui-grid-col-7 textPlaceHolderStyle ltrDirection">
+                    {{selectedWorkStation?.telegram}}
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-12">
+                    <div class="ui-message ui-messages-error ui-corner-all errorMsgStyle" *ngIf="contactEditForm.controls['telegram'].touched && contactEditForm.controls['telegram'].hasError('pattern')">
+                        {{shared.InnerCode_InvalidTelegramMsg}}
+                    </div>
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="{{editMode ? 'ui-grid-col-4':'ui-grid-col-5'}}">
+                    <label for="einstagram">
+                                      <i class="fa fa-instagram font-icon-style"></i>
+                                    {{shared.instagramLabel}}                               
+                                </label>
+                </div>
+                <div *ngIf="editMode" class="ui-grid-col-8">
+                    <input pInputText id="einstagram" [(ngModel)]="selectedWorkStation.instagram" type="text" size="30" formControlName="instagram"
+                        class="latinFontStyle" />
+                </div>
+                <div *ngIf="!editMode" class="ui-grid-col-7 textPlaceHolderStyle ltrDirection">
+                    {{selectedWorkStation?.instagram}}
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-12">
+                    <div class="ui-message ui-messages-error ui-corner-all errorMsgStyle" *ngIf="contactEditForm.controls['instagram'].touched && contactEditForm.controls['instagram'].hasError('pattern')">
+                        {{shared.InnerCode_InvalidInstagramMsg}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </p-panel>
+    <p-footer>
+        <div *ngIf="editMode" align="center" style="padding:4px">
+            <button type="submit" pButton icon="fa-save" label="{{shared.saveLabel}}" class="ui-button turquoise-btn"></button>
+        </div>
+        <div *ngIf="!editMode" align="center" style="padding:4px">
+            <button type="submit" pButton icon="fa-close" label="{{shared.closeLabel}}" class="ui-button"></button>
+        </div>
+    </p-footer>
+</form>
+<p-dialog [(visible)]="loading" responsive="true" [resizable]="false" showEffect="fade" width="300" [rtl]="true" modal="modal"
+    [showHeader]="false" styleClass="ui-dialog">
+    <loadingCmp [loading]="loading" spinnerStyleClass="spinnerClassBlack"></loadingCmp>
+</p-dialog>

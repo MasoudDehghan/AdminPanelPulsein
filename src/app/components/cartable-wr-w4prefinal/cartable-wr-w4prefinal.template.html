@@ -1,0 +1,149 @@
+<p-growl [value]="hmsgs" life="6000"></p-growl>
+
+<div *ngIf="!loading">
+    <div class="ui-g ui-g-pad dashboard">
+        <div class="ui-g-12">
+            <p-toolbar styleClass="toolbarstyle">
+                <div class="ui-toolbar-group-right headerLabel">
+                    <img src="../assets/images/review.png" style="vertical-align: middle;" />
+                    {{wrCartableLabel}}
+                    <span class="totalFilteredClass" >
+                        {{shared.totalNumberLabel}} : {{workers?.length}}
+                    </span>
+
+                </div>
+                <div class="ui-toolbar-group-left">
+                        <button type="button" pButton icon="fa-refresh" (click)="showPreFinalWorkerCartabl()"></button>
+                </div>
+            </p-toolbar>
+
+        </div>
+
+
+
+        <div class="ui-g-12 ui-md-12 ui-lg-12">
+            <div align="center">
+                <p-dataTable [value]="workers" [alwaysShowPaginator]="false" [rows]="7"
+                    [paginator]="true" [pageLinks]="5" [emptyMessage]="shared.emptyListMsg">
+
+                    <p-column field="code" [header]="shared.workerCodeLabel" [filter]="true" [style]="{'width':'20%'}">
+                        <ng-template let-col let-worker="rowData" pTemplate="body">
+                            <a (click)="showViewDialog(worker)">
+                                <span class="latinFontStyle">{{worker.code}}</span>
+                            </a>
+                        </ng-template>
+                    </p-column>
+                    <p-column field="workStation.title" [header]="shared.bizNameLabel" [filter]="true" [style]="{'width':'20%'}"></p-column>
+                    <p-column field="user.firstName" [header]="shared.firstNameLabel" [filter]="true" [style]="{'width':'15%'}"></p-column>
+                    <p-column field="user.lastName" [header]="shared.lastNameLabel" [filter]="true" [style]="{'width':'15%'}"></p-column>
+
+
+                    <p-column [style]="{'text-align':'center'}" [header]="shared.editLabelFa" [hidden]="!editCapable">
+                        <ng-template let-col let-worker="rowData" pTemplate="body">
+                            <button type="button" pButton icon="fa-edit" class="blue-btn" (click)="showWorkerEditDialog(worker)"
+                                [pTooltip]="shared.editLabelFa"></button>
+                        </ng-template>
+                    </p-column>
+  
+                    <p-column [header]="shared.delLabelFa" [style]="{'text-align':'center'}" [hidden]="!editCapable">
+                        <ng-template let-col let-worker="rowData" pTemplate="body">
+                            <button type="button" pButton icon="fa-trash" class="black-btn" (click)="deleteWorker(worker)"
+                                [pTooltip]="shared.delLabelFa"></button>
+                        </ng-template>
+                    </p-column>
+                </p-dataTable>
+            </div>
+        </div>
+
+
+    </div>
+
+</div>
+<div *ngIf="loading">
+    <p-dialog [(visible)]="loading" responsive="true" [resizable]="false" width="300" [rtl]="true" [showHeader]="false"
+        styleClass="ui-dialog">
+        <loadingCmp [loading]="loading" spinnerStyleClass="spinnerClassBlack"></loadingCmp>
+    </p-dialog>
+</div>
+<div *ngIf="displayWorkerView">
+    <p-dialog [(visible)]="displayWorkerView" [resizable]="false" [closable]="false" [responsive]="true" [modal]="true"
+        [rtl]="true" width="700">
+        <p-header>
+            {{shared.workerViewLabel}}
+            <div style="float:left">
+                <button type="button" pButton icon="fa-close" class="ui-button pink-btn smallBtn" (click)="closeViewDialog();"></button>
+            </div>
+        </p-header>
+        <workerViewComponent [workerID]="selectedWorkerID" (onShowImage)="onShowImage($event)"></workerViewComponent>
+    </p-dialog>
+</div>
+
+<div *ngIf="displayWorkerEditDialog">
+    <p-dialog [(visible)]="displayWorkerEditDialog" responsive="true" [closable]="false" [resizable]="false" showEffect="fade"
+        width="900" [rtl]="true" modal="modal" styleClass="ui-dialog">
+        <p-header>
+            {{shared.editLabelFa}}
+            <div style="float:left">
+                <button type="button" pButton icon="fa-close" class="ui-button pink-btn smallBtn" (click)="closeWorkerEditDialog();"></button>
+            </div>
+        </p-header>
+        <div class="ui-rtl" dir="rtl">
+            <p-tabView>
+                <p-tabPanel [header]="shared.expertsLabel">
+                    <editWorkerJobCatComponent [inputWorkerID]="workerID" (onSave)="onSaveWorkerPanelNonClose($event)"
+                        (onClose)="onCloseWorkerEditDialog($event)">
+                    </editWorkerJobCatComponent>
+                </p-tabPanel>
+                <p-tabPanel [header]="shared.personalWorkerDataSumLabel">
+                    <editWorkerPersonalComponent [inputWorkerID]="workerID" [editMode]="true" (onClose)="onCloseWorkerEditDialog($event)"
+                        (onSave)="onSaveWorkerPanel($event)"></editWorkerPersonalComponent>
+                </p-tabPanel>
+
+                <p-tabPanel [header]="shared.contactDataLabel">
+                    <editWorkerContactInfoComponent [inputWorkerID]="workerID" [editMode]="true"
+                        (onShowWorkerPhoneToAdd)="onShowWorkerPhoneDialogToAdd($event)" (onShowWorkerPhoneToEdit)="onShowWorkerPhoneDialogToEdit($event)"
+                        (onClose)="onCloseWorkerEditDialog($event)" (onSave)="onSaveWorkerPanel($event)"></editWorkerContactInfoComponent>
+                </p-tabPanel>
+                <p-tabPanel [header]="shared.documentsLabel">
+                    <editWorkerDocumentComponent [inputWorkerID]="workerID" [documentTypeList]="basicData.docTypeList"
+                        (onClose)="onCloseWorkerEditDialog($event)" (onSave)="onSaveWorkerPanel($event)" (onShowImage)="onShowImage($event)"></editWorkerDocumentComponent>
+                </p-tabPanel>
+
+            </p-tabView>
+        </div>
+    </p-dialog>
+</div>
+
+
+
+<div *ngIf="displayCatalogImageDialog">
+    <p-dialog [(visible)]="displayCatalogImageDialog" [responsive]="true" [modal]="true" [resizable]="false"
+        [showHeader]="false" [dismissableMask]="true">
+        <div class="ui-grid ui-grid-responsive ui-grid-pad" *ngIf="selectedImageCatalog">
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-12" style="text-align:center">
+                    <img src="{{selectedImageCatalog.source}}" style="max-width:512px;height:auto">
+                </div>
+            </div>
+        </div>
+    </p-dialog>
+</div>
+<div *ngIf="displayImageDialog">
+    <p-dialog [(visible)]="displayImageDialog" [responsive]="true" [modal]="true" [resizable]="true" [showHeader]="false"
+        [closable]="true" [dismissableMask]="true">
+        <div class="ui-grid ui-grid-responsive ui-grid-pad">
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-12" style="text-align:center">
+                    <img [src]="selectedImagePath" style="max-width:512px;height:auto" />
+                </div>
+            </div>
+        </div>
+    </p-dialog>
+</div>
+
+<p-confirmDialog header="{{shared.confirmHeader}}" width="425" rtl="true" #cd>
+    <p-footer>
+        <button type="button" pButton icon="fa-close" [label]="shared.noLabel" (click)="cd.reject()" style="margin-right: 30%;"></button>
+        <button type="button" pButton icon="fa-check" [label]="shared.yesLabel" (click)="cd.accept()"></button>
+    </p-footer>
+</p-confirmDialog>

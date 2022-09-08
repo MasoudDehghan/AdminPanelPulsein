@@ -1,0 +1,352 @@
+<p-growl [value]="hmsgs"></p-growl>
+
+<div class="ui-g ui-g-responsive ui-g-pad">
+    <div class="ui-g-12">
+        <p-toolbar styleClass="toolbarstyle">
+            <div class="ui-toolbar-group-right headerLabel">
+                <img src="../assets/images/geography.png" style="vertical-align: middle;" /> {{activeLabel}}
+
+            </div>
+            <div class="ui-toolbar-group-left">
+                <button type="button" class="ui-button deep-purple-btn" *ngIf="selectedNodeType==''" pButton icon="fa-plus-circle"
+                    (click)="showAddProvincePanel()" label="{{shared.addProvinceLabel}}"></button>
+                <button type="button" *ngIf="selectedNodeType=='Province'" pButton icon="fa-edit" class="ui-button-warning"
+                    (click)="showEditProvincePanel()" label="{{shared.editProvinceLabel}} "></button>
+                <button type="button" *ngIf="selectedNodeType=='Province'" pButton icon="fa-remove" class="ui-button-danger"
+                    (click)="delete()" label="{{shared.deleteProvinceLabel}} "></button>
+                <button type="button" class="ui-button deep-purple-btn" *ngIf="selectedNodeType=='Province'" pButton
+                    icon="fa-plus-circle" (click)="showAddTownshipPanel()" label="{{shared.addTownshipLabel}}"></button>
+                <button type="button" *ngIf="selectedNodeType=='Township'" pButton icon="fa-edit" class="ui-button-warning"
+                    (click)="showEditTownshipPanel()" label="{{shared.editTownshipLabel}}"></button>
+                <button type="button" *ngIf="selectedNodeType=='Township'" pButton icon="fa-remove" class="ui-button-danger"
+                    (click)="delete()" label="{{shared.deleteTownshipLabel}}"></button>
+                <button type="button" class="ui-button deep-purple-btn" *ngIf="selectedNodeType=='Township'" pButton
+                    icon="fa-plus-circle" (click)="showAddCityPanel()" label="{{shared.addCityLabel}}"></button>
+                <button type="button" *ngIf="selectedNodeType=='City'" pButton icon="fa-edit" class="ui-button-warning"
+                    (click)="showEditCityPanel()" label="{{shared.editCityLabel}}"></button>
+                <button type="button" *ngIf="selectedNodeType=='City'" pButton icon="fa-remove" class="ui-button-danger"
+                    (click)="delete()" label="{{shared.deleteCityLabel}} "></button>
+                <button type="button" class="ui-button deep-purple-btn" *ngIf="selectedNodeType=='City'" pButton icon="fa-plus-circle"
+                    (click)="showAddRegionPanel()" label="{{shared.addRegionLabel}}"></button>
+                <button type="button" *ngIf="selectedNodeType=='Region'" pButton icon="fa-edit" class="ui-button-warning"
+                    (click)="showEditRegionPanel()" label="{{shared.editRegionLabel}}"></button>
+                <button type="button" *ngIf="selectedNodeType=='Region'" pButton icon="fa-remove" class="ui-button-danger"
+                    (click)="delete()" label="{{shared.deleteRegionLabel}} "></button>
+
+                <button type="button" class="ui-button deep-purple-btn" *ngIf="selectedNodeType=='Region'" pButton icon="fa-plus-circle"
+                    (click)="showAddAreaPanel()" label="{{shared.addAreaLabel}}"></button>
+                <button type="button" *ngIf="selectedNodeType=='Area'" pButton icon="fa-edit" class="ui-button-warning"
+                    (click)="showEditAreaPanel()" label="{{shared.editAreaLabel}}"></button>
+                <button type="button" *ngIf="selectedNodeType=='Area'" pButton icon="fa-remove" class="ui-button-danger"
+                    (click)="delete()" label="{{shared.deleteAreaLabel}} "></button>
+                <button type="button" pButton icon="fa-refresh" (click)="initGeoTree()" [pTooltip]="shared.refreshLabel"></button>
+
+            </div>
+        </p-toolbar>
+
+    </div>
+    <div id="gtreeid" class="ui-g-3">
+        <p-tree #expandingTree [value]="geoTree" (onNodeSelect)="nodeSelect($event)" (onNodeExpand)="nodeExpand($event)"
+            selectionMode="single" [(selection)]="selectedNode" styleClass="geoTreeStyle" [style]="{'width':'auto','min-height':'70vh','max-height':'70vh','overflow':'auto'}"></p-tree>
+    </div>
+    <div class="ui-g-9">
+        <p-dataGrid [value]="provinces" [paginator]="true" [rows]="12" *ngIf="selectedNodeType=='' && provinces.length>0"
+            [emptyMessage]="shared.emptyListMsg">
+            <header>
+                <span class="headerLabel"> {{shared.listProvinceLabel}}</span>
+            </header>
+            <ng-template let-province pTemplate="item">
+                <div style="padding:3px" class="ui-g-12 ui-md-3">
+                    <p-panel [style]="{'text-align':'center'}">
+                        <div>{{province.name}}</div>
+                        <hr class="ui-widget-content" style="border-top:0">
+                        <a class="content-icon"><i class="fa fa-edit" (click)="showProvinceEntity(province)"></i></a>
+                        <a class="content-icon"><i class="fa fa-remove" (click)="deleteProvince(province)"></i></a>
+
+                    </p-panel>
+                </div>
+            </ng-template>
+        </p-dataGrid>
+
+        <p-dataGrid [value]="townships" [paginator]="true" [rows]="12" [alwaysShowPaginator]="false" *ngIf="selectedNodeType=='Province' && townships.length>0">
+            <header>
+                <span class="headerLabel"> {{shared.listTownshipLabel}} {{selectedNodeName}}</span>
+            </header>
+            <ng-template let-township pTemplate="item">
+                <div style="padding:3px" class="ui-g-12 ui-md-3">
+                    <p-panel [style]="{'text-align':'center'}">
+                        <div>{{township.name}}</div>
+                        <hr class="ui-widget-content" style="border-top:0">
+                        <a class="content-icon"><i class="fa fa-edit" (click)="showTownshipEntity(township)"></i></a>
+                        <a class="content-icon"><i class="fa fa-remove" (click)="deleteTownship(township)"></i></a>
+
+                    </p-panel>
+                </div>
+            </ng-template>
+        </p-dataGrid>
+
+        <p-dataGrid [value]="cities" [paginator]="true" [rows]="12" [alwaysShowPaginator]="false" [emptyMessage]="shared.emptyCityListMsg"
+            *ngIf="selectedNodeType=='Township' && cities.length > 0">
+            <header>
+                <span class="headerLabel"> {{shared.listCityLabel}} {{selectedNodeName}}</span>
+            </header>
+            <ng-template let-city pTemplate="item">
+                <div style="padding:3px" class="ui-g-12 ui-md-3">
+                    <p-panel [style]="{'text-align':'center'}">
+                        <div>{{city.name}}</div>
+                        <hr class="ui-widget-content" style="border-top:0">
+                        <a class="content-icon"><i class="fa fa-edit" (click)="showCityEntity(city)"></i></a>
+                        <a class="content-icon"><i class="fa fa-remove" (click)="deleteCity(city)"></i></a>
+
+                    </p-panel>
+                </div>
+            </ng-template>
+        </p-dataGrid>
+
+        <p-dataGrid [value]="regions" [paginator]="true" [rows]="12" [alwaysShowPaginator]="false" [emptyMessage]="shared.emptyRegionListMsg"
+            *ngIf="selectedNodeType=='City' && regions.length > 0">
+            <header>
+                <span class="headerLabel"> {{shared.listRegionLabel}} {{selectedNodeName}}</span>
+            </header>
+            <ng-template let-region pTemplate="item">
+                <div style="padding:3px" class="ui-g-12 ui-md-3">
+                    <p-panel [style]="{'text-align':'center'}">
+                        <div>{{region.name}}</div>
+                        <hr class="ui-widget-content" style="border-top:0">
+                        <a class="content-icon"><i class="fa fa-edit" (click)="showRegionEntity(region)"></i></a>
+                        <a class="content-icon"><i class="fa fa-remove" (click)="deleteRegion(region)"></i></a>
+
+                    </p-panel>
+                </div>
+            </ng-template>
+        </p-dataGrid>
+
+        <p-dataGrid [value]="areas" [paginator]="true" [rows]="12" [alwaysShowPaginator]="false" [emptyMessage]="shared.emptyAreaListMsg"
+            *ngIf="selectedNodeType=='Region' && areas.length > 0">
+            <header>
+                <span class="headerLabel"> {{shared.listAreaLabel}} {{selectedNodeName}}</span>
+            </header>
+            <ng-template let-area pTemplate="item">
+                <div style="padding:3px" class="ui-g-12 ui-md-3">
+                    <p-panel [style]="{'text-align':'center'}">
+                        <div>{{area.name}}</div>
+                        <hr class="ui-widget-content" style="border-top:0">
+                        <a class="content-icon"><i class="fa fa-edit" (click)="showAreaEntity(area)"></i></a>
+                        <a class="content-icon"><i class="fa fa-remove" (click)="deleteArea(area)"></i></a>
+
+                    </p-panel>
+                </div>
+            </ng-template>
+        </p-dataGrid>
+
+        <div style="padding:3px" *ngIf="selectedNodeType=='Area'">
+            <p-panel [style]="{'text-align':'center'}">
+                <div>{{selectedNodeName}}</div>
+                <hr class="ui-widget-content" style="border-top:0">
+                <a class="content-icon"><i class="fa fa-edit" (click)="showEditAreaPanel()"></i></a>
+                <a class="content-icon"><i class="fa fa-remove" (click)="delete()"></i></a>
+
+            </p-panel>
+        </div>
+    </div>
+
+</div>
+<div *ngIf="newDisplayDialog">
+    <p-dialog header="{{panelHeaderLabel}}" [(visible)]="newDisplayDialog" [responsive]="true" [resizable]="false"
+        showEffect="fade" [width]="400" [modal]="true" [rtl]="true">
+        <form [formGroup]="newForm" (submit)="register()">
+            <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-6"><label for="nameID">
+                            <i class="fa fa-dot-circle-o font-icon-style"></i>
+                            {{shared.nameLabel}}</label></div>
+                    <div class="ui-grid-col-6">
+                        <input pInputText id="newGeoEntityNameID" type="text" [(ngModel)]="newGeoEntity.name"
+                            formControlName="newJobGeoName" />
+                    </div>
+                </div>
+                <div class="ui-grid-row">
+
+                    <div class="ui-grid-col-12">
+
+                        <div class="ui-message ui-messages-error ui-corner-all" *ngIf="newForm.controls['newJobGeoName'].touched && newForm.controls['newJobGeoName'].hasError('required')">
+                            {{shared.requiredMsg}}
+                        </div>
+                        <div class="ui-message ui-messages-error ui-corner-all" *ngIf="newForm.controls['newJobGeoName'].touched && newForm.controls['newJobGeoName'].hasError('minlength')">
+                            {{shared.minLengthValidatorNameMsg}} :
+                            {{newForm.controls['newJobGeoName'].errors.minlength.requiredLength}} {{shared.charLabel}}
+                        </div>
+                        <div class="ui-message ui-messages-error ui-corner-all" *ngIf="newForm.controls['newJobGeoName'].touched && newForm.controls['newJobGeoName'].hasError('maxlength')">
+                            {{shared.maxLengthValidatorNameMsg}} :
+                            {{newForm.controls['newJobGeoName'].errors.maxlength.requiredLength}} {{shared.charLabel}}
+                        </div>
+                    </div>
+
+                </div>
+                <div class="ui-grid-row" *ngIf="newCityNode || newAreaNode">
+                    <div class="ui-grid-col-6"><label for="longID">
+                            <i class="fa fa-dot-circle-o font-icon-style"></i>
+                            {{shared.longtitudeLabel}}</label></div>
+                    <div class="ui-grid-col-6">
+                        <input pInputText id="newGeoEntityLongID" type="text" [(ngModel)]="newGeoEntity.long"
+                            formControlName="long" class="ltrDirection" />
+                    </div>
+                </div>
+                <div class="ui-grid-row" *ngIf="newCityNode || newAreaNode">
+                    <div class="ui-grid-col-6"><label for="latID">
+                            <i class="fa fa-dot-circle-o font-icon-style"></i>
+                            {{shared.latitudeLabel}}</label></div>
+                    <div class="ui-grid-col-6">
+                        <input pInputText id="newGeoEntityLatID" type="text" [(ngModel)]="newGeoEntity.lat"
+                            formControlName="lat" class="ltrDirection" />
+                    </div>
+                </div>
+                <div class="ui-grid-row" *ngIf="newCityNode">
+                    <div class="ui-grid-col-6"><label>
+                            <i class="fa fa-dot-circle-o font-icon-style"></i>
+                            {{shared.activeLabel}}</label></div>
+                    <div class="ui-grid-col-6">
+                        <p-checkbox [(ngModel)]="newGeoEntity.active" binary="false" formControlName="active"></p-checkbox>
+                    </div>
+                </div>
+            </div>
+            <footer>
+                <div align="center">
+                    <button type="submit" pButton icon="fa-check" label="{{shared.saveLabel}}" [disabled]="!newForm.valid && isLoading"></button>
+                </div>
+            </footer>
+        </form>
+    </p-dialog>
+</div>
+<div *ngIf="editDisplayDialog">
+    <p-dialog header="{{panelHeaderLabel}}" [(visible)]="editDisplayDialog" [responsive]="true" [resizable]="false"
+        showEffect="fade" [modal]="true" [rtl]="true" width="400">
+        <form [formGroup]="editForm" (submit)="update()">
+            <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-6"><label for="nameID">
+                            <i class="fa fa-dot-circle-o font-icon-style"></i>
+                            {{shared.nameLabel}}</label></div>
+                    <div class="ui-grid-col-6">
+                        <input pInputText id="selectedNodeName" [(ngModel)]="selectedNodeName" type="text"
+                            formControlName="name" />
+                    </div>
+                </div>
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-12 ui-message ui-messages-error ui-corner-all" *ngIf="editForm.controls['name'].touched && editForm.controls['name'].hasError('required')">
+                        {{shared.requiredMsg}}
+                    </div>
+                </div>
+                <div class="ui-grid-row" *ngIf="editCityNode || editAreaNode">
+                    <div class="ui-grid-col-6"><label for="longID">
+                            <i class="fa fa-dot-circle-o font-icon-style"></i>
+                            {{shared.longtitudeLabel}}</label></div>
+                    <div class="ui-grid-col-6">
+                        <input pInputText id="selectedNodeLongID" type="text" [(ngModel)]="selectedNodeLong"
+                            formControlName="long" class="ltrDirection" />
+                    </div>
+                </div>
+                <div class="ui-grid-row" *ngIf="editCityNode || editAreaNode">
+                    <div class="ui-grid-col-6"><label for="latID">
+                            <i class="fa fa-dot-circle-o font-icon-style"></i>
+                            {{shared.latitudeLabel}}</label></div>
+                    <div class="ui-grid-col-6">
+                        <input pInputText id="selectedNodeLatID" type="text" [(ngModel)]="selectedNodeLat"
+                            formControlName="lat" class="ltrDirection" />
+                    </div>
+                </div>
+                <div class="ui-grid-row" *ngIf="editCityNode">
+                    <div class="ui-grid-col-6"><label>
+                            <i class="fa fa-dot-circle-o font-icon-style"></i>
+                            {{shared.activeLabel}}</label></div>
+                    <div class="ui-grid-col-6">
+                        <p-checkbox [(ngModel)]="selectedNodeActive" binary="false" formControlName="active"></p-checkbox>
+                    </div>
+                </div>
+            </div>
+            <footer>
+                <div align="center">
+                    <button type="submit" pButton icon="fa-check" (click)="update()" label="{{shared.saveLabel}}"
+                        [disabled]="!editForm.valid && isLoading"></button>
+                </div>
+            </footer>
+        </form>
+    </p-dialog>
+</div>
+<div *ngIf="editEntityDialog">
+    <p-dialog header="{{panelHeaderLabel}}" [(visible)]="editEntityDialog" [responsive]="true" [resizable]="false"
+        showEffect="fade" [modal]="true" [rtl]="true" width="400">
+        <form [formGroup]="editEntityForm" (submit)="updateEntity()">
+            <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-6"><label for="nameID">
+                            <i class="fa fa-dot-circle-o font-icon-style"></i>
+                            {{shared.nameLabel}}</label></div>
+                    <div class="ui-grid-col-6">
+                        <input pInputText id="selectedEntityNameID" [(ngModel)]="selectedEntity.name" type="text"
+                            formControlName="name" />
+
+                    </div>
+                </div>
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-12">
+                        <div class="ui-message ui-messages-error ui-corner-all" *ngIf="editEntityForm.controls['name'].touched && editEntityForm.controls['name'].hasError('required')">
+                            {{shared.requiredMsg}}
+                        </div>
+                        <div class="ui-message ui-messages-error ui-corner-all" *ngIf="editEntityForm.controls['name'].touched && editEntityForm.controls['name'].hasError('minlength')">
+                            {{shared.minLengthValidatorNameMsg}} :
+                            {{editEntityForm.controls['name'].errors.minlength.requiredLength}} {{shared.charLabel}}
+                        </div>
+                        <div class="ui-message ui-messages-error ui-corner-all" *ngIf="editEntityForm.controls['name'].touched && editEntityForm.controls['name'].hasError('maxlength')">
+                            {{shared.maxLengthValidatorNameMsg}} :
+                            {{editEntityForm.controls['name'].errors.maxlength.requiredLength}} {{shared.charLabel}}
+                        </div>
+                    </div>
+                </div>
+                <div class="ui-grid-row" *ngIf="editCityNode || editAreaNode">
+                    <div class="ui-grid-col-6"><label for="longID">
+                            <i class="fa fa-dot-circle-o font-icon-style"></i>
+                            {{shared.longtitudeLabel}}</label></div>
+                    <div class="ui-grid-col-6">
+                        <input pInputText id="selectedEntityLongID" type="text" [(ngModel)]="selectedEntity.long"
+                            formControlName="long" class="ltrDirection" />
+                    </div>
+                </div>
+                <div class="ui-grid-row" *ngIf="editCityNode || editAreaNode">
+                    <div class="ui-grid-col-6"><label for="latID">
+                            <i class="fa fa-dot-circle-o font-icon-style"></i>
+                            {{shared.latitudeLabel}}</label></div>
+                    <div class="ui-grid-col-6">
+                        <input pInputText id="selectedEntityLatID" type="text" [(ngModel)]="selectedEntity.lat"
+                            formControlName="lat" class="ltrDirection" />
+                    </div>
+                </div>
+                <div class="ui-grid-row" *ngIf="editCityNode">
+                    <div class="ui-grid-col-6"><label>
+                            <i class="fa fa-dot-circle-o font-icon-style"></i>
+                            {{shared.activeLabel}}</label></div>
+                    <div class="ui-grid-col-6">
+                        <p-checkbox [(ngModel)]="selectedEntity.active" binary="false" formControlName="active"></p-checkbox>
+                    </div>
+                </div>
+            </div>
+
+            <footer>
+                <div align="center">
+                    <button type="submit" pButton icon="fa-check" (click)="updateEntity(selectedEntity)" label="{{shared.saveLabel}}"
+                        [disabled]="!editEntityForm.valid && isLoading"></button>
+                </div>
+            </footer>
+        </form>
+    </p-dialog>
+</div>
+<p-confirmDialog header="{{shared.confirmHeader}}" width="425" rtl="true" #cd>
+    <p-footer>
+        <button type="button" pButton icon="fa-close" [label]="shared.noLabel" (click)="cd.reject()" style="margin-right: 30%;"></button>
+        <button type="button" pButton icon="fa-check" [label]="shared.yesLabel" (click)="cd.accept()"></button>
+    </p-footer>
+</p-confirmDialog>
+<p-dialog [(visible)]="isLoading" responsive="true" [resizable]="false" showEffect="fade" width="300" [rtl]="true"
+    modal="modal" [showHeader]="false" styleClass="ui-dialog">
+    <loadingCmp [loading]="isLoading" spinnerStyleClass="spinnerClassBlack"></loadingCmp>
+</p-dialog>

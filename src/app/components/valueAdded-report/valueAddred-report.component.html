@@ -1,0 +1,423 @@
+<p-growl [value]="hmsgs" life="6000">
+</p-growl>
+<div *ngIf="loading">
+  <p-dialog [(visible)]="loading" responsive="true" [resizable]="false" width="300" [rtl]="true" [showHeader]="false"
+    styleClass="ui-dialog">
+    <loadingCmp [loading]="loading" spinnerStyleClass="spinnerClassBlack"></loadingCmp>
+  </p-dialog>
+</div>
+<div class="ui-g ui-g-pad ui-g-reponsive dashboard ">
+  <div class="ui-g-12">
+
+    <p-toolbar styleClass="toolbarstyle">
+      <div class="ui-toolbar-group-right headerLabel">
+        <img src="../../assets/images/transaction.png" style="vertical-align: middle;" /> {{activeLabel}}
+        <span class="totalFilteredClass" *ngIf="totalRecords">
+          {{shared.totalNumberLabel}} : {{totalRecords}}
+        </span>
+      </div>
+      <div class="ui-toolbar-group-left">
+        <div *ngIf="reportResult">
+          <button type="button" pButton icon="fa-file-excel-o" iconPos="left" pTooltip="Excel"
+            (click)="exportExcel()"></button>
+        </div>
+        <div *ngIf="reportResultAggregated">
+          <button type="button" pButton icon="fa-file-excel-o" iconPos="left" pTooltip="Excel"
+            (click)="exportAggregatedExcel()"></button>
+        </div>
+      </div>
+    </p-toolbar>
+    <p-card>
+
+      <form [formGroup]="filterForm" (ngSubmit)="onSubmitFilterform()">
+
+        <div class="ui-grid ui-grid-responsive  farsi-font" style="padding:0px!important">
+          <div class="ui-grid-row">
+
+            <div class="ui-grid-col-1">
+              <label>
+                <i class="fa fa-dot-circle-o font-icon-style"></i>
+                زمان شروع
+              </label>
+            </div>
+            <div class="ui-grid-col-2">
+
+              <dp-date-picker [(ngModel)]="reportStartDate" mode="day" [config]="datePickerConfig" theme="dp-material"
+                [ngModelOptions]="{standalone: true}">
+              </dp-date-picker>
+            </div>
+            <div class="ui-grid-col-1">
+              <label>
+                <i class="fa fa-dot-circle-o font-icon-style"></i>
+                زمان پایان
+              </label>
+            </div>
+            <div class="ui-grid-col-2">
+
+              <dp-date-picker [(ngModel)]="reportStopDate" mode="day" [config]="datePickerConfig" theme="dp-material"
+                [ngModelOptions]="{standalone: true}">
+              </dp-date-picker>
+            </div>
+            <div class="ui-grid-col-2">
+              <label>
+                <i class="fa fa-dot-circle-o font-icon-style"></i>
+                گزارش تجمیعی
+              </label>
+            </div>
+            <div class="ui-grid-col-1">
+              <p-checkbox id="aggID" [(ngModel)]="aggregateReport" binary="true" formControlName="aggregate">
+              </p-checkbox>
+            </div>
+            <div class="ui-grid-col-1">
+
+              <button type="submit" pButton icon="fa-search" label="{{shared.showFilter}}"
+                class="ui-button turquoise-btn"
+                style="padding-left: 40px;padding-right:40px;border-radius: 5px"></button>
+
+
+
+              <!-- <button pButton label="Test" (click)="test()" class="ui-button turquoise-btn"
+                style="padding-left: 40px;padding-right:40px;border-radius: 5px"></button> -->
+
+            </div>
+
+          </div>
+
+
+
+        </div>
+
+
+      </form>
+    </p-card>
+    <div *ngIf="reportResult" align="center" style="width:100%;margin-bottom: 30px;">
+      <p-table [value]="reportResult" [loading]="dataTableLoading" loadingIcon="fa-spinner" #idt>
+        <ng-template pTemplate="header">
+          <tr>
+            <th rowspan="2">{{shared.timeLabel}}</th>
+            <th rowspan="2">{{shared.clientNameLabel}}</th>
+            <th rowspan="2">{{shared.expertNameLabel}}</th>
+            <th rowspan="2">{{shared.requestCodeLabel}}</th>
+            <th rowspan="2">{{shared.requestTypeLabel}}</th>
+            <th rowspan="2">{{shared.factorPriceLabel}}</th>
+
+            <th colspan="3">{{shared.commisionLabel}}</th>
+
+
+            <th rowspan="2">{{shared.expertShareLabel}}</th>
+            <th rowspan="2">{{shared.docNumberLabel}}</th>
+            <th rowspan="2">{{shared.showBillLabel}}</th>
+          </tr>
+          <tr>
+            <th>{{shared.commisionLabel}}</th>
+            <th>{{shared.valueAddedLabel}}</th>
+            <th>{{shared.totalLabel2}}</th>
+          </tr>
+          <tr>
+            <th>
+              <input pInputText type="text" style="width:70%"
+                (input)="idt.filter($event.target.value, 'registerTimeS', 'contains')">
+            </th>
+            <th>
+              <input pInputText type="text" style="width:70%"
+                (input)="idt.filter($event.target.value, 'clientName', 'contains')">
+            </th>
+            <th>
+              <input pInputText type="text" style="width:70%"
+                (input)="idt.filter($event.target.value, 'workerName', 'contains')">
+            </th>
+            <th>
+              <input pInputText type="text" style="width:70%"
+                (input)="idt.filter($event.target.value, 'code', 'contains')">
+            </th>
+            <th>
+              <input pInputText type="text" style="width:70%"
+                (input)="idt.filter($event.target.value, 'cat3', 'contains')">
+            </th>
+            <th>
+              <input pInputText type="number" size="2" style="width:70%"
+                (input)="idt.filter($event.target.value, 'factorPrice', 'gte')">
+            </th>
+            <th>
+              <input pInputText type="number" size="2" style="width:70%"
+                (input)="idt.filter($event.target.value, 'commision', 'gte')">
+            </th>
+            <th>
+              <input pInputText type="number" size="2" style="width:70%"
+                (input)="idt.filter($event.target.value, 'valueAdded', 'gte')">
+            </th>
+            <th>
+              <input pInputText type="number" size="2" style="width:70%"
+                (input)="idt.filter($event.target.value, 'totalCommision', 'gte')">
+            </th>
+            <th>
+              <input pInputText type="number" size="2" style="width:70%"
+                (input)="idt.filter($event.target.value, 'workerIncome', 'gte')">
+            </th>
+            <th>
+              <input pInputText type="text" style="width:70%"
+                (input)="idt.filter($event.target.value, 'accountantNumber', 'contains')">
+            </th>
+
+            <th></th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-report>
+          <tr>
+            <td>{{report.registerTimeS}}</td>
+            <td>{{report.clientName}}</td>
+            <td>{{report.workerName}}</td>
+            <td>{{report.code}}</td>
+            <td>{{report.cat3}}</td>
+            <td>{{report.factorPrice}}</td>
+            <td>{{report.commision}}</td>
+            <td>{{report.valueAdded}}</td>
+            <td>{{report.totalCommision}}</td>
+            <td>{{report.workerIncome}}</td>
+            <td>
+              <div *ngIf="report.registered;else registerAcc">
+                {{report.accountantNumber}}
+              </div>
+              <ng-template #registerAcc>
+                <button type="button" class="green-btn" pButton icon="fa-plus-square"
+                  (click)="showRegisterDialog(report)">
+                </button>
+              </ng-template>
+
+            </td>
+            <td>
+              <button type="button" class="orange-btn" pButton icon="fa-info-circle" (click)="showDetail(report)">
+              </button>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td [attr.colspan]="12">
+              {{shared.emptyListMsg}}
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="footer">
+          <tr *ngIf="!idt.filteredValue">
+            <td colspan="5">{{shared.totalLabel}}</td>
+            <td>{{reportResultSum.factorPrice}}</td>
+            <td>{{reportResultSum.commision}}</td>
+            <td>{{reportResultSum.valueAdded}}</td>
+            <td>{{reportResultSum.totalCommision}}</td>
+            <td>{{reportResultSum.workerIncome}}</td>
+            <td></td>
+            <td></td>
+          </tr>
+        </ng-template>
+      </p-table>
+
+    </div>
+
+    <div *ngIf="reportResultAggregated" align="center" style="width:100%;margin-bottom: 30px;">
+      <p-table [value]="reportResultAggregated" [loading]="dataTableLoading" loadingIcon="fa-spinner" #adt>
+        <ng-template pTemplate="header">
+          <tr>
+            <th rowspan="2">{{shared.expertNameLabel}}</th>
+            <th rowspan="2">{{shared.factorPriceLabel}}</th>
+            <th colspan="3">{{shared.commisionLabel}}</th>
+            <th rowspan="2">{{shared.expertShareLabel}}</th>
+            <th rowspan="2">{{shared.docNumberLabel}}</th>
+            <th rowspan="2">{{shared.showBillLabel}}</th>
+          <tr>
+            <th>{{shared.commisionLabel}}</th>
+            <th>{{shared.valueAddedLabel}}</th>
+            <th>{{shared.totalLabel2}}</th>
+          </tr>
+          <tr>
+            <th>
+              <input pInputText type="text" style="width:70%"
+                (input)="adt.filter($event.target.value, 'workerName', 'contains')">
+            </th>
+            <th>
+              <input pInputText type="number" size="2" style="width:70%"
+                (input)="adt.filter($event.target.value, 'factorPrice', 'gte')">
+            </th>
+            <th>
+              <input pInputText type="number" size="2" style="width:70%"
+                (input)="adt.filter($event.target.value, 'commision', 'gte')">
+            </th>
+            <th>
+              <input pInputText type="number" size="2" style="width:70%"
+                (input)="adt.filter($event.target.value, 'valueAdded', 'gte')">
+            </th>
+            <th>
+              <input pInputText type="number" size="2" style="width:70%"
+                (input)="adt.filter($event.target.value, 'totalCommision', 'gte')">
+            </th>
+            <th>
+              <input pInputText type="number" size="2" style="width:70%"
+                (input)="adt.filter($event.target.value, 'workerIncome', 'gte')">
+            </th>
+            <th>
+              <input pInputText type="text" style="width:70%"
+                (input)="adt.filter($event.target.value, 'accountantNumber', 'contains')">
+            </th>
+
+            <th></th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-report>
+          <tr>
+            <td>{{report.workerName}}</td>
+            <td>{{report.sum.factorPrice}}</td>
+            <td>{{report.sum.commision}}</td>
+            <td>{{report.sum.valueAdded}}</td>
+            <td>{{report.sum.totalCommision}}</td>
+            <td>{{report.sum.workerIncome}}</td>
+            <td>
+              <div *ngIf="report.registered;else registerAccg">
+                {{report.accountantNumber}}
+              </div>
+              <ng-template #registerAccg>
+                <div align="center">
+                  <button type="button" class="green-btn" pButton icon="fa-plus-square"
+                    (click)="showAggregatedRegisterDialog(report)">
+                  </button>
+                </div>
+              </ng-template>
+
+            </td>
+            <td>
+              <div align="center">
+                <button type="button" class="orange-btn" pButton icon="fa-info-circle"
+                  (click)="showAggregatedDetail(report)">
+                </button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td [attr.colspan]="8">
+              {{shared.emptyListMsg}}
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="footer">
+          <tr *ngIf="!adt.filteredValue">
+            <td>{{shared.totalLabel}}</td>
+            <td>{{reportResultAggregatedSum.factorPrice}}</td>
+            <td>{{reportResultAggregatedSum.commision}}</td>
+            <td>{{reportResultAggregatedSum.valueAdded}}</td>
+            <td>{{reportResultAggregatedSum.totalCommision}}</td>
+            <td>{{reportResultAggregatedSum.workerIncome}}</td>
+            <td></td>
+            <td></td>
+          </tr>
+        </ng-template>
+      </p-table>
+
+    </div>
+
+  </div>
+
+  <div *ngIf="displayDetail">
+    <p-dialog [(visible)]="displayDetail" [resizable]="false" [closable]="false" [responsive]="true" [modal]="true"
+      [positionTop]="0" [width]="750" [header]="shared.billInfoLabel">
+      <p-header>
+        <div style="float:left">
+          <span style="padding-right: 20px;padding-left: 20px;font-size: 14px;border-color: lightcyan;border-radius: 6px;border: 1px solid;text-align: center;
+          margin-left: 20px;" pTooltip="زمان ثبت سند" *ngIf="selectedValueAddedInfo.accNumberRegisterTimeS">
+            {{selectedValueAddedInfo.accNumberRegisterTimeS.substring(0,10)}} </span>
+          <button type="button" pButton icon="fa fa-print" style="background:none;border:none" (click)="onPrintBill()"
+            [disabled]="!selectedValueAddedInfo.printable"></button>
+          <button type="button" pButton icon="fa fa-close" style="background:none;border:none"
+            (click)="closeDetail()"></button>
+        </div>
+
+      </p-header>
+
+      <app-valueAddedExtended-view [selectedData]="selectedValueAddedInfo"></app-valueAddedExtended-view>
+    </p-dialog>
+  </div>
+
+
+  <div *ngIf="displayAggregatedDetail">
+    <p-dialog [(visible)]="displayAggregatedDetail" [resizable]="false" [closable]="false" [responsive]="true"
+      [modal]="true" [positionTop]="0" [width]="750" [header]="shared.billInfoLabel">
+      <p-header>
+
+        <div style="float:left">
+          <span style="padding-right: 20px;padding-left: 20px;font-size: 14px;border-color: lightcyan;border-radius: 6px;border: 1px solid;text-align: center;
+          margin-left: 20px;" pTooltip="زمان ثبت سند" *ngIf="selectedAggregatedValueAddedInfo.accNumberRegisterTimeS">
+            {{selectedAggregatedValueAddedInfo.accNumberRegisterTimeS.substring(0,10)}} </span>
+          <button type="button" pButton icon="fa fa-print" style="background:none;border:none" (click)="onPrintBill()"
+            [disabled]="!selectedAggregatedValueAddedInfo.printable"></button>
+          <button type="button" pButton icon="fa fa-close" style="background:none;border:none"
+            (click)="closeAggregatedDetail()"></button>
+        </div>
+
+      </p-header>
+
+      <app-valueAddedExtended-view [selectedAggregatedData]="selectedAggregatedValueAddedInfo"></app-valueAddedExtended-view>
+    </p-dialog>
+  </div>
+  <div *ngIf="displayRegisterDialog">
+    <p-dialog [(visible)]="displayRegisterDialog" responsive="true" [positionTop]="0" [resizable]="false" width="600"
+      [rtl]="true" [modal]="true" [header]="shared.registerFinancialDoc" styleClass="ui-dialog">
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmmitRegisterForm()" id="registerForm">
+
+        <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+
+
+          <div class="ui-grid-row">
+            <div class="ui-grid-col-4">
+              <label class="control-labely required">
+                <i class="fa fa-dot-circle-o font-icon-style"></i>
+                {{shared.docNumberLabel}}
+              </label>
+            </div>
+
+            <div class="ui-grid-col-8">
+              <input pInputText id="docNumberID" [(ngModel)]="selectedAccountNumber" type="text"
+                formControlName="accountNumber" class="width100p  ltrDirection" />
+              <div class="ui-message ui-messages-error ui-corner-all width100p" *ngIf="registerForm.controls['accountNumber'].touched &&
+                                          registerForm.controls['accountNumber'].dirty &&
+                                                  registerForm.controls['accountNumber'].hasError('required') ">
+                {{shared.requiredMsg}}
+              </div>
+              <div class="ui-message ui-messages-error ui-corner-all width100p" *ngIf="registerForm.controls['accountNumber'].touched &&
+                      registerForm.controls['accountNumber'].dirty &&
+                      registerForm.controls['accountNumber'].errors?.minlength">
+                {{shared.minCharMaxCharLabel}}
+              </div>
+              <div class="ui-message ui-messages-error ui-corner-all width100p" *ngIf="registerForm.controls['accountNumber'].touched &&
+                  registerForm.controls['accountNumber'].dirty &&
+                  registerForm.controls['accountNumber'].errors?.maxlength">
+                {{shared.minCharMaxCharLabel}}
+              </div>
+
+            </div>
+          </div>
+          <div class="ui-grid-row">
+            <div class="ui-grid-col-4">
+              <label>
+                <i class="fa fa-dot-circle-o font-icon-style"></i>
+                {{shared.registerTimeLabel}}
+              </label>
+            </div>
+            <div class="ui-grid-col-8">
+              <dp-date-picker [(ngModel)]="_registerDate" mode="day" [config]="datePickerConfig" theme="dp-material"
+                [ngModelOptions]="{standalone: true}">
+              </dp-date-picker>
+            </div>
+          </div>
+
+        </div>
+
+
+        <div align="center" style="padding:4px">
+          <button type="submit" pButton icon="fa-save" label="{{shared.registerLabel}}" [disabled]="!registerForm.valid"
+            class="ui-button turquoise-btn btn-style" style="padding-left: 30px;padding-right: 30px"></button>
+        </div>
+
+
+      </form>
+    </p-dialog>
+  </div>

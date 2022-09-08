@@ -1,0 +1,45 @@
+a{
+    color:blue;font-weight:bold;
+}
+a:link {
+    color:chocolate;
+    text-align: center; 
+    text-decoration: none;
+    display: inline-block;
+
+}
+
+a:hover, a:active {
+    cursor: pointer;
+    text-decoration: underline;
+
+}
+.greenStyle{
+    color:rgb(69, 241, 69);
+    text-align:center;
+}
+.grayStye{
+    color:rgb(201, 201, 201);
+    text-align:center;
+}
+
+table.blueTable {
+    border: 1px solid rgb(0, 0, 0);
+    background-color: #aeea00;
+    width: 100%;
+    text-align: right;
+    border-collapse: collapse;
+  }
+
+  table.blueTable td, table.blueTable th {
+    border: 1px solid rgb(202, 201, 201);
+    padding: 6px 4px;
+    direction: rtl;
+  }
+  table.blueTable tbody td {
+    font-size: 16px;
+    direction: rtl;
+  }
+  table.blueTable tr:nth-child(even) {
+    background: #ff6e40;
+  }

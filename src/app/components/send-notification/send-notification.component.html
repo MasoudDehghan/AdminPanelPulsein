@@ -1,0 +1,135 @@
+<form [formGroup]="contentForm" (ngSubmit)="onSubmitContentForm()">
+    <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+        <div class="ui-grid-row">
+            <div class="ui-grid-col-4">
+                <label class="control-labelx required">
+                    <i class="fa fa-dot-circle-o font-icon-style"></i>
+                    {{shared.titleLabel}}
+                </label>
+            </div>
+            <div class="ui-grid-col-8">
+                <input pInputText type="text" formControlName="title" class="width100p" placeholder="{{shared.maxLengthValidatorNameMsg}} : 30" maxlength="30"/>
+                <div class="ui-message ui-messages-error ui-corner-all width100p" *ngIf="contentForm.controls['title'].touched &&
+                contentForm.controls['title'].dirty &&
+                contentForm.controls['title'].hasError('required') ">
+                    {{shared.requiedFieldLabel}}
+                </div>
+                <div class="ui-message ui-messages-error ui-corner-all width100p" *ngIf="contentForm.controls['title'].touched &&
+       contentForm.controls['title'].dirty &&
+       contentForm.controls['title'].errors?.max ">
+                    {{shared.maxCharLabel}}
+                </div>
+            </div>
+        </div>
+
+        <div class="ui-grid-row">
+            <div class="ui-grid-col-4">
+                <label class="control-labelx required">
+                    <i class="fa fa-dot-circle-o font-icon-style"></i>
+                    {{shared.contentLabel}}
+                </label>
+            </div>
+            <div class="ui-grid-col-8">
+                <textarea pInputTextarea formControlName="content" class="width100p" placeholder="{{shared.maxLengthValidatorNameMsg}} : 40" [rows]="2" [cols]="12" maxlength="40"></textarea>
+                <div class="ui-message ui-messages-error ui-corner-all width100p" *ngIf="contentForm.controls['content'].touched &&
+             contentForm.controls['content'].dirty &&
+             contentForm.controls['content'].hasError('required') ">
+                    {{shared.requiedFieldLabel}}
+                </div>
+                <div class="ui-message ui-messages-error ui-corner-all width100p" *ngIf="contentForm.controls['content'].touched &&
+    contentForm.controls['content'].dirty &&
+    contentForm.controls['content'].errors?.max ">
+                    {{shared.maxCharLabel}}
+                </div>
+            </div>
+        </div>
+        <div class="ui-grid-row">
+            <div class="ui-grid-col-4">
+                <label class="control-labelx required">
+                    <i class="fa fa-dot-circle-o font-icon-style"></i>
+                    {{shared.relatedCat}}
+                </label>
+            </div>
+            <div class="ui-grid-col-8">
+                <p-autoComplete field="name" appendTo="body" [suggestions]="jobCat3Result" formControlName="linkCat"
+                    placeholder="{{shared.searchInJobCategory3}}"
+                    (completeMethod)="searchJobCat3($event)" [inputStyle]="{'width':'100%'}">
+                </p-autoComplete>
+            </div>
+        </div>
+        <div class="ui-grid-row">
+            <div class="ui-grid-col-4">
+                <label class="control-labelx required">
+                    <i class="fa fa-dot-circle-o font-icon-style"></i>
+                    {{shared.vibrateLabel}}
+                </label>
+            </div>
+            <div class="ui-grid-col-8">
+                <p-checkbox formControlName="vibrate" binary="true"></p-checkbox>
+            </div>
+        </div>
+        <div class="ui-grid-row">
+            <div class="ui-grid-col-4">
+                <label class="control-labelx required">
+                    <i class="fa fa-dot-circle-o font-icon-style"></i>
+                    {{shared.soundLabel}}
+                </label>
+            </div>
+            <div class="ui-grid-col-8">
+                <p-checkbox formControlName="sound" binary="true"></p-checkbox>
+            </div>
+        </div>
+        <div class="ui-grid-row">
+            <div class="ui-grid-col-4">
+                <label class="control-labelx required">
+                    <i class="fa fa-dot-circle-o font-icon-style"></i>
+                    {{shared.ledLabel}}
+                </label>
+            </div>
+            <div class="ui-grid-col-8">
+                <p-checkbox formControlName="led" binary="true"></p-checkbox>
+            </div>
+        </div>
+        <div class="ui-grid-row">
+            <div class="ui-grid-col-4">
+                <label class="control-labelx required">
+                    <i class="fa fa-dot-circle-o font-icon-style"></i>
+                    {{shared.isBigLabel}}
+                </label>
+            </div>
+            <div class="ui-grid-col-8">
+                <p-checkbox formControlName="isBig" binary="true" (onChange)="onChange($event)"></p-checkbox>
+            </div>
+        </div>
+        <div class="ui-grid-row" *ngIf="displayImageUpload">
+            <div class="ui-grid-col-4">
+                <label class="control-labelx required">
+                    <i class="fa fa-dot-circle-o font-icon-style"></i>
+                    {{shared.imageLabel}}
+                </label>
+            </div>
+            <div class="ui-grid-col-8">
+                <p-fileUpload name="demo" [url]="uploadURL" (onUpload)="onUpload($event)" accept="image/*" auto="true"
+                    [invalidFileSizeMessageSummary]="shared.invalidFileSize" [invalidFileSizeMessageDetail]="shared.invalidFileSizeMessageDetail"
+                    [chooseLabel]="shared.chooseFileLabel" [uploadLabel]="shared.uploadLabel" [cancelLabel]="shared.cancelLabel"
+                    [maxFileSize]="fileSize">
+                    <ng-template pTemplate="content">
+                        <ul *ngIf="uploadedFiles?.length" style="font-family:Arial">
+                            <li *ngFor="let file of uploadedFiles">{{file.name}} - {{file.size}} {{shared.byteLabel}}</li>
+                        </ul>
+                    </ng-template>
+                </p-fileUpload>
+            </div>
+        </div>
+
+    </div>
+    <div align="center" style="padding:4px">
+        <button type="submit" pButton icon="fa-paper-plane" label="{{shared.sendLabel}}" class="ui-button turquoise-btn"
+            style="width:40%"> </button>
+    </div>
+    <p-messages [value]="hmsgs"></p-messages>
+</form>
+<p-dialog [(visible)]="loading" responsive="true" [resizable]="false" width="300" [rtl]="true" [showHeader]="false"
+    styleClass="ui-dialog">
+    <loadingCmp [loading]="loading" spinnerStyleClass="spinnerClassBlack"></loadingCmp>
+</p-dialog>

@@ -1,0 +1,7 @@
+.valueAddedID {
+  page-break-after: always;
+  
+}
+.valueAddedID:last-child {
+  page-break-after: avoid;
+}

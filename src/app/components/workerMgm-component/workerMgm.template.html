@@ -1,0 +1,452 @@
+<p-growl [value]="hmsgs" life="6000">
+</p-growl>
+
+<div class="ui-rtl ui-g ui-g-pad ui-g-reponsive dashboard" *ngIf="!loading">
+    <div class="ui-g-12">
+        <p-toolbar styleClass="toolbarstyle">
+            <div class="ui-toolbar-group-right headerLabel">
+                <div class="ui-g">
+                    <div class="ui-g-6">
+                        <img src="../assets/images/worker.png" style="vertical-align: middle;" /> {{activeLabel}}
+                        <span class="totalFilteredClass" *ngIf="!displayDialog && !showWorkerStat">
+                            {{workerLength}}
+                        </span>
+                    </div>
+                    <div class="ui-g-5">
+                        <p-autoComplete field="name" appendTo="body" [suggestions]="jobCat3Result"
+                            (onSelect)="selectJobCat3($event)" (completeMethod)="searchJobCat3($event)"
+                            [inputStyle]="{'width':'100%'}" placeholder="{{shared.searchInJobCategory3}}">
+                        </p-autoComplete>
+                    </div>
+                    <div class="ui-g-1">
+                        <button pButton type="button" icon="fa fa-search" iconPos="left"></button>
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="ui-toolbar-group-left">
+                <button type="button" pButton class="ui-button orange-btn" icon="fa-comment" (click)="showSMSPanel()"
+                    label="{{shared.sendSMSPanel}}" [pTooltip]="shared.sendSMSPanel"
+                    [disabled]="!sensSMSCapable"></button>
+                <button type="button" class="ui-button pink-btn" pButton icon="fa-file-excel-o" iconPos="left"
+                    pTooltip="Excel Filtered Workers" [label]="shared.filteredExcelViewLabel"
+                    (click)="exportFilteredDataExcel()"></button>
+                <button type="button" pButton icon="fa-filter" (click)="showFilterDialog()"
+                    [pTooltip]="shared.showFilter" *ngIf="!displayDialog"></button>
+                <button type="button" pButton icon="fa-refresh" (click)="refreshWorkerList()"
+                    [pTooltip]="shared.refreshLabel"></button>
+                <button type="button" pButton icon="fa-file-excel-o" iconPos="left" pTooltip="Excel"
+                    (click)="exportExcel()"></button>
+
+
+
+
+            </div>
+        </p-toolbar>
+    </div>
+    <div class="ui-g-12">
+        <div class="ui-toolbar ui-widget ui-widget-header ui-corner-all ui-helper-clearfix"
+            *ngIf="chipsFilterValues?.length>0">
+            <div class="ui-chips ui-widget">
+                <ul class="ui-inputtext ui-state-default ui-corner-all">
+                    <li *ngFor="let ci of chipsFilterValues;let i=index"
+                        class="ui-chips-token ui-state-highlight ui-corner-all">
+                        <span class="ui-chips-token-label" (click)="onRemoveChip(i)">{{ci}}
+                            <span class="ui-chips-token-icon fa fa-fw fa-close"></span>
+                        </span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div *ngIf="showOnMapFlag">
+            <agm-map [latitude]="latitude" [longitude]="longitude" [scrollwheel]="false" [zoom]="zoom"
+                [disableDefaultUI]="false" [streetViewControl]="false">
+                <agm-marker *ngFor="let m of wsMarkerList; let i = index" [latitude]="m.lat" [longitude]="m.lng"
+                    [label]="m.label" [markerDraggable]="m.draggable" (dragEnd)="markerDragEnd(m, $event)">
+                </agm-marker>
+            </agm-map>
+        </div>
+        <div *ngIf="displayMgmPanel">
+            <div *ngIf="showWorkerList">
+                <p-table [value]="workers" [rows]="8" [paginator]="true" [pageLinks]="5" exportFilename="browsers"
+                    (onFilter)="onFilter($event)" #dt>
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th style="width:7%" rowspan="2">
+                                <div class="ui-grid ui-grid-responsive ui-grid-pad">
+                                    <div class="ui-grid-row">
+                                        <div class="ui-grid-col-4">
+                                            <p-triStateCheckbox (onChange)="dt.filter($event.value,'active','equals')">
+                                            </p-triStateCheckbox>
+                                        </div>
+                                        <div class="ui-grid-col-4">
+                                            <p-triStateCheckbox (onChange)="dt.filter($event.value,'haveBond','equals')">
+                                            </p-triStateCheckbox>
+                                        </div>
+                                        <div class="ui-grid-col-4">
+                                            <p-triStateCheckbox (onChange)="dt.filter($event.value,'offerBlock','equals')">
+                                            </p-triStateCheckbox>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </th>
+                            <th rowspan="2" style="width:10%">
+                                {{shared.workerCodeLabel}}
+                                <input style="width:100%" pInputText type="text"
+                                    (input)="dt.filter($event.target.value, 'code', 'contains')">
+
+                            </th>
+                            <th colspan="2" style="width:15%">{{shared.personalWorkerDataSumLabel}}</th>
+                            <th rowspan="2" style="width:15%">{{shared.bizNameLabel}}
+                                <input style="width:100%" pInputText type="text"
+                                    (input)="dt.filter($event.target.value, 'wsTitle', 'contains')">
+                            </th>
+                            <th rowspan="2" style="width:10%">{{shared.contactDataLabel}}
+                                <input style="width:100%" pInputText type="text"
+                                    (input)="dt.filter($event.target.value, 'mobileNumber', 'contains')">
+                            </th>
+                            <th rowspan="2" style="width:5%">{{shared.coverageAreaLabel}}</th>
+                            <th rowspan="2" style="width:5%">{{shared.documentLabel}}</th>
+                            <th rowspan="2" style="width:5%">
+                                {{shared.pointLabel}}
+                                <input style="width:100%" pInputText type="text"
+                                    (input)="dt.filter($event.target.value, 'score', 'gte')">
+                            </th>
+                            <th rowspan="2" style="width:10%">{{shared.appVersionLabel}}
+                                <p-dropdown [options]="basicData.workerAppVersions" appendTo="body"
+                                    [style]="{'width':'90%'}" (onChange)="dt.filter($event.value,'appVersion','equals')"
+                                    styleClass="ui-column-filter"></p-dropdown>
+                            </th>
+                            <th rowspan="2" style="width:10%">{{shared.registerStateLabel}}
+                                <p-dropdown [options]="basicData.filteredRegisterStateList" appendTo="body"
+                                    [style]="{'width':'90%'}"
+                                    (onChange)="dt.filter($event.value,'registerState','equals')"
+                                    styleClass="ui-column-filter"></p-dropdown>
+                            </th>
+                            <th *ngIf="editCapable" rowspan="2" style="width:5%">{{shared.delLabelFa}}</th>
+
+                        </tr>
+                        <tr>
+                            <th>
+                                {{shared.firstNameLabel}}
+                                <input style="width:100%" pInputText type="text"
+                                    (input)="dt.filter($event.target.value, 'firstName', 'contains')">
+
+                            </th>
+                            <th>{{shared.lastNameLabel}}
+                                <input style="width:100%" pInputText type="text"
+                                    (input)="dt.filter($event.target.value, 'lastName', 'contains')">
+
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-worker>
+
+                        <tr>
+                            <td>
+                                <div class="ui-grid ui-grid-responsive ui-grid-pad">
+                                    <div class="ui-grid-row">
+                                        <div class="ui-grid-col-4" style="text-align:center">
+                                            <div *ngIf="worker.active;else notActive" pTooltip="{{shared.activeLabel}}"
+                                                style="float: right">
+                                                <fa name="fas fa-flag" style="color:orange"></fa>
+                                            </div>
+                                            <ng-template #notActive>
+                                                <fa name="fas fa-flag" style="color:gray"></fa>
+                                            </ng-template>
+                                        </div>
+                                        <div class="ui-grid-col-4" style="text-align:center">
+                                            <div *ngIf="worker.haveBond;else noBond" pTooltip="{{shared.bondLabel}}"
+                                                style="float: right">
+                                                <fa name="fas fa-money" style="color:greenyellow"></fa>
+                                            </div>
+                                            <ng-template #noBond>
+                                                <fa name="fas fa-money" style="color:gray"></fa>
+                                            </ng-template>
+                                        </div>
+                                        <div class="ui-grid-col-4" style="text-align:center">
+                                            <div *ngIf="worker.offerBlock;else noBlock"
+                                                pTooltip="{{shared.offerBlockLabel}}" style="float: right">
+                                                <fa name="fas fa-ban" style="color:red"></fa>
+                                            </div>
+                                            <ng-template #noBlock>
+                                                <fa name="fas fa-ban" style="color:gray"></fa>
+                                            </ng-template>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </td>
+                            <td>
+                                <a (click)="showViewDialog(worker)">
+                                    <span class="latinFontStyle">{{worker.code}}</span>
+                                </a>
+
+                            </td>
+                            <td>
+                                {{worker.firstName}}
+                            </td>
+                            <td>
+                                <a (click)="showPersonalInfoEditPanel(worker)">
+                                    {{worker.lastName}}
+                                </a>
+                            </td>
+                            <td>
+                                <a (click)="showJobCatEditPanel(worker)">
+                                    {{worker.wsTitle}}
+                                </a>
+                            </td>
+                            <td>
+                                <a (click)="showEditContactDialog(worker)">
+                                    {{worker.mobileNumber}}
+                                </a>
+                            </td>
+                            <td>
+                                <button type="button" class="green-btn" pButton icon="fa-map-o"
+                                    (click)="showEditServiceDialog(worker)"></button>
+                            </td>
+                            <td>
+                                <button type="button" pButton icon="fa-file-o"
+                                    (click)="showEditDocumentDialog(worker)"></button>
+
+                            </td>
+                            <td>
+                                {{worker.score | number:'1.2-2' }}
+
+                            </td>
+                            <td>
+                                <div style="float:left">
+                                    {{worker.appVersion}}
+                                </div>
+                            </td>
+                            <td>
+                                <a (click)="showRegisterStateData(worker)">
+                                    {{worker.registerState}}
+                                </a>
+                            </td>
+                            <td *ngIf="editCapable">
+                                <button type="button" pButton icon="fa-close" class="pink-btn" (click)="delete(worker)"
+                                    [pTooltip]="shared.delLabelFa"></button>
+                            </td>
+
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage" let-columns>
+                        <tr>
+                            <td [attr.colspan]="columns.length">
+                                {{shared.emptyListMsg}}
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div *ngIf="displayEditWorkerJobCatDialog">
+    <p-dialog [(visible)]="displayEditWorkerJobCatDialog" responsive="true" [resizable]="false" showEffect="fade"
+        width="900" [rtl]="true" modal="modal" styleClass="ui-dialog">
+        <p-header>
+            {{shared.removeAddWorkerJobMap}} {{selectedWorkerFullName}}
+        </p-header>
+        <editWorkerJobCatComponent [inputWorkerID]="selectedWorkerID" (onSave)="onSaveWorkerJobCat($event)"
+            (onClose)="onCloseWorkerJobCat($event)">
+        </editWorkerJobCatComponent>
+    </p-dialog>
+</div>
+<div *ngIf="displayEditWorkerPersonalInfoDialog">
+    <p-dialog [(visible)]="displayEditWorkerPersonalInfoDialog" [responsive]="true" [resizable]="false" width="500"
+        [rtl]="true" [modal]="true" [closable]="false" styleClass="ui-dialog">
+        <p-header>
+            {{shared.personalWorkerDataSumLabel}} {{selectedWorkerFullName}}
+            <div style="float:left">
+                <span style="font-size:11px;">
+                    {{shared.editModeLabel}} : {{editMode ? shared.activeModeLabel:shared.inactiveModeLabel}}
+                </span>
+                <button type="button" pButton icon="fa-edit" class="ui-button turquoise-btn smallBtn"
+                    (click)="toggleEditMode();"></button>
+                <button type="button" pButton icon="fa-close" class="ui-button pink-btn smallBtn"
+                    (click)="closePersonalPanel();"></button>
+            </div>
+
+        </p-header>
+        <editWorkerPersonalComponent [inputWorkerID]="selectedWorkerID" [editMode]="editMode"
+            (onClose)="onClosePersonalInfoPanel($event)" (onSave)="onSavePersonalInfoPanel($event)">
+        </editWorkerPersonalComponent>
+    </p-dialog>
+</div>
+<div *ngIf="showRegisterStateInfoPanel">
+    <p-dialog [(visible)]="showRegisterStateInfoPanel" [responsive]="true" [resizable]="false" width="600" [rtl]="true"
+        [modal]="true" [closable]="false" styleClass="ui-dialog">
+        <p-header>
+            {{shared.registerStateLabel}} {{selectedWorkerFullName}}
+            <div style="float:left">
+                <span style="font-size:11px;">
+                    {{shared.editModeLabel}} : {{editMode ? shared.activeModeLabel:shared.inactiveModeLabel}}
+                </span>
+                <button type="button" pButton icon="fa-edit" class="ui-button turquoise-btn smallBtn"
+                    (click)="toggleEditMode();"></button>
+                <button type="button" pButton icon="fa-close" class="ui-button pink-btn smallBtn"
+                    (click)="closeRegisterStatePanel();"></button>
+
+            </div>
+        </p-header>
+        <editWorkerRegisterStateComponent [inputWorkerID]="selectedWorkerID"
+            [registerStateList]="basicData.registerStateList" [editMode]="editMode"
+            (onClose)="onCloseRegisterInfoPanel($event)" (onSave)="onSaveRegisterInfoPanel($event)">
+        </editWorkerRegisterStateComponent>
+    </p-dialog>
+</div>
+<div *ngIf="displayEditContactDialog">
+    <p-dialog [(visible)]="displayEditContactDialog" [responsive]="true" [resizable]="false" width="600" [rtl]="true"
+        [modal]="true" [closable]="false" styleClass="ui-dialog">
+        <p-header>
+            {{shared.contactDataLabel}} {{selectedWorkerFullName}}
+            <div style="float:left">
+                <span style="font-size:11px;">
+                    {{shared.editModeLabel}} : {{editMode ? shared.activeModeLabel:shared.inactiveModeLabel}}
+                </span>
+                <button type="button" pButton icon="fa-edit" class="ui-button turquoise-btn smallBtn"
+                    (click)="toggleEditMode();"></button>
+                <button type="button" pButton icon="fa-close" class="ui-button pink-btn smallBtn"
+                    (click)="closeEditContactDialog();"></button>
+
+            </div>
+        </p-header>
+        <editWorkerContactInfoComponent [inputWorkerID]="selectedWorkerID" [editMode]="editMode"
+            (onShowWorkerPhoneToAdd)="onShowPhoneDialogToAdd($event)"
+            (onShowWorkerPhoneToEdit)="onShowPhoneDialogToEdit($event)" (onClose)="onCloseContactInfoPanel($event)"
+            (onSave)="onSaveContactInfoPanel($event)"></editWorkerContactInfoComponent>
+    </p-dialog>
+</div>
+<div *ngIf="displayEditDocumentDialog">
+    <p-dialog [(visible)]="displayEditDocumentDialog" [responsive]="true" [resizable]="false" width="700" [rtl]="true"
+        [modal]="true" [closable]="false" styleClass="ui-dialog">
+        <p-header>
+            {{shared.documentsLabel}} {{selectedWorkerFullName}}
+            <div style="float:left">
+                <button type="button" pButton icon="fa-close" class="ui-button pink-btn smallBtn"
+                    (click)="closeEditDocumentDialog();"></button>
+            </div>
+        </p-header>
+        <editWorkerDocumentComponent [inputWorkerID]="selectedWorkerID" [documentTypeList]="basicData.wdocTypeList"
+            (onClose)="onCloseDocumentInfoPanel($event)" (onSave)="onSaveDocumentInfoPanel($event)"
+            (onShowImage)="onShowImage($event)"></editWorkerDocumentComponent>
+
+    </p-dialog>
+</div>
+<div *ngIf="displayEditServiceDialog">
+    <p-dialog [(visible)]="displayEditServiceDialog" [responsive]="true" [resizable]="false" width="500" [rtl]="true"
+        [modal]="true" [closable]="false" styleClass="ui-dialog" positionTop="0">
+        <p-header>
+            {{shared.coverageAreaLabel}} {{selectedWorkerFullName}}
+            <div style="float:left">
+                <button type="button" pButton icon="fa-close" class="ui-button pink-btn smallBtn"
+                    (click)="closeEditServiceDialog();"></button>
+            </div>
+        </p-header>
+        <editWorkerServiceAreaComponent [inputWorkerID]="selectedWorkerID" [cityList]="basicData.activeCityList"
+            (onClose)="onCloseServiceAreaInfoPanel($event)" (onSave)="onSaveServiceAreaInfoPanel($event)">
+        </editWorkerServiceAreaComponent>
+
+    </p-dialog>
+</div>
+
+<div *ngIf="displayEditWorkingHourDialog">
+    <p-dialog [(visible)]="displayEditWorkingHourDialog" [responsive]="true" [resizable]="false" width="750"
+        [rtl]="true" [modal]="true" [closable]="false" styleClass="ui-dialog" positionTop="0">
+        <p-header>
+            {{shared.workingHoursLabel}} {{selectedWorkerFullName}}
+            <div style="float:left">
+                <button type="button" pButton icon="fa-close" class="ui-button pink-btn smallBtn"
+                    (click)="closeEditWorkingHourDialog();"></button>
+            </div>
+        </p-header>
+        <editWorkerWorkingHourComponent [inputWorkerID]="selectedWorkerID"
+            (onClose)="onCloseWorkingHourInfoPanel($event)" (onSave)="onSaveWorkingHourInfoPanel($event)">
+        </editWorkerWorkingHourComponent>
+
+    </p-dialog>
+</div>
+<div *ngIf="displayPhoneDialog">
+    <p-dialog [header]="shared.phoneEditMsg" [(visible)]="displayPhoneDialog" [resizable]="false" [responsive]="true"
+        [modal]="true" [modal]="true" [rtl]="true" width="500" positionTop="0">
+        <editWorkerPhoneInfoComponent [inputWorkerID]="selectedWorkerID" [editMode]="editMode"
+            (onClose)="onClosePhoneInfoPanel($event)" (onError)="onErrorPhoneInfoPanel($event)"
+            [workerPhone]="workerPhone" [newWorkerPhone]="newWorkerPhone" (onSave)="onSavePhoneInfoPanel($event)">
+        </editWorkerPhoneInfoComponent>
+    </p-dialog>
+</div>
+
+<div *ngIf="displayWorkerView">
+    <p-dialog [(visible)]="displayWorkerView" [resizable]="false" [closable]="false" [responsive]="true" [modal]="true"
+        [rtl]="true" width="700" positionTop="0">
+        <p-header>
+            {{shared.workerViewLabel}} {{selectedWorkerFullName}}
+            <div style="float:left">
+                <button type="button" pButton icon="fa-close" class="ui-button pink-btn smallBtn"
+                    (click)="closeViewDialog();"></button>
+            </div>
+        </p-header>
+        <workerViewComponent [workerID]="selectedWorkerID" (onShowImage)="onShowImage($event)"></workerViewComponent>
+    </p-dialog>
+</div>
+<div *ngIf="displayFilterDialog">
+    <p-dialog [(visible)]="displayFilterDialog" responsive="true" [resizable]="false" width="600" [rtl]="true"
+        [modal]="true" [header]="shared.showFilter" styleClass="ui-dialog" positionTop="0">
+        <wrFilterComponent [selectedJobCategory1]="filteredJobCategory1"
+        [selectedJobCategory2]="filteredJobCategory2"
+            [serviceCityList]="basicData.activeCityList"
+            [selectedJobCategory3]="filteredJobCategory3" [jobCategory1Map]="basicData.jobCategory1Map"
+            [selectedCode]="filteredCode" [selectedWorkerMobileNumber]="filteredWorkerMobileNumber"
+            [selectedWorkerfirstName]="filteredWorkerfirstName" [selectedWorkerLastName]="filteredWorkerLastName"
+            [selectedWorkerNationalCode]="filteredWorkerNationalCode" [selectedCity]="filteredCity"
+            [selectedRegion]="filteredRegion" [selectedArea]="filteredArea"
+            [selectedWorkerRegisteredBy]="filteredWorkerRegisteredBy"
+            [selectedWorkerVerifiedBy]="filteredWorkerVerifiedBy"
+            [selectedActive]="filteredActive"
+            [selectedHaveBond]="filteredHaveBond"
+            [selectedOfferBlock]="filteredOfferBlock"
+            [selectedCoverageCityList]="filteredCoverageCityList"
+            [selectedRegisterStartDate]="filteredRegisterStartDate"
+            [selectedRegisterStopDate]="filteredRegisterStopDate" [selectedAppVersion]="filteredAppVersion"
+            [usersList]="basicData.usersList" [registerStateList]="basicData.registerStateList"
+            [provinceList]="basicData.chooseProvinceList" [jobCategory1List]="basicData.jobCategory1List"
+            [appVersionList]="basicData.workerAppVersions" (onSearch)="onSearchFilterPanel($event)"
+            (onError)="onErrorFilterPanel($event)"></wrFilterComponent>
+    </p-dialog>
+</div>
+<div *ngIf="displaySMSPanel">
+    <p-dialog [(visible)]="displaySMSPanel" responsive="true" [resizable]="false" width="600" [rtl]="true"
+        [modal]="true" [header]="shared.sendSMSPanel" styleClass="ui-dialog" positionTop="0">
+        <app-send-sms [smsList]="filteredSMSList"></app-send-sms>
+    </p-dialog>
+</div>
+<div *ngIf="displayImageDialog">
+    <p-dialog [(visible)]="displayImageDialog" [responsive]="true" [modal]="true" [resizable]="false"
+        [showHeader]="false" [closable]="true" [dismissableMask]="true" positionTop="0">
+        <div class="ui-grid ui-grid-responsive ui-grid-pad">
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-12" style="text-align:center">
+                    <img src="{{selectedImagePath}}" style="max-width:256px;height:auto">
+                </div>
+            </div>
+        </div>
+    </p-dialog>
+</div>
+<p-dialog [(visible)]="loading" responsive="true" [resizable]="false" width="300" [rtl]="true" [showHeader]="false"
+    styleClass="ui-dialog">
+    <loadingCmp [loading]="loading" spinnerStyleClass="spinnerClassBlack"></loadingCmp>
+</p-dialog>
+
+<p-confirmDialog header="{{shared.confirmHeader}}" width="425" rtl="true" #cd>
+    <p-footer>
+        <button type="button" pButton icon="fa-close" [label]="shared.noLabel" (click)="cd.reject()"
+            style="margin-right: 30%;"></button>
+        <button type="button" pButton icon="fa-check" [label]="shared.yesLabel" (click)="cd.accept()"></button>
+    </p-footer>
+</p-confirmDialog>

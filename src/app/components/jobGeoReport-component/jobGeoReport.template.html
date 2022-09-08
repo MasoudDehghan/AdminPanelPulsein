@@ -1,0 +1,163 @@
+<p-growl [value]="hmsgs" life="6000"></p-growl>
+<div class="ui-g ui-g-pad dashboard">
+    <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+        <div class="ui-g-12">
+            <div class="toolbarstyle ui-toolbar ui-widget ui-widget-header ui-corner-all ui-helper-clearfix">
+                <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+                    <div class="ui-grid-row">
+                        <div class="ui-grid-col-4 headerLabel">
+                            <img src="../assets/images/georeport.png" style="vertical-align: middle;" /> {{shared.geoReportLabel}}
+                        </div>
+                        <div class="ui-grid-col-8" style="direction: ltr">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="ui-grid-row">
+            <div class="ui-grid-col-4">
+                <p-panel [header]="shared.menuItem2SubItem3Label">
+                    <form [formGroup]="jobGeoFilterForm" (ngSubmit)="onSubmitJobGeo()">
+                        <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+                            <div class="ui-grid-row">
+                                <div class="ui-grid-col-4">
+                                    <label for="provinceID">
+                                    <i class="fa fa-dot-circle-o font-icon-style"></i>
+                                    {{shared.provinceLabel}}
+                                </label>
+                                </div>
+                                <div class="ui-grid-col-8">
+                                    <p-dropdown id="provinceID" [(ngModel)]="selectedProvince" [options]="provinceList" (onChange)="onProvinceChange($event)"
+                                        [style]="{'width':'200px'}" formControlName="province" filter="filter"></p-dropdown>
+                                </div>
+                            </div>
+                            <div class="ui-grid-row">
+                                <div class="ui-grid-col-4">
+                                    <label for="townshipID">
+                                    <i class="fa fa-dot-circle-o font-icon-style"></i>
+                                    {{shared.townshipLabel}}
+                                </label>
+                                </div>
+                                <div class="ui-grid-col-8">
+                                    <p-dropdown id="townshipID" [(ngModel)]="selectedTownship" [options]="townshipList" (onChange)="onTownshipChange($event)"
+                                        [style]="{'width':'200px'}" formControlName="township" filter="filter"></p-dropdown>
+                                </div>
+                            </div>
+                            <div class="ui-grid-row">
+                                <div class="ui-grid-col-4">
+                                    <label for="cityID">
+                                    <i class="fa fa-dot-circle-o font-icon-style"></i>
+                                    {{shared.cityLabel}}
+                                </label>
+                                </div>
+                                <div class="ui-grid-col-8">
+                                    <p-dropdown id="cityID" [(ngModel)]="selectedCity" [options]="cityList" [style]="{'width':'200px'}" formControlName="city"
+                                        filter="filter"></p-dropdown>
+                                </div>
+                            </div>
+                            <div class="ui-grid-row">
+                                <div class="ui-grid-col-4">
+                                    <label for="jc1ID">
+                                    <i class="fa fa-dot-circle-o font-icon-style"></i>
+                                    {{shared.job_Category1Label}}
+                                </label>
+                                </div>
+                                <div class="ui-grid-col-8">
+                                    <p-dropdown id="jc1ID" [(ngModel)]="selectedJobCategory1" [options]="jobCategory1List" (onChange)="onJobCategory1Change($event)"
+                                        [style]="{'width':'200px'}" formControlName="jobCategory1FormCntrl" filter="filter"></p-dropdown>
+                                </div>
+                            </div>
+
+                            <div class="ui-grid-row">
+                                <div class="ui-grid-col-4">
+                                    <label for="jc2ID">
+                                    <i class="fa fa-dot-circle-o font-icon-style"></i>
+                                    {{shared.job_Category2Label}}
+                                    
+                                </label>
+                                </div>
+                                <div class="ui-grid-col-8">
+                                    <p-dropdown id="jc2ID" [(ngModel)]="selectedJobCategory2" [options]="jobCategory2List" (onChange)="onJobCategory2Change($event)"
+                                        [style]="{'width':'200px'}" formControlName="jobCategory2FormCntrl" filter="filter"></p-dropdown>
+                                </div>
+                            </div>
+
+                            <div class="ui-grid-row">
+                                <div class="ui-grid-col-4">
+                                    <label for="jc3ID">
+                                    <i class="fa fa-dot-circle-o font-icon-style"></i>
+                                    {{shared.job_Category3Label}}
+                                </label>
+                                </div>
+                                <div class="ui-grid-col-8">
+                                    <p-dropdown id="jc3ID" [(ngModel)]="selectedJobCategory3" [options]="jobCategory3List" [style]="{'width':'200px'}" formControlName="jobCategory3FormCntrl"
+                                        filter="filter"></p-dropdown>
+                                </div>
+
+                            </div>
+                        </div>
+                        <br/>
+                        <div align="center">
+                            <button type="submit" pButton icon="fa-save" label="{{shared.doFilterLabel}}" class="ui-button black-btn saveBtnStyle"></button>
+                        </div>
+                    </form>
+                </p-panel>
+            </div>
+            <div class="ui-grid-col-4">
+                <p-panel id="geoFilterPanelNoHeaderID" styleClass="geoReportNodePanel">
+                    <p-treeTable [value]="geoTree" selectionMode="single" [(selection)]="selectedNode"
+                         (onNodeExpand)="nodeExpand($event)" (onNodeSelect)="nodeSelect($event)"
+                         [loading]="loading"
+                        #expandingTree>
+                        <ng-template pTemplate="header">
+                                <tr>
+                                    <th>{{shared.titleLabel}}</th>
+                                    <th>{{shared.registeredBizCounter}}</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-rowNode let-rowData="rowData">
+                                <tr [ttSelectableRow]="rowNode">
+                                    <td>
+                                            <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
+                                        {{rowData.label}}</td>
+                                    <td>{{rowData.counter}}</td>
+                                </tr>
+                            </ng-template>
+                    </p-treeTable>
+                </p-panel>
+            </div>
+            <div class="ui-grid-col-4">
+                <p-dataTable [value]="workStations" [rows]="9" [paginator]="true" [pageLinks]="5" emptyMessage="{{shared.emptyListMsg}}">
+                    <p-headerColumnGroup>
+                        <p-row>
+                            <p-column [header]="shared.bizNameLabel" field="title"></p-column>
+                            <p-column [header]="shared.showLabel"></p-column>
+                        </p-row>
+                    </p-headerColumnGroup>
+                    <p-column field="title"></p-column>
+                    <p-column [style]="{'text-align':'center'}">
+                        <ng-template let-col let-workStation="rowData" pTemplate="body">
+                            <button type="button" pButton icon="fa-tasks" class="ui-button-success" (click)="showWorkStationInfo(workStation)" [pTooltip]="shared.showDetialLabel"></button>
+                        </ng-template>
+                    </p-column>
+
+                </p-dataTable>
+            </div>
+        </div>
+    </div>
+</div>
+<p-confirmDialog header="{{shared.confirmHeader}}" width="425" rtl="true" #cd>
+    <p-footer>
+        <button type="button" pButton icon="fa-close" [label]="shared.noLabel" (click)="cd.reject()" style="margin-right: 30%;"></button>
+        <button type="button" pButton icon="fa-check" [label]="shared.yesLabel" (click)="cd.accept()"></button>
+    </p-footer>
+</p-confirmDialog>
+
+<p-dialog [(visible)]="loading" responsive="true" [resizable]="false" showEffect="fade" width="300" [rtl]="true" modal="modal"
+    [showHeader]="false" styleClass="ui-dialog">
+    <loadingCmp [loading]="loading" spinnerStyleClass="spinnerClassBlack"></loadingCmp>
+</p-dialog>
+<p-dialog [(visible)]="displayWorkstationInfo" responsive="true" [resizable]="false" showEffect="fade" width="600" [rtl]="true"
+    modal="modal" [header]="workstationHeader" styleClass="ui-dialog">
+    <workStationViewComponent [workStation]="selectedWorkstation"></workStationViewComponent>
+</p-dialog>

@@ -1,0 +1,158 @@
+<p-growl [value]="msgs" life="3000"></p-growl>
+<form [formGroup]="locationEditForm" (ngSubmit)="onSubmitLocationform()">
+    <p-panel id="locationEditPanelID" [style]="{'width':'95%'}" styleClass="overflowBox">
+        <div formGroupName="location" class="ui-grid ui-grid-responsive  ui-grid-pad">
+            <div class="ui-grid-row">
+                <div class="{{editMode ? 'ui-grid-col-4':'ui-grid-col-5'}}">
+                    <label for="eprovinceID">
+                                    <i class="fa fa-dot-circle-o font-icon-style"></i>
+                                    {{provinceLabel}}
+                                    <span  *ngIf="editMode" style="color:red;">*</span>
+                                </label>
+                </div>
+                <div *ngIf="editMode" class="ui-grid-col-8">
+                    <p-dropdown id="eprovinceID" [(ngModel)]="selectedProvinceID" [options]="provinceList" (onChange)="onProvinceChange($event)"
+                        [style]="{'width':'100%'}" formControlName="province" filter="filter"></p-dropdown>
+                </div>
+                <div *ngIf="!editMode" class="ui-grid-col-8 textPlaceHolderStyle">
+                    {{selectedProvinceName}}
+                </div>
+
+            </div>
+            <div class="ui-grid-row">
+                <div class="{{editMode ? 'ui-grid-col-4':'ui-grid-col-5'}}">
+                    <label for="etownshipID">
+                                    <i class="fa fa-dot-circle-o font-icon-style"></i>
+                                    {{townshipLabel}}
+                                    <span  *ngIf="editMode" style="color:red;">*</span>
+                                </label>
+                </div>
+                <div *ngIf="editMode" class="ui-grid-col-8">
+                    <p-dropdown id="etownshipID" [(ngModel)]="selectedTownshipID" [options]="townshipList" (onChange)="onTownshipChange($event)"
+                        [style]="{'width':'100%'}" formControlName="township" filter="filter"></p-dropdown>
+                </div>
+                <div *ngIf="!editMode" class="ui-grid-col-7 textPlaceHolderStyle">
+                    {{selectedTownshipName}}
+                </div>
+
+            </div>
+            <div class="ui-grid-row">
+                <div class="{{editMode ? 'ui-grid-col-4':'ui-grid-col-5'}}">
+                    <label for="ecityID">
+                                    <i class="fa fa-dot-circle-o font-icon-style"></i>
+                                    {{cityLabel}}
+                                    <span  *ngIf="editMode" style="color:red;">*</span>
+                                </label>
+                </div>
+                <div *ngIf="editMode" class="ui-grid-col-8">
+                    <p-dropdown id="ecityID" [(ngModel)]="selectedCity" [options]="cityList" (onChange)="onCityChange($event)" [style]="{'width':'100%'}"
+                        formControlName="city" filter="filter"></p-dropdown>
+                </div>
+                <div *ngIf="!editMode" class="ui-grid-col-7 textPlaceHolderStyle">
+                    {{selectedWorkStation?.area?.region?.city?.name}}
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="{{editMode ? 'ui-grid-col-4':'ui-grid-col-5'}}">
+                    <label for="eregionID">
+                                    <i class="fa fa-dot-circle-o font-icon-style"></i>
+                                    {{regionLabel}}
+                                    <span   *ngIf="editMode" style="color:red;">*</span>
+                                </label>
+                </div>
+                <div *ngIf="editMode" class="ui-grid-col-8">
+                    <p-dropdown id="eregionID" [(ngModel)]="selectedRegionID" [options]="regionList" (onChange)="onRegionChange($event)" [style]="{'width':'100%'}"
+                        formControlName="region" filter="filter"></p-dropdown>
+                </div>
+                <div *ngIf="!editMode" class="ui-grid-col-7 textPlaceHolderStyle">
+                    {{selectedWorkStation?.area?.region?.name}}
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="{{editMode ? 'ui-grid-col-4':'ui-grid-col-5'}}">
+                    <label for="eareaID">
+                                    <i class="fa fa-dot-circle-o font-icon-style"></i>
+                                    {{areaLabel}}
+                                  <span  *ngIf="editMode" style="color:red;">*</span>
+                                </label>
+                </div>
+                <div *ngIf="editMode" class="ui-grid-col-8">
+                    <p-dropdown id="eareaID" [(ngModel)]="selectedArea" (onChange)="onAreaChange($event)" [options]="areaList" [style]="{'width':'100%'}"
+                        formControlName="area" filter="filter"></p-dropdown>
+                </div>
+                <div *ngIf="!editMode" class="ui-grid-col-7 textPlaceHolderStyle">
+                    {{selectedWorkStation?.area?.name}}
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="{{editMode ? 'ui-grid-col-4':'ui-grid-col-5'}}">
+                    <label for="eaddressID">
+                                    <i class="fa fa-dot-circle-o font-icon-style"></i>
+                                    {{addressLabel}}
+                                </label>
+                </div>
+                <div *ngIf="editMode" class="ui-grid-col-8">
+                    <textarea pInputTextarea id="eaddressID" [(ngModel)]="selectedWorkStation.address" formControlName="address" rows="3" class="width100p"></textarea>
+                </div>
+                <div *ngIf="!editMode" class="ui-grid-col-7 textPlaceHolderStyle">
+                    {{selectedWorkStation?.address}}
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="{{editMode ? 'ui-grid-col-4':'ui-grid-col-5'}}">
+                    <label for="epostalCodeID">
+                                    <i class="fa fa-dot-circle-o font-icon-style"></i>
+                                    {{postalCodeLabel}}
+                                </label>
+                </div>
+                <div *ngIf="editMode" class="ui-grid-col-8">
+                    <input pInputText id="epostalCodeID" [(ngModel)]="selectedWorkStation.postalCode" type="text" size="30" formControlName="postalCode"
+                        class="width100p ltrDirection" maxlength="10" />
+                </div>
+                <div *ngIf="!editMode" class="ui-grid-col-7 textPlaceHolderStyle">
+                    {{selectedWorkStation?.postalCode}}
+                </div>
+            </div>
+
+        </div>
+        <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-8">
+                    <label>
+                                    <i class="fa fa-dot-circle-o font-icon-style"></i>
+                                    {{showLocationOnMap}}
+                                </label>
+                    <button type="button" class="ui-button-success" pButton icon="fa-map" (click)="showMap();"></button>
+
+                </div>
+                <div class="ui-grid-col-4">
+
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-12">
+                    <br/>
+                    <div *ngIf="displayMap">
+                        <agm-map [latitude]="latitude" [longitude]="longitude" [scrollwheel]="false" [zoom]="zoom" [disableDefaultUI]="false"
+                            [streetViewControl]="false" #locEditMap>
+                            <agm-marker [latitude]="latitude" [longitude]="longitude" [markerDraggable]="editMode" (dragEnd)="markerDragEnd($event)"></agm-marker>
+                        </agm-map>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </p-panel>
+    <p-footer>
+        <div *ngIf="editMode" align="center" style="padding:4px">
+            <button type="submit" pButton icon="fa-save" label="{{saveLabel}}" class="ui-button turquoise-btn"></button>
+        </div>
+        <div *ngIf="!editMode" align="center" style="padding:4px">
+            <button type="submit" pButton icon="fa-close" label="{{closeLabel}}" class="ui-button"></button>
+        </div>
+    </p-footer>
+</form>
+<p-dialog [(visible)]="loading" responsive="true" [resizable]="false" showEffect="fade" width="300" [rtl]="true" modal="modal"
+    [showHeader]="false" styleClass="ui-dialog">
+    <loadingCmp [loading]="loading" spinnerStyleClass="spinnerClassBlack"></loadingCmp>
+</p-dialog>

@@ -1,0 +1,21 @@
+<div class="uipStyle">
+    <div>
+        <span class="panelHeaderStyle">{{headerLabel}}</span>
+        <div style="float:left">
+            <a class="topbar-icon" (click)="filterByJC1()" ><i class="fa fa-table" aria-hidden="true"></i></a>
+        </div>
+    </div>
+    <div id="wsAdminPanelID" class="ui-g" (click)="filterByJC1()">
+        <div class="ui-g-6">
+            <div class="ui-g-12">                 
+                        <span class="adminBadge">{{totalRegisteredCounter}}</span>                  
+            </div>
+
+        </div>
+        <div class="ui-g-6">
+             <a class="topbar-icon" (click)="filterByJC1()" >
+                 <img [src]="imagePath" style="width:80px;height:80px" />
+             </a>
+        </div>
+    </div>
+</div>

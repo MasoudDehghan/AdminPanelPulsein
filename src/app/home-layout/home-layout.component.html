@@ -1,0 +1,9 @@
+<div [class.isPrinting]="printService.isPrinting">
+<p-growl [value]="globalMsgs" sticky="true"></p-growl>
+
+<headerComponent></headerComponent>
+<sideBarMenu></sideBarMenu>
+
+<router-outlet></router-outlet>
+<footerComponent></footerComponent>
+</div>

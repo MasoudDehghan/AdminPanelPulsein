@@ -1,0 +1,1127 @@
+<p-growl [value]="hmsgs" life="6000" baseZIndex="10000">
+</p-growl>
+<div *ngIf="!isLoading">
+
+    <div class="ui-g ui-g-pad ui-g-reponsive">
+        <div class="ui-g-12">
+            <p-toolbar styleClass="toolbarstyle">
+                <div class="ui-toolbar-group-right headerLabel">
+                    <img src="../assets/images/jobs.png" style="vertical-align: middle;" />{{activeLabel}}
+
+                </div>
+                <div class="ui-toolbar-group-left">
+                    <button type="button" class="ui-button deep-purple-btn" pButton icon="fa-plus-circle"
+                        (click)="showAddJobCategory1Panel()" label="{{shared.addJC1Label}}"></button>
+                    <button type="button" *ngIf="selectedNodeType=='JobCategory1'" pButton icon="fa-edit"
+                        class="ui-button-warning" (click)="showEditJobCategory1Panel()"
+                        label="{{shared.editJC1Label}} "></button>
+                    <button type="button" *ngIf="selectedNodeType=='JobCategory1'" pButton icon="fa-remove"
+                        class="ui-button-danger" (click)="delete()" label="{{shared.deleteJC1Label}} "></button>
+
+                    <button type="button" class="ui-button deep-purple-btn" pButton icon="fa-plus-circle"
+                        *ngIf="selectedNodeType=='JobCategory1'" (click)="showAddJobCategory2Panel()"
+                        label="{{shared.addJC2Label}}"></button>
+                    <button type="button" *ngIf="selectedNodeType=='JobCategory2'" pButton icon="fa-edit"
+                        class="ui-button-warning" (click)="showEditJobCategory2Panel()"
+                        label="{{shared.editJC2Label}} "></button>
+                    <button type="button" *ngIf="selectedNodeType=='JobCategory2'" pButton icon="fa-remove"
+                        class="ui-button-danger" (click)="delete()" label="{{shared.deleteJC2Label}} "></button>
+
+                    <button type="button" class="ui-button deep-purple-btn" pButton icon="fa-plus-circle"
+                        *ngIf="selectedNodeType=='JobCategory2'" (click)="showAddJobCategory3Panel()"
+                        label="{{shared.addJC3Label}}"></button>
+                    <button type="button" *ngIf="selectedNodeType=='JobCategory3'" pButton icon="fa-edit"
+                        class="ui-button-warning" (click)="showEditJobCategory3Panel()"
+                        label="{{shared.editJC3Label}} "></button>
+                    <button type="button" *ngIf="selectedNodeType=='JobCategory3'" pButton icon="fa-remove"
+                        class="ui-button-danger" (click)="delete()" label="{{shared.deleteJC3Label}} "></button>
+                    <button type="button" pButton icon="fa-refresh" (click)="initJobCTree()"
+                        [pTooltip]="shared.refreshLabel"></button>
+
+                </div>
+            </p-toolbar>
+
+        </div>
+        <div class="ui-g-3">
+            <p-tree #expandingTree [value]="jobcTree" (onNodeSelect)="nodeSelect($event)"
+                (onNodeExpand)="nodeExpand($event)" selectionMode="single" [(selection)]="selectedNode"
+                [style]="{'width':'auto','min-height':'70vh','max-height':'70vh','overflow':'auto'}"></p-tree>
+        </div>
+        <div class="ui-g-9">
+            <div *ngIf="selectedNodeType==''">
+                <p-dataGrid [value]="jobc1List" [paginator]="true" [alwaysShowPaginator]="false" [rows]="8"
+                    [emptyMessage]="shared.emptyJC1ListMsg">
+                    <header>
+                        <span class="headerLabel"> {{shared.listJC1Label}}</span>
+                    </header>
+                    <ng-template let-jc1 pTemplate="item">
+                        <div style="padding:3px" class="ui-g-12 ui-md-3">
+                            <p-panel [style]="{'text-align':'center'}">
+                                <img src="{{baseImagePath}}/{{jc1.icon}}" style="width:64px;height:64px">
+                                <div>{{jc1.name}}</div>
+                                <hr class="ui-widget-content" style="border-top:0">
+                                <a class="content-icon">
+                                    <i class="fa fa-edit" (click)="showJobCategory1EditPanel(jc1)"
+                                        style="cursor:pointer"></i>
+                                </a>
+                                <a class="content-icon">
+                                    <i class="fa fa-remove" (click)="deleteJobCategory1(jc1)"
+                                        style="cursor:pointer"></i>
+                                </a>
+                            </p-panel>
+                        </div>
+                    </ng-template>
+                </p-dataGrid>
+            </div>
+
+            <div *ngIf="selectedNodeType=='JobCategory1'">
+                <p-dataGrid [value]="jobc2List" [paginator]="true" [emptyMessage]="shared.emptyJC2ListMsg"
+                    [alwaysShowPaginator]="false" [rows]="8"
+                    *ngIf="selectedNodeType=='JobCategory1' && jobc2List.length>0">
+                    <header>
+                        <span class="headerLabel"> {{shared.listJC2Label}} {{selectedNodeName}}
+                            {{selectedNodeLatinName}}</span>
+                    </header>
+                    <ng-template let-jc2 pTemplate="item">
+                        <div style="padding:3px" class="ui-g-12 ui-md-3">
+                            <p-panel [style]="{'text-align':'center'}">
+                                <img src="{{baseImagePath}}/{{jc2.icon}}" style="width:64px;height:64px">
+                                <div>{{jc2.name}}</div>
+                                <hr class="ui-widget-content" style="border-top:0">
+                                <a class="content-icon">
+                                    <i class="fa fa-edit" (click)="showJobCategory2EditPanel(jc2)"
+                                        style="cursor:pointer"></i>
+                                </a>
+                                <a class="content-icon">
+                                    <i class="fa fa-remove" (click)="deleteJobCategory2(jc2)"
+                                        style="cursor:pointer"></i>
+                                </a>
+                            </p-panel>
+                        </div>
+                    </ng-template>
+                </p-dataGrid>
+            </div>
+
+            <div *ngIf="selectedNodeType=='JobCategory2'">
+                <p-dataGrid [value]="jobc3List" [paginator]="true" [emptyMessage]="shared.emptyJC3ListMsg"
+                    [alwaysShowPaginator]="false" [rows]="8">
+                    <header>
+                        <span class="headerLabel"> {{shared.listJC3Label}} {{selectedNodeName}}
+                            {{selectedNodeLatinName}}</span>
+                    </header>
+                    <ng-template let-jc3 pTemplate="item">
+                        <div style="padding:3px" class="ui-g-12 ui-md-3">
+                            <p-panel [style]="{'text-align':'center'}">
+                                <img src="{{baseImagePath}}/{{jc3.icon}}" style="width:64px;height:64px">
+                                <div>{{jc3.name}}</div>
+                                <hr class="ui-widget-content" style="border-top:0">
+                                <a class="content-icon">
+                                    <i class="fa fa-edit" (click)="showJobCategory3EditPanel(jc3)"
+                                        style="cursor:pointer"></i>
+                                </a>
+                                <a class="content-icon" *ngIf="editCommCapable">
+                                    <i class="fa fa-percent" (click)="showEditCommissionPanel(jc3)"></i>
+                                </a>
+                                <a class="content-icon" *ngIf="editPriceCapable && jc3.haveNewSeo">
+                                    <i class="fa fa-dollar" (click)="showEditPricePanel(jc3)"></i>
+                                </a>
+                                <a class="content-icon">
+                                    <i class="fa fa-globe" (click)="showJC3EditActiveCitiesPanelc(jc3)"
+                                        style="cursor:pointer"></i>
+                                </a>
+                                <a class="content-icon">
+                                    <i class="fa fa-remove" (click)="deleteJobCategory3(jc3)"
+                                        style="cursor:pointer"></i>
+                                </a>
+                            </p-panel>
+                        </div>
+                    </ng-template>
+                </p-dataGrid>
+            </div>
+
+            <div align="center" style="padding:3px" *ngIf="selectedNodeType=='JobCategory3'">
+                <p-panel [style]="{'text-align':'center'}">
+                    <img src="{{baseImagePath}}/{{selectedNodeIcon}}" style="width:64px;height:64px">
+                    <div>{{selectedNodeName}}</div>
+                    <hr class="ui-widget-content" style="border-top:0">
+                    <a class="content-icon">
+                        <i class="fa fa-edit" (click)="showEditJobCategory3Panel()"></i>
+                    </a>
+                    <a class="content-icon" *ngIf="editCommCapable">
+                        <i class="fa fa-percent" (click)="showEditCommissionPanelx()"></i>
+                    </a>
+                    <a class="content-icon" *ngIf="editPriceCapable && selectedJobCategoty3.haveNewSeo">
+                        <i class="fa fa-dollar" (click)="showEditPricePanelx()"></i>
+                    </a>
+                    <a class="content-icon">
+                        <i class="fa fa-globe" (click)="showJC3EditActiveCitiesPanel()" style="cursor:pointer"></i>
+                    </a>
+                    <a class="content-icon">
+                        <i class="fa fa-remove" (click)="delete()" style="cursor:pointer"></i>
+                    </a>
+                </p-panel>
+            </div>
+        </div>
+    </div>
+</div>
+<p-confirmDialog header="{{shared.confirmHeader}}" width="425" rtl="true" #cd>
+    <p-footer>
+        <button type="button" pButton icon="fa-close" [label]="shared.noLabel" (click)="cd.reject()"
+            style="margin-right: 30%;"></button>
+        <button type="button" pButton icon="fa-check" [label]="shared.yesLabel" (click)="cd.accept()"></button>
+    </p-footer>
+</p-confirmDialog>
+<div *ngIf="newDisplayDialog">
+    <p-dialog header="{{panelHeaderLabel}}" [(visible)]="newDisplayDialog" [responsive]="true" [resizable]="false"
+        showEffect="fade" [modal]="true" [rtl]="true" styleClass="ui-dialog">
+        <form [formGroup]="newForm" (submit)="register()">
+            <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-6">
+                        <label for="nameID">
+                            <i class="fa fa-dot-circle-o font-icon-style"></i>
+                            {{shared.fnameLabel}}
+                        </label>
+                    </div>
+                    <div class="ui-grid-col-6">
+                        <input pInputText id="name" type="text" [(ngModel)]="newJobCategory.name" formControlName="name"
+                            style="width:100%" />
+                    </div>
+                </div>
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-12">
+                        <div class="ui-message ui-messages-error ui-corner-all"
+                            *ngIf="newForm.controls['name'].touched && newForm.controls['name'].hasError('required')">
+                            {{shared.requiredMsg}}
+                        </div>
+                        <div class="ui-message ui-messages-error ui-corner-all"
+                            *ngIf="newForm.controls['name'].touched && newForm.controls['name'].hasError('minlength')">
+                            {{shared.minLengthValidatorNameMsg}} :
+                            {{newForm.controls['name'].errors.minlength.requiredLength}} {{shared.charLabel}}
+                        </div>
+                        <div class="ui-message ui-messages-error ui-corner-all"
+                            *ngIf="newForm.controls['name'].touched && newForm.controls['name'].hasError('maxlength')">
+                            {{shared.maxLengthValidatorNameMsg}} :
+                            {{newForm.controls['name'].errors.maxlength.requiredLength}} {{shared.charLabel}}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-6">
+                        <label for="latinNameID">
+                            <i class="fa fa-dot-circle-o font-icon-style"></i>
+                            {{shared.latinNameLabel}}
+                        </label>
+                    </div>
+                    <div class="ui-grid-col-6">
+                        <input pInputText id="latinNameID" type="text" [(ngModel)]="newJobCategory.ename"
+                            formControlName="ename" style="width:100%" />
+                    </div>
+                </div>
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-12">
+                        <div class="ui-message ui-messages-error ui-corner-all"
+                            *ngIf="newForm.controls['ename'].touched && newForm.controls['ename'].hasError('required')">
+                            {{shared.requiredMsg}}
+                        </div>
+                        <div class="ui-message ui-messages-error ui-corner-all"
+                            *ngIf="newForm.controls['ename'].touched && newForm.controls['ename'].hasError('minlength')">
+                            {{shared.minLengthValidatorNameMsg}} :
+                            {{newForm.controls['ename'].errors.minlength.requiredLength}} {{shared.charLabel}}
+                        </div>
+                        <div class="ui-message ui-messages-error ui-corner-all"
+                            *ngIf="newForm.controls['ename'].touched && newForm.controls['ename'].hasError('maxlength')">
+                            {{shared.maxLengthValidatorNameMsg}} :
+                            {{newForm.controls['ename'].errors.maxlength.requiredLength}} {{shared.charLabel}}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ui-grid-row" *ngIf="newJC3Node">
+
+                    <div class="ui-grid-col-6">
+                        <label>
+                            <i class="fa fa-dot-circle-o font-icon-style"></i>
+                            {{shared.priorityLabel}}:{{newJobCategory.priority}}</label>
+                    </div>
+                    <div class="ui-grid-col-6">
+                        <p-slider id="prID" [(ngModel)]="newJobCategory.priority" [min]="1" [max]="10"
+                            formControlName="priority"></p-slider>
+
+                    </div>
+                </div>
+                <div class="ui-grid-row" *ngIf="newJC3Node">
+                    <div class="ui-grid-col-6">
+                        <label>
+                            <i class="fa fa-dot-circle-o font-icon-style"></i>
+                            {{shared.emergencyEnableLabel}}</label>
+                    </div>
+                    <div class="ui-grid-col-6">
+                        <p-checkbox id="emergencyEnableID" [(ngModel)]="newJobCategory.emergencyEnable" binary="true"
+                            formControlName="emergencyEnable">
+                        </p-checkbox>
+                    </div>
+                </div>
+                <div class="ui-grid-row" *ngIf="newJC3Node">
+                    <div class="ui-grid-col-6">
+                        <label>
+                            <i class="fa fa-dot-circle-o font-icon-style"></i>
+                            {{shared.nowToStartPeriodLabel}}</label>
+                    </div>
+                    <div class="ui-grid-col-6">
+
+                        <input pInputText id="nowToStartPeriodID" type="number" placeholder="به ساعت"
+                            [(ngModel)]="newJobCategory.nowToStartPeriod" formControlName="nowToStartPeriod"
+                            style="width:100%" />
+                    </div>
+                </div>
+                <div class="ui-grid-row" *ngIf="newJC3Node">
+                    <div class="ui-grid-col-6">
+                        <label>
+                            <i class="fa fa-dot-circle-o font-icon-style"></i>
+                            {{shared.invoiceRequiredLabel}}</label>
+                    </div>
+                    <div class="ui-grid-col-6">
+                        <p-checkbox id="invoiceRequiredID" [(ngModel)]="newJobCategory.invoiceRequired" binary="true"
+                            formControlName="invoiceRequired">
+                        </p-checkbox>
+                    </div>
+                </div>
+
+                <div class="ui-grid-row" *ngIf="newJC3Node">
+                    <div class="ui-grid-col-6">
+                        <label>
+                            <i class="fa fa-dot-circle-o font-icon-style"></i>
+                            {{shared.destinationAddressRequiredLabel}}</label>
+                    </div>
+                    <div class="ui-grid-col-6">
+                        <p-checkbox id="destinationAddressRequiredID"
+                            [(ngModel)]="newJobCategory.destinationAddressRequired" binary="true"
+                            formControlName="destinationAddressRequired">
+                        </p-checkbox>
+                    </div>
+                </div>
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-12">
+                        <label>
+                            <i class="fa fa-dot-circle-o font-icon-style"></i>
+                            آیکون</label>
+
+                    </div>
+                </div>
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-12">
+                        <p-fileUpload name="demo" [url]="uploadURL" (onUpload)="onUpload($event)" accept="image/*"
+                            [invalidFileSizeMessageSummary]="shared.invalidFileSize"
+                            [invalidFileSizeMessageDetail]="shared.invalidFileSizeMessageDetail"
+                            [chooseLabel]="shared.chooseFileLabel" [uploadLabel]="shared.uploadLabel"
+                            [cancelLabel]="shared.cancelLabel" maxFileSize="250000">
+                            <ng-template pTemplate="content">
+                                <ul *ngIf="uploadedFiles.length">
+                                    <li *ngFor="let file of uploadedFiles">{{file.name}} - {{file.size}}
+                                        {{shared.byteLabel}}</li>
+                                </ul>
+                            </ng-template>
+                        </p-fileUpload>
+                    </div>
+                </div>
+            </div>
+            <footer>
+                <div align="center">
+                    <button type="submit" pButton icon="fa-check" label="{{shared.saveLabel}}"
+                        [disabled]="!newForm.valid && isLoading"></button>
+                </div>
+            </footer>
+        </form>
+
+    </p-dialog>
+</div>
+<div *ngIf="editDisplayDialog">
+    <p-dialog header="{{panelHeaderLabel}}" [(visible)]="editDisplayDialog" [responsive]="true" [resizable]="false"
+        showEffect="fade" [modal]="true" [rtl]="true" width="450">
+        <form [formGroup]="editForm" (submit)="update()">
+
+            <div align="center">
+                <img src="{{baseImagePath}}/{{selectedNodeIcon}}" style="width:64px;height:64px" />
+            </div>
+
+            <div align="center">
+                <a class="content-icon">
+                    <i class="fa fa-plus-square" (click)="showChangeIcon()"></i>
+                </a>
+                <a class="content-icon" *ngIf="showRemoveIcon">
+                    <i class="fa fa-minus-square" (click)="removeIcon()"></i>
+                </a>
+            </div>
+
+            <p-fileUpload name="demo" *ngIf="showUploadIcon" [url]="uploadURL" (onUpload)="onUpload($event)"
+                accept="image/*" [invalidFileSizeMessageSummary]="shared.invalidFileSize"
+                [invalidFileSizeMessageDetail]="shared.invalidFileSizeMessageDetail"
+                [chooseLabel]="shared.chooseFileLabel" [uploadLabel]="shared.uploadLabel"
+                [cancelLabel]="shared.cancelLabel" maxFileSize="250000">
+                <ng-template pTemplate="content">
+                    <ul *ngIf="uploadedFiles.length">
+                        <li *ngFor="let file of uploadedFiles">{{file.name}} - {{file.size}} {{shared.byteLabel}}</li>
+                    </ul>
+                </ng-template>
+            </p-fileUpload>
+
+
+            <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-6">
+                        <label for="nameID">
+                            <i class="fa fa-dot-circle-o font-icon-style"></i>
+                            {{shared.nameLabel}}
+                        </label>
+                    </div>
+                    <div class="ui-grid-col-6">
+                        <input pInputText id="nameID" [(ngModel)]="selectedNodeName" type="text" formControlName="name"
+                            style="width:100%" />
+                    </div>
+
+                </div>
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-12">
+                        <div class="ui-message ui-messages-error ui-corner-all"
+                            *ngIf="editForm.controls['name'].touched && editForm.controls['name'].hasError('required')">
+                            {{shared.requiredMsg}}
+                        </div>
+                        <div class="ui-message ui-messages-error ui-corner-all"
+                            *ngIf="editForm.controls['name'].touched && editForm.controls['name'].hasError('minlength')">
+                            {{shared.minLengthValidatorNameMsg}} :
+                            {{editForm.controls['name'].errors.minlength.requiredLength}} {{shared.charLabel}}
+                        </div>
+                        <div class="ui-message ui-messages-error ui-corner-all"
+                            *ngIf="editForm.controls['name'].touched && editForm.controls['name'].hasError('maxlength')">
+                            {{shared.maxLengthValidatorNameMsg}} :
+                            {{editForm.controls['name'].errors.maxlength.requiredLength}} {{shared.charLabel}}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-6">
+                        <label for="lnameID">
+                            <i class="fa fa-dot-circle-o font-icon-style"></i>
+                            {{shared.latinNameLabel}}
+                        </label>
+                    </div>
+                    <div class="ui-grid-col-6">
+                        <input pInputText id="lnameID" [(ngModel)]="selectedNodeLatinName" type="text"
+                            formControlName="ename" style="width:100%" />
+                    </div>
+
+                </div>
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-12">
+                        <div class="ui-message ui-messages-error ui-corner-all"
+                            *ngIf="editForm.controls['ename'].touched && editForm.controls['ename'].hasError('required')">
+                            {{shared.requiredMsg}}
+                        </div>
+                        <div class="ui-message ui-messages-error ui-corner-all"
+                            *ngIf="editForm.controls['ename'].touched && editForm.controls['ename'].hasError('minlength')">
+                            {{shared.minLengthValidatorNameMsg}} :
+                            {{editForm.controls['ename'].errors.minlength.requiredLength}} {{shared.charLabel}}
+                        </div>
+                        <div class="ui-message ui-messages-error ui-corner-all"
+                            *ngIf="editForm.controls['ename'].touched && editForm.controls['ename'].hasError('maxlength')">
+                            {{shared.maxLengthValidatorNameMsg}} :
+                            {{editForm.controls['ename'].errors.maxlength.requiredLength}} {{shared.charLabel}}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ui-grid-row" *ngIf="editJC3Node">
+                    <div class="ui-grid-col-6">
+                        <label>
+                            <i class="fa fa-dot-circle-o font-icon-style"></i>
+                            {{shared.priorityLabel}}:{{selectedNodePriority}}</label>
+                    </div>
+                    <div class="ui-grid-col-6">
+                        <p-slider id="prID" [(ngModel)]="selectedNodePriority" [min]="1" [max]="10"
+                            formControlName="priority"></p-slider>
+                    </div>
+
+                </div>
+
+                <div class="ui-grid-row" *ngIf="editJC3Node">
+                    <div class="ui-grid-col-6">
+                        <label>
+                            <i class="fa fa-dot-circle-o font-icon-style"></i>
+                            {{shared.emergencyEnableLabel}}</label>
+                    </div>
+                    <div class="ui-grid-col-6">
+                        <p-checkbox id="xemergencyEnableID" [(ngModel)]="selectedNodeEmergencyEnable" binary="true"
+                            formControlName="emergencyEnable">
+                        </p-checkbox>
+                    </div>
+                </div>
+                <div class="ui-grid-row" *ngIf="editJC3Node">
+                    <div class="ui-grid-col-6">
+                        <label>
+                            <i class="fa fa-dot-circle-o font-icon-style"></i>
+                            {{shared.nowToStartPeriodLabel}}</label>
+                    </div>
+                    <div class="ui-grid-col-6">
+
+                        <input pInputText id="xnowToStartPeriodID" type="number"
+                            [(ngModel)]="selectedNodeNowToStartPeriod" formControlName="nowToStartPeriod"
+                            style="width:100%" />
+                    </div>
+                </div>
+                <div class="ui-grid-row" *ngIf="editJC3Node">
+                    <div class="ui-grid-col-6">
+                        <label>
+                            <i class="fa fa-dot-circle-o font-icon-style"></i>
+                            {{shared.invoiceRequiredLabel}}</label>
+                    </div>
+                    <div class="ui-grid-col-6">
+                        <p-checkbox id="xinvoiceRequiredID" [(ngModel)]="selectedNodeInvoiceRequired" binary="true"
+                            formControlName="invoiceRequired">
+                        </p-checkbox>
+                    </div>
+                </div>
+                <div class="ui-grid-row" *ngIf="editJC3Node">
+                    <div class="ui-grid-col-6">
+                        <label>
+                            <i class="fa fa-dot-circle-o font-icon-style"></i>
+                            {{shared.destinationAddressRequiredLabel}}</label>
+                    </div>
+                    <div class="ui-grid-col-6">
+                        <p-checkbox id="xDestinationAddressRequiredID"
+                            [(ngModel)]="selectedNodeDestinationAddressRequired" binary="true"
+                            formControlName="destinationAddressRequired">
+                        </p-checkbox>
+                    </div>
+                </div>
+            </div>
+            <footer>
+                <div align="center">
+                    <button type="submit" pButton icon="fa-check" label="{{shared.saveLabel}}"
+                        [disabled]="!editForm.valid && isLoading"></button>
+                </div>
+            </footer>
+        </form>
+
+    </p-dialog>
+</div>
+<div *ngIf="editEntityDialog">
+    <p-dialog header="{{panelHeaderLabel}}" [(visible)]="editEntityDialog" [responsive]="true" [resizable]="false"
+        showEffect="fade" [modal]="true" [rtl]="true" width="450">
+        <form [formGroup]="editEntityForm" (submit)="updateEntity()">
+            <div align="center">
+                <img src="{{baseImagePath}}/{{selectedNodeIcon}}" style="width:64px;height:64px" />
+            </div>
+
+            <div align="center">
+                <a class="content-icon">
+                    <i class="fa fa-plus-square" (click)="showChangeIcon()"></i>
+                </a>
+                <a class="content-icon" *ngIf="showRemoveIcon">
+                    <i class="fa fa-minus-square" (click)="removeIcon()"></i>
+                </a>
+            </div>
+            <p-fileUpload name="demo" *ngIf="showUploadIcon" [url]="uploadURL" (onUpload)="onUpload($event)"
+                accept="image/*" [invalidFileSizeMessageSummary]="shared.invalidFileSize"
+                [invalidFileSizeMessageDetail]="shared.invalidFileSizeMessageDetail"
+                [chooseLabel]="shared.chooseFileLabel" [uploadLabel]="shared.uploadLabel"
+                [cancelLabel]="shared.cancelLabel" maxFileSize="250000">
+                <ng-template pTemplate="content">
+                    <ul *ngIf="uploadedFiles.length">
+                        <li *ngFor="let file of uploadedFiles">{{file.name}} - {{file.size}} {{shared.byteLabel}}</li>
+                    </ul>
+                </ng-template>
+            </p-fileUpload>
+            <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-6">
+                        <label for="nameID">
+                            <i class="fa fa-dot-circle-o font-icon-style"></i>
+                            {{shared.fnameLabel}}
+                        </label>
+                    </div>
+                    <div class="ui-grid-col-6">
+                        <input pInputText id="name" [(ngModel)]="selectedJobCategory.name" type="text"
+                            formControlName="name" style="width:100%" />
+                    </div>
+                </div>
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-12">
+                        <div class="ui-message ui-messages-error ui-corner-all"
+                            *ngIf="editEntityForm.controls['name'].touched && editEntityForm.controls['name'].hasError('required')">
+                            {{shared.requiredMsg}}
+                        </div>
+                        <div class="ui-message ui-messages-error ui-corner-all"
+                            *ngIf="editEntityForm.controls['name'].touched && editEntityForm.controls['name'].hasError('minlength')">
+                            {{shared.minLengthValidatorNameMsg}} :
+                            {{editEntityForm.controls['name'].errors.minlength.requiredLength}} {{shared.charLabel}}
+                        </div>
+                        <div class="ui-message ui-messages-error ui-corner-all"
+                            *ngIf="editEntityForm.controls['name'].touched && editEntityForm.controls['name'].hasError('maxlength')">
+                            {{shared.maxLengthValidatorNameMsg}} :
+                            {{editEntityForm.controls['name'].errors.maxlength.requiredLength}} {{shared.charLabel}}
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-6">
+                        <label for="enameID">
+                            <i class="fa fa-dot-circle-o font-icon-style"></i>
+                            {{shared.latinNameLabel}}
+                        </label>
+                    </div>
+                    <div class="ui-grid-col-6">
+                        <input pInputText id="enameID" [(ngModel)]="selectedJobCategory.ename" type="text"
+                            formControlName="ename" style="width:100%" />
+                    </div>
+                </div>
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-12">
+                        <div class="ui-message ui-messages-error ui-corner-all"
+                            *ngIf="editEntityForm.controls['ename'].touched && editEntityForm.controls['ename'].hasError('required')">
+                            {{shared.requiredMsg}}
+                        </div>
+                        <div class="ui-message ui-messages-error ui-corner-all"
+                            *ngIf="editEntityForm.controls['ename'].touched && editEntityForm.controls['ename'].hasError('minlength')">
+                            {{shared.minLengthValidatorNameMsg}} :
+                            {{editEntityForm.controls['ename'].errors.minlength.requiredLength}} {{shared.charLabel}}
+                        </div>
+                        <div class="ui-message ui-messages-error ui-corner-all"
+                            *ngIf="editEntityForm.controls['ename'].touched && editEntityForm.controls['ename'].hasError('maxlength')">
+                            {{shared.maxLengthValidatorNameMsg}} :
+                            {{editEntityForm.controls['ename'].errors.maxlength.requiredLength}} {{shared.charLabel}}
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="ui-grid-row" *ngIf="editJC3Node">
+                    <div class="ui-grid-col-6">
+
+                        <label>
+                            <i class="fa fa-dot-circle-o font-icon-style"></i> {{shared.priorityLabel}} :
+                            {{selectedJobCategory.priority}}</label>
+                    </div>
+                    <div class="ui-grid-col-6">
+
+                        <p-slider id="prID" [(ngModel)]="selectedJobCategory.priority" [min]="1" [max]="10"
+                            formControlName="priority"></p-slider>
+                    </div>
+                </div>
+                <div class="ui-grid-row" *ngIf="editJC3Node">
+
+                    <div class="ui-grid-col-6">
+                        <label>
+                            <i class="fa fa-dot-circle-o font-icon-style"></i>
+                            {{shared.emergencyEnableLabel}}</label>
+                    </div>
+                    <div class="ui-grid-col-6">
+                        <p-checkbox id="zemergencyEnableID" [(ngModel)]="selectedJobCategory.emergencyEnable"
+                            binary="true" formControlName="emergencyEnable">
+                        </p-checkbox>
+                    </div>
+                </div>
+                <div class="ui-grid-row" *ngIf="editJC3Node">
+                    <div class="ui-grid-col-6">
+                        <label>
+                            <i class="fa fa-dot-circle-o font-icon-style"></i>
+                            {{shared.nowToStartPeriodLabel}}</label>
+                    </div>
+                    <div class="ui-grid-col-6">
+
+                        <input pInputText id="znowToStartPeriodID" type="number"
+                            [(ngModel)]="selectedJobCategory.nowToStartPeriod" formControlName="nowToStartPeriod"
+                            style="width:100%" />
+                    </div>
+                </div>
+                <div class="ui-grid-row" *ngIf="editJC3Node">
+                    <div class="ui-grid-col-6">
+                        <label>
+                            <i class="fa fa-dot-circle-o font-icon-style"></i>
+                            {{shared.invoiceRequiredLabel}}</label>
+                    </div>
+                    <div class="ui-grid-col-6">
+                        <p-checkbox id="zinvoiceRequiredID" [(ngModel)]="selectedJobCategory.invoiceRequired"
+                            binary="true" formControlName="invoiceRequired">
+                        </p-checkbox>
+                    </div>
+                </div>
+                <div class="ui-grid-row" *ngIf="editJC3Node">
+                    <div class="ui-grid-col-6">
+                        <label>
+                            <i class="fa fa-dot-circle-o font-icon-style"></i>
+                            {{shared.destinationAddressRequiredLabel}}</label>
+                    </div>
+                    <div class="ui-grid-col-6">
+                        <p-checkbox id="zdestinationAddressRequiredID"
+                            [(ngModel)]="selectedJobCategory.destinationAddressRequired" binary="true"
+                            formControlName="destinationAddressRequired">
+                        </p-checkbox>
+                    </div>
+                </div>
+            </div>
+
+            <footer>
+                <div align="center">
+                    <button type="submit" pButton icon="fa-check" label="{{shared.saveLabel}}"
+                        [disabled]="!editEntityForm.valid && isLoading"></button>
+                </div>
+
+            </footer>
+        </form>
+
+    </p-dialog>
+</div>
+<div *ngIf="showEditCommDialog">
+    <p-dialog header="{{panelHeaderLabel}}" [(visible)]="showEditCommDialog" [responsive]="true" [resizable]="false"
+        showEffect="fade" [modal]="true" [rtl]="true" width="800">
+        <form [formGroup]="editCommForm" (ngSubmit)="onSubmitEditform()">
+            <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-3">
+
+                    </div>
+                    <div class="ui-grid-col-3" style="border: 1px solid;border-color: black">
+                        ارایه پیشنهاد در کمتر از 30 دقیقه
+                    </div>
+                    <div class="ui-grid-col-3" style="border: 1px solid;border-color: black">
+                        ارایه پیشنهاد در کمتر از 60 دقیقه
+                    </div>
+                    <div align="center" class="ui-grid-col-3" style="border: 1px solid;border-color: black">
+                        پایه
+                    </div>
+                </div>
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-3">
+
+                    </div>
+                    <div class="ui-grid-col-3" style="border: 1px solid;border-color: black">
+                        <div class="ui-grid-col-6">
+                            با نظر سنجی
+                        </div>
+                        <div class="ui-grid-col-6">
+                            بدون نظر سنجی
+                        </div>
+                    </div>
+                    <div class="ui-grid-col-3" style="border: 1px solid;border-color: black">
+                        <div class="ui-grid-col-6">
+                            با نظر سنجی
+                        </div>
+                        <div class="ui-grid-col-6">
+                            بدون نظر سنجی
+                        </div>
+                    </div>
+                    <div class="ui-grid-col-3" style="border: 1px solid;border-color: black">
+                        <div class="ui-grid-col-6">
+                            با نظر سنجی
+                        </div>
+                        <div class="ui-grid-col-6">
+                            بدون نظر سنجی
+                        </div>
+                    </div>
+                </div>
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-3">
+                        اقلام
+                    </div>
+                    <div class="ui-grid-col-3">
+                        <div class="ui-grid-col-6">
+                            <input pInputText type="number" [(ngModel)]="selectedJobCategoty3.commission.items_30_like"
+                                formControlName="items_30_like" style="width:100%" />
+                        </div>
+                        <div class="ui-grid-col-6">
+                            <input pInputText type="number"
+                                [(ngModel)]="selectedJobCategoty3.commission.items_30_dislike"
+                                formControlName="items_30_dislike" style="width:100%" />
+                        </div>
+                    </div>
+                    <div class="ui-grid-col-3">
+                        <div class="ui-grid-col-6">
+                            <input pInputText type="number" [(ngModel)]="selectedJobCategoty3.commission.items_60_like"
+                                formControlName="items_60_like" style="width:100%" />
+                        </div>
+                        <div class="ui-grid-col-6">
+                            <input pInputText type="number"
+                                [(ngModel)]="selectedJobCategoty3.commission.items_60_dislike"
+                                formControlName="items_60_dislike" style="width:100%" />
+                        </div>
+                    </div>
+                    <div class="ui-grid-col-3">
+                        <div class="ui-grid-col-6">
+                            <input pInputText type="number"
+                                [(ngModel)]="selectedJobCategoty3.commission.items_base_like"
+                                formControlName="items_base_like" style="width:100%" />
+                        </div>
+                        <div class="ui-grid-col-6">
+                            <input pInputText type="number"
+                                [(ngModel)]="selectedJobCategoty3.commission.items_base_dislike"
+                                formControlName="items_base_dislike" style="width:100%" />
+                        </div>
+                    </div>
+                </div>
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-3">
+                        دستمزد
+                    </div>
+                    <div class="ui-grid-col-3">
+                        <div class="ui-grid-col-6">
+                            <input pInputText type="number" [(ngModel)]="selectedJobCategoty3.commission.wage_30_like"
+                                formControlName="wage_30_like" style="width:100%" />
+                        </div>
+                        <div class="ui-grid-col-6">
+                            <input pInputText type="number"
+                                [(ngModel)]="selectedJobCategoty3.commission.wage_30_dislike"
+                                formControlName="wage_30_dislike" style="width:100%" />
+                        </div>
+                    </div>
+                    <div class="ui-grid-col-3">
+                        <div class="ui-grid-col-6">
+                            <input pInputText type="number" [(ngModel)]="selectedJobCategoty3.commission.wage_60_like"
+                                formControlName="wage_60_like" style="width:100%" />
+                        </div>
+                        <div class="ui-grid-col-6">
+                            <input pInputText type="number"
+                                [(ngModel)]="selectedJobCategoty3.commission.wage_60_dislike"
+                                formControlName="wage_60_dislike" style="width:100%" />
+                        </div>
+                    </div>
+                    <div class="ui-grid-col-3">
+                        <div class="ui-grid-col-6">
+                            <input pInputText type="number" [(ngModel)]="selectedJobCategoty3.commission.wage_base_like"
+                                formControlName="wage_base_like" style="width:100%" />
+                        </div>
+                        <div class="ui-grid-col-6">
+                            <input pInputText type="number"
+                                [(ngModel)]="selectedJobCategoty3.commission.wage_base_dislike"
+                                formControlName="wage_base_dislike" style="width:100%" />
+                        </div>
+                    </div>
+                </div>
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-3">
+                        ایاب و ذهاب
+                    </div>
+                    <div class="ui-grid-col-3">
+                        <div class="ui-grid-col-6">
+                            <input pInputText type="number"
+                                [(ngModel)]="selectedJobCategoty3.commission.transfer_30_like"
+                                formControlName="transfer_30_like" style="width:100%" />
+                        </div>
+                        <div class="ui-grid-col-6">
+                            <input pInputText type="number"
+                                [(ngModel)]="selectedJobCategoty3.commission.transfer_30_dislike"
+                                formControlName="transfer_30_dislike" style="width:100%" />
+                        </div>
+                    </div>
+                    <div class="ui-grid-col-3">
+                        <div class="ui-grid-col-6">
+                            <input pInputText type="number"
+                                [(ngModel)]="selectedJobCategoty3.commission.transfer_60_like"
+                                formControlName="transfer_60_like" style="width:100%" />
+                        </div>
+                        <div class="ui-grid-col-6">
+                            <input pInputText type="number"
+                                [(ngModel)]="selectedJobCategoty3.commission.transfer_60_dislike"
+                                formControlName="transfer_60_dislike" style="width:100%" />
+                        </div>
+                    </div>
+                    <div class="ui-grid-col-3">
+                        <div class="ui-grid-col-6">
+                            <input pInputText type="number"
+                                [(ngModel)]="selectedJobCategoty3.commission.transfer_base_like"
+                                formControlName="transfer_base_like" style="width:100%" />
+                        </div>
+                        <div class="ui-grid-col-6">
+                            <input pInputText type="number"
+                                [(ngModel)]="selectedJobCategoty3.commission.transfer_base_dislike"
+                                formControlName="transfer_base_dislike" style="width:100%" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div align="center" style="padding:4px">
+                <button type="submit" pButton icon="fa-save" label="{{shared.saveLabelFa}}"
+                    class="ui-button turquoise-btn" [disabled]="!editCommForm.valid"></button>
+            </div>
+        </form>
+
+    </p-dialog>
+</div>
+<div *ngIf="showEditPriceDialog">
+    <p-dialog header="{{panelHeaderLabel}}" [(visible)]="showEditPriceDialog" [responsive]="true" [resizable]="false"
+        showEffect="fade" [modal]="true" [rtl]="true" width="550" positionTop="0">
+        <form [formGroup]="editPriceForm" (ngSubmit)="onSubmitEditPriceform()">
+            <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-2">
+                        <label>
+                            <i class="fa fa-dot-circle-o font-icon-style"></i>
+                            {{shared.titleLabel}}
+                        </label>
+                    </div>
+                    <div class="ui-grid-col-10">
+                        <input pInputText id="name" [(ngModel)]="selectedJC3_Price_Name" type="text"
+                            formControlName="title" style="width:100%" />
+                    </div>
+                </div>
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-2">
+                        <label>
+                            <i class="fa fa-dot-circle-o font-icon-style"></i>
+                            {{shared.contentLabel}}
+                        </label>
+                    </div>
+                    <div class="ui-grid-col-10">
+                        <textarea pInputTextarea id="sdscID" [(ngModel)]="selectedJC3_Price_Desc"
+                            formControlName="description" class="width100p" rows="3"></textarea>
+                    </div>
+                </div>
+
+
+
+            </div>
+            <div align="center" style="padding:4px">
+                <button type="submit" pButton icon="fa-save" label="{{shared.saveLabelFa}}"
+                    style="padding-left: 20px;padding-right: 20px;" class="ui-button turquoise-btn"
+                    [disabled]="!editPriceForm.valid"></button>
+            </div>
+        </form>
+        <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+            <div class="ui-grid-row">
+
+                <div class="ui-grid-col-12">
+                    <p-panel header="درج مورد جدید">
+                        <form [formGroup]="addPriceItem" (ngSubmit)="onSubmitAddPriceItem()">
+                            <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+                                <div class="ui-grid-row">
+                                    <div class="ui-grid-col-2">
+                                        <label>
+                                            <i class="fa fa-dot-circle-o font-icon-style"></i>
+                                            {{shared.titleLabel}}
+                                        </label>
+                                    </div>
+                                    <div class="ui-grid-col-10">
+                                        <input pInputText id="ntextID" [(ngModel)]="newPriceItem_text" type="text"
+                                            formControlName="text" style="width:100%" />
+                                    </div>
+                                </div>
+                                <div class="ui-grid-row">
+                                    <div class="ui-grid-col-2">
+                                        <label>
+                                            <i class="fa fa-dot-circle-o font-icon-style"></i>
+                                            {{shared.priceLabel}}
+                                        </label>
+                                    </div>
+                                    <div class="ui-grid-col-10">
+                                        <input pInputText id="npriceID" [(ngModel)]="newPriceItem_price" type="text"
+                                            formControlName="price" style="width:100%" />
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div align="center" style="padding:4px">
+                                <button type="submit" pButton icon="fa-plus-circle" label="{{shared.addLabel}}"
+                                    class="ui-button orange-btn" [disabled]="!addPriceItem.valid"></button>
+                            </div>
+                        </form>
+                    </p-panel>
+                    <p-panel header=" ریز موارد">
+                        <p-table [value]="selectedJC3_Price_List" [rows]="3" [paginator]="true" [loading]="inLoading"
+                            [pageLinks]="5" [alwaysShowPaginator]="false" (onEditInit)="onEditInit($event)"
+                            (onEditComplete)="onEditComplete($event)" (onEditCancel)="onEditCancel($event)" #table>
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th style="width:65%">{{shared.titleLabel}}</th>
+                                    <th style="width:25%">{{shared.priceLabel}}</th>
+                                    <th style="width:10%">{{shared.delLabelFa}}</th>
+
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-pr>
+                                <tr>
+                                    <td [pEditableColumn]="pr" [pEditableColumnField]="'text'">
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                <input type="text" [(ngModel)]="pr.text">
+                                            </ng-template>
+                                            <ng-template pTemplate="output">
+                                                {{pr.text}}
+                                            </ng-template>
+                                        </p-cellEditor>
+
+                                    </td>
+                                    <td [pEditableColumn]="pr" [pEditableColumnField]="'price'">
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                <input type="text" [(ngModel)]="pr.price">
+                                            </ng-template>
+                                            <ng-template pTemplate="output">
+                                                {{pr.price}}
+                                            </ng-template>
+                                        </p-cellEditor>
+
+                                    </td>
+
+                                    <td>
+                                        <div align="center">
+                                            <button type="button" pButton icon="fa-close" (click)="removePriceItem(pr)"
+                                                class="ui-button pink-btn" [pTooltip]="shared.delLabelFa"></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-template>
+
+                            <ng-template pTemplate="emptymessage">
+                                <tr>
+                                    <td [attr.colspan]="3">
+                                        {{shared.emptyListMsg}}
+                                    </td>
+                                </tr>
+                            </ng-template>
+
+                        </p-table>
+                        <p-footer>
+                            <div class="farsi-font" style="text-align: right;direction: rtl">
+                                <span> {{shared.editDocMsg}}</span>
+                                <br />
+                                <span>پس از اعمال تغییرات یا درج مورد جدید بر روی
+                                    دکمه ذخیره کلیک کنید</span>
+                            </div>
+                        </p-footer>
+                    </p-panel>
+
+                </div>
+            </div>
+        </div>
+    </p-dialog>
+</div>
+<div *ngIf="showEditActiveCityDialog">
+    <p-dialog header="{{panelHeaderLabel}}" [(visible)]="showEditActiveCityDialog" [responsive]="true"
+        [resizable]="false" showEffect="fade" [modal]="true" [rtl]="true" width="550" positionTop="0">
+        <p-table [value]="selectedJC3_ActiveCity_List" [rows]="4" [paginator]="true" [loading]="inLoading"
+            [pageLinks]="5" [alwaysShowPaginator]="false" (onEditInit)="onEditInitACity($event)"
+            (onEditComplete)="onEditCompleteACity($event)" (onEditCancel)="onEditCancelACity($event)" #table>
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="width:45%">{{shared.nameLabel}}</th>
+                    <th style="width:45%">آفست کمیسیون</th>
+                    <th style="width:10%">{{shared.delLabelFa}}</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-element>
+                <tr>
+                    <td>
+                        {{element.city.name}}
+                    </td>
+                    <td [pEditableColumn]="element" [pEditableColumnField]="'comissionOffset'">
+                        <p-cellEditor>
+                            <ng-template pTemplate="input">
+                                <input pInputText placeholder="ValidRange -10:10" type="number" size="2" [(ngModel)]="element.comissionOffset" class="ltrDirection">
+                            </ng-template>
+                            <ng-template pTemplate="output">
+                                <div align="center" class="ltrDirection">
+                                    {{element.comissionOffset}}
+                                </div>
+                            </ng-template>
+                        </p-cellEditor>
+
+                    </td>
+
+                    <td>
+                        <div align="center" style="margin: 5px;">
+                            <button type="button" pButton icon="fa-close" (click)="removeActiveCity(element)"
+                                class="ui-button pink-btn" [pTooltip]="shared.delLabelFa"></button>
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td [attr.colspan]="5">
+                        {{shared.emptyListMsg}}
+                    </td>
+                </tr>
+            </ng-template>
+
+        </p-table>
+        <p-footer>
+            <div align="center" style="direction: rtl">
+                <i class="fa fa-info-circle font-icon-style">
+                    <span style="direction: rtl"> {{shared.editCommisionOffsetMsg}}</span>
+                </i>
+
+
+            </div>
+
+        </p-footer>
+        <br/>
+        <form [formGroup]="newActiveCityForm" (ngSubmit)="onSubmitNewActiveCity()">
+            <p-panel [header]="shared.registerActiveCity" id="activeCityPanelID">
+                <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+
+                    <div class="ui-grid-row">
+                        <div class="ui-grid-col-4">
+                            <label for="cityID">
+                                <i class="fa fa-info-circle font-icon-style"></i>
+                                {{shared.cityLabel}}</label>
+                        </div>
+                        <div class="ui-grid-col-8">
+                            <p-dropdown id="cityID" [(ngModel)]="newActiveCity" [options]="basicData.activeCityList"
+                                [style]="{'width':'100%'}" required="true" appendTo="body" formControlName="activeCity">
+                            </p-dropdown>
+                        </div>
+                    </div>
+                    <div class="ui-grid-row">
+                        <div class="ui-grid-col-12">
+                            <div class="ui-message ui-messages-error ui-corner-all" *ngIf="newActiveCityForm.controls['activeCity'].touched && newActiveCityForm.controls['activeCity'].hasError('required') ">
+                               فیلد شهر ضروری است
+                            </div>
+    
+                        </div>
+                    </div>
+                    <div class="ui-grid-row">
+                        <div class="ui-grid-col-4">
+                            <label for="titleID">
+                                <i class="fa fa-info-circle font-icon-style"></i>
+                                آفست کمیسیون</label>
+                        </div>
+                        <div class="ui-grid-col-8">
+                            <input pInputText id="commisionOffsetID" type="number" size="2" [(ngModel)]="newCommisionOffset"
+                            placeholder="ValidRange -10:10"
+                                formControlName="coffset" class="width100p ltrDirection" />
+                        </div>
+                    </div>
+                    <div class="ui-grid-row">
+                        <div class="ui-grid-col-12">
+                            <div class="ui-message ui-messages-error ui-corner-all" *ngIf="newActiveCityForm.controls['coffset'].touched && newActiveCityForm.controls['coffset'].hasError('required') ">
+                               فیلد آفست ضروری است
+                            </div>
+                            <div class="ui-message ui-messages-error ui-corner-all" *ngIf="newActiveCityForm.controls['coffset'].touched && (newActiveCityForm.controls['coffset'].hasError('min') || newActiveCityForm.controls['coffset'].hasError('max'))">
+                                فیلد آفست باید بین 10 و 10- باشد 
+                             </div>
+                        </div>
+                    </div>
+                </div>
+            </p-panel>
+            <div align="center">
+                <div>
+                    <button type="submit" pButton icon="fa fa-plus-circle" label="{{shared.saveLabel}}"
+                        class="ui-button green-btn saveBtnStyle" [disabled]="!newActiveCityForm.valid"></button>
+                </div>
+            </div>
+        </form>
+    </p-dialog>
+</div>
+<div *ngIf="isLoading">
+
+    <p-dialog [(visible)]="isLoading" responsive="true" [resizable]="false" showEffect="fade" width="300" [rtl]="true"
+        modal="modal" [showHeader]="false" styleClass="ui-dialog">
+        <loadingCmp [loading]="isLoading" spinnerStyleClass="spinnerClassBlack"></loadingCmp>
+    </p-dialog>
+</div>

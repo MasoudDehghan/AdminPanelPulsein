@@ -1,0 +1,26 @@
+
+<form [formGroup]="contentForm" (ngSubmit)="onSubmitContentForm()">
+    <textarea pInputTextarea [(ngModel)]="smsContent" 
+        formControlName="smsContentCntrl" class="width100p"
+        (keyup)="calculateChars()"
+        [rows]="6" [cols]="12" maxlength="{{maxLengthChars}}"></textarea>
+        {{shared.reminingCharsLabel}} : <span id="chars">{{reminingChars}}</span> 
+
+    <div class="ui-message ui-messages-error ui-corner-all width100p" *ngIf="contentForm.controls['smsContentCntrl'].touched &&
+             contentForm.controls['smsContentCntrl'].dirty &&
+             contentForm.controls['smsContentCntrl'].hasError('required') ">
+        {{shared.requiedFieldLabel}}
+    </div>
+    <div class="ui-message ui-messages-error ui-corner-all width100p" *ngIf="contentForm.controls['smsContentCntrl'].touched &&
+    contentForm.controls['smsContentCntrl'].dirty &&
+    contentForm.controls['smsContentCntrl'].errors?.max ">
+        {{shared.maxCharLabel}}
+    </div>
+    <div align="center" style="padding:4px">
+        <button type="submit" pButton icon="fa-paper-plane" label="{{shared.sendLabel}}" class="ui-button turquoise-btn" style="width:40%" > </button>
+    </div>
+    <p-messages [value]="hmsgs" ></p-messages>
+</form>
+<p-dialog [(visible)]="loading" responsive="true" [resizable]="false" width="300" [rtl]="true" [showHeader]="false" styleClass="ui-dialog">
+    <loadingCmp [loading]="loading" spinnerStyleClass="spinnerClassBlack"></loadingCmp>
+</p-dialog>

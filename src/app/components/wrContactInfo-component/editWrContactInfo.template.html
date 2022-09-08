@@ -1,0 +1,75 @@
+<p-growl [value]="msgs" life="3000"></p-growl>
+<loadingCmp [loading]="loading" spinnerStyleClass="spinnerClassBlack"></loadingCmp>
+<div *ngIf="!loading" class="ui-rtl" dir="rtl">
+    <p-tabView>
+        <p-tabPanel [header]="shared.usedInApp">
+            <form [formGroup]="contactEditForm" (ngSubmit)="onSubmitContactform()">
+                <p-panel id="iContactPanelID">
+                    <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+                        <div class="ui-grid-row">
+                            <div class="{{editMode ? 'ui-grid-col-4':'ui-grid-col-6'}}">
+                                <label for="eweb">
+                                       <i class="fa fa-globe font-icon-style"></i>
+                                    {{shared.appMobileLabel}}                            
+                                </label>
+                            </div>
+                            <div *ngIf="editMode" class="ui-grid-col-8">
+                                <input pInputText id="mobileAppID" [(ngModel)]="selectedWorker.user.mobileNumber" type="text" size="30" formControlName="mobile" class="ltrDirection"  />
+                            </div>
+                            <div *ngIf="!editMode" class="ui-grid-col-6 textPlaceHolderStyle ltrDirection">
+                                {{selectedWorker?.user?.mobileNumber}}
+                            </div>
+
+                        </div>
+                        <div class="ui-grid-row">
+                            <div class="{{editMode ? 'ui-grid-col-4':'ui-grid-col-6'}}">
+                                <label for="email">
+                                       <i class="fa fa-globe font-icon-style"></i>
+                                    {{shared.emailLabel}}                               
+                                </label>
+                            </div>
+                            <div *ngIf="editMode" class="ui-grid-col-8">
+                                <input pInputText id="email" [(ngModel)]="selectedWorker.user.email" type="text" size="30" formControlName="email" class="ltrDirection"
+                                />
+                            </div>
+                            <div *ngIf="!editMode" class="ui-grid-col-6 textPlaceHolderStyle ltrDirection">
+                                {{selectedWorker?.user?.email}}
+                            </div>
+
+                        </div>
+
+                    </div>
+                </p-panel>
+                <p-footer>
+                    <div *ngIf="editMode" align="center" style="padding:4px">
+                        <button type="submit" pButton icon="fa-save" label="{{shared.saveLabel}}" class="ui-button turquoise-btn"></button>
+                    </div>
+
+                </p-footer>
+            </form>
+        </p-tabPanel>
+        <p-tabPanel [header]="shared.otherPhoneNumber">
+            <p-panel header=" {{shared.registeredPhoneNumberList}}">
+
+                <p-dataTable [value]="selectedWorker.workerPhones" selectionMode="single" [(selection)]="selectedWorkerPhone" (onRowSelect)="onWorkerPhoneListRowSelect($event)"
+                    [emptyMessage]="shared.emptyPhoneListMsg" [rows]="4" [paginator]="true" [pageLinks]="5" [alwaysShowPaginator]="false">
+                    <p-column field="number" [style]="{'width':'45%'}">
+                    </p-column>
+
+                    <p-column header="{{shared.delLabelFa}}" [style]="{'width':'10%'}" *ngIf="editMode">
+                        <ng-template let-col let-workerPhone="rowData" pTemplate="body">
+                            <i class="fa fa-close" style="color:red;cursor:pointer" (click)="removeWorkerPhone2(selectedWorker,workerPhone)"></i>
+                        </ng-template>
+                    </p-column>
+                    <p-footer>
+                        <div *ngIf="editMode">
+                            <button type="button" pButton icon="fa-add" label="{{shared.addLabel}}" class="ui-button turquoise-btn" (click)="showPhoneDialogToAdd()"></button>
+                        </div>
+                    </p-footer>
+                </p-dataTable>
+            </p-panel>
+
+        </p-tabPanel>
+
+    </p-tabView>
+</div>

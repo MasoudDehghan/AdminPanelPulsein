@@ -1,0 +1,133 @@
+
+<p-growl [value]="hmsgs" life="6000"></p-growl>
+<div *ngIf="loading">
+    <p-dialog [(visible)]="loading" responsive="true" [resizable]="false" width="300" [rtl]="true" [showHeader]="false" styleClass="ui-dialog">
+        <loadingCmp [loading]="loading" spinnerStyleClass="spinnerClassBlack"></loadingCmp>
+    </p-dialog>
+</div>
+<div class="ui-g ui-g-pad ui-g-reponsive dashboard " *ngIf="!loading">
+  <div class="ui-g-12">
+    <div class="toolbarstyle ui-toolbar ui-widget ui-widget-header ui-corner-all ui-helper-clearfix">
+      <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+        <div class="ui-grid-row" *ngIf="displayTransactionList">
+          <div class="ui-grid-col-3 headerLabel">
+            <img src="../../assets/images/transaction.png" style="vertical-align: middle;" /> {{activeLabel}}
+            <span class="totalFilteredClass">
+              {{shared.totalNumberLabel}} : {{totalRecords}}
+            </span>
+          </div>
+          <div class="ui-grid-col-9" style="direction: ltr">
+            <button type="button" class="ui-button deep-purple-btn" pButton icon="fa-refresh" (click)="initTransactionList()" label="{{shared.showTransactionListLabel}}">
+            </button>
+            <button type="button" pButton icon="fa-filter" (click)="showFilterDialog()" label="{{shared.showFilter}}"></button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="ui-toolbar ui-widget ui-widget-header ui-corner-all ui-helper-clearfix" *ngIf="chipsFilterValues?.length>0">
+      <div class="ui-chips ui-widget">
+        <ul class="ui-inputtext ui-state-default ui-corner-all">
+          <li *ngFor="let ci of chipsFilterValues;let i=index" class="ui-chips-token ui-state-highlight ui-corner-all">
+            <span class="ui-chips-token-label" (click)="onRemoveChip(i)">{{ci}}
+              <span class="ui-chips-token-icon fa fa-fw fa-close"></span>
+            </span>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div *ngIf="displayTransactionList" align="center" style="width:98%">
+      <p-dataTable [value]="transactionList" [rows]="defaultPageSize" [paginator]="true" [emptyMessage]="shared.emptyListMsg" [lazy]="true"
+        (onLazyLoad)="loadRequestsLazy($event)" [loading]="dataTableLoading" [totalRecords]="totalRecords" [sortField]="sortF"
+        [alwaysShowPaginator]="false"
+        [sortOrder]="sortO" (onSort)="changeSort($event)" loadingIcon="fa-spinner" 
+         [(first)]="first" (onPage)="paginate($event)">
+        <p-headerColumnGroup>
+          <p-row>
+              <p-column rowspan="2" [style]="{'width':'2%'}"></p-column>
+            <p-column [header]="shared.clientViewLabel" colspan="2" [style]="{'width':'15%'}"></p-column>
+            <p-column field="2" [sortable]="true" [header]="shared.amountLabel" rowspan="2" [style]="{'width':'10%'}"></p-column>
+            <p-column [header]="shared.creditLabel" rowspan="2" [style]="{'width':'10%'}"></p-column>
+            
+            <p-column  [header]="shared.paymentMethodLabel" rowspan="2" [style]="{'width':'10%'}"></p-column>
+            <p-column  [header]="shared.trackingCodeLabel" rowspan="2" [style]="{'width':'10%'}"></p-column>
+            <p-column  [header]="shared.typeLabel" rowspan="2" [style]="{'width':'10%'}"></p-column>
+            <p-column field="3" [sortable]="true" [header]="shared.registerTimeLabel"  rowspan="2" [style]="{'width':'10%'}"></p-column>
+
+            <p-column [header]="shared.showDetialLabel" rowspan="2" [style]="{'width':'5%'}"></p-column>
+
+          </p-row>
+          <p-row>
+            <p-column field="4" [sortable]="true" [header]="shared.firstNameLabel"></p-column>
+            <p-column field="5" [sortable]="true" [header]="shared.lastNameLabel"></p-column>
+          </p-row>
+        </p-headerColumnGroup>
+        <p-column styleClass="col-button">
+            <ng-template let-transaction="rowData" pTemplate="body">
+               <div *ngIf="transaction.inc">
+                 <i class="fa fa-plus"></i>
+               </div>
+               <div *ngIf="!transaction.inc">
+                  <i class="fa fa-minus"></i>
+                </div>
+            </ng-template>
+        </p-column>
+        <p-column field="user.firstName"></p-column>
+        <p-column field="user.lastName"></p-column>
+        <p-column field="amount"></p-column>
+        <p-column field="balance"></p-column>
+
+        <p-column>
+            <ng-template let-transaction="rowData" pTemplate="body">
+                <div *ngIf="transaction.cash; else elseBlock" >
+                 {{shared.cacheLabel}}
+                </div>
+                <ng-template #elseBlock>
+                    {{shared.withCreditLabel}}
+                </ng-template>
+             </ng-template>
+        </p-column>
+        
+        <p-column field="trackingCode" ></p-column>
+        <p-column field="transactionType" ></p-column>
+        <p-column field="registerTime" styleClass="ltrDirection"></p-column>
+
+        <p-column [style]="{'text-align':'center'}">
+          <ng-template let-col let-transaction="rowData" pTemplate="body">
+            <button type="button" class="green-btn" pButton icon="fa-info-circle" (click)="showTransactiontDetail(transaction)">
+            </button>
+          </ng-template>
+        </p-column>
+   
+      </p-dataTable>
+
+    </div>
+    <div *ngIf="displayTransactionView">
+      <p-dialog [(visible)]="displayTransactionView" [resizable]="false" [closable]="true" [responsive]="true" [modal]="true" 
+        [positionTop]="0"
+        [width]="550" [header]="shared.requestViewLabel">
+        <app-transaction-view [transactionp]="selectedTransactionP" [loading]="loadingDialog"></app-transaction-view>
+      </p-dialog>
+    </div>
+    <div *ngIf="displayFilterDialog">
+        <p-dialog [(visible)]="displayFilterDialog" responsive="true" 
+        [positionTop]="0"
+          [resizable]="false" width="600" [rtl]="true" [modal]="true"
+        [header]="shared.showFilter" styleClass="ui-dialog">
+        <app-transaction-filter [selectedTransactionAmountRange]="filteredTransactionAmountRange" 
+        [selectedRegisterStartDate]="filteredRegisterStartDate" [selectedRegisterStopDate]="filteredRegisterStopDate"
+        [selectedPaymentMethodID]="filteredPaymentMethodID" [selectedTrackingCode]="filteredTrackingCode"
+        [selectedPaymentTypeID]="filteredPaymentTypeID"
+        [selectedReferenceUserID]="filteredReferenceUserID"
+        [selectedFirstName]="filteredFirstName"
+        [selectedLastName]="filteredLastName"
+        [systemUsersList]="basicData.usersList"
+        [transactionTypeList]="basicData.transactionTypeList"
+        (onSearch)="onSearchFilterPanel($event)" (onError)="onErrorFilterPanel($event)">
+      </app-transaction-filter>
+      </p-dialog>
+    </div>
+
+  </div>
+

@@ -1,0 +1,1017 @@
+<p-growl [value]="hmsgs" life="6000">
+</p-growl>
+<div *ngIf="loading;else content">
+  <p-dialog [(visible)]="loading" responsive="true" [resizable]="false" width="300" [rtl]="true" [showHeader]="false"
+    styleClass="ui-dialog">
+    <loadingCmp [loading]="loading" spinnerStyleClass="spinnerClassBlack"></loadingCmp>
+  </p-dialog>
+</div>
+<ng-template #content>
+  <div class="ui-g ui-g-pad ui-g-reponsive dashboard">
+    <div class="ui-g-12">
+      <p-toolbar styleClass="toolbarstyle">
+        <div class="ui-toolbar-group-right headerLabel">
+          <div *ngIf="displayRequestList">
+
+            <img src="../../assets/images/req.png" style="vertical-align: middle;" /> {{activeLabel}}
+            <span class="totalFilteredClass">
+              {{shared.totalNumberLabel}} : {{totalRecords}}
+            </span>
+          </div>
+          <div *ngIf=" displayJobOfferList">
+            <img src="../../assets/images/pulse.png" style="vertical-align: middle;" /> {{activeLabel}}
+            <span class="md-chips">
+              {{selectedRequest?.title}}
+            </span>
+            <span class="md-chips">
+              {{shared.requestCodeLabel}} : {{selectedRequest?.code}}
+            </span>
+            <span class="md-chips">
+              {{shared.fullNameLabel}} : {{selectedRequest?.clientFirstName}} {{selectedRequest?.clientLastName}}
+            </span>
+          </div>
+        </div>
+        <div class="ui-toolbar-group-left">
+          <div *ngIf="displayJobOfferList;else reg">
+            <button type="button" class="ui-button pink-btn" pButton icon="fas fa-th-list"
+              (click)="showCandidateWorkerList()" label="{{shared.candidateWorkerList}}"
+              [disabled]="selectedRequest.requestStateID!==1">
+            </button>
+            <button type="button" class="ui-button deep-purple-btn" pButton icon="fa fa-list-alt"
+              (click)="backToRequestList()" label="{{shared.backToRequestList}}">
+            </button>
+
+          </div>
+          <ng-template #reg>
+            <button type="button" class="ui-button pink-btn" pButton icon="fa fa-filter" (click)="rtvYesterdayList()"
+              label="دیروز">
+            </button>
+
+            <button type="button" class="ui-button deep-purple-btn" pButton icon="fa fa-filter" (click)="rtvTodayList()"
+              label="امروز">
+            </button>
+
+            <button type="button" class="ui-button green-btn" pButton icon="fa fa-refresh"
+              (click)="initRequestList()"></button>
+            <button type="button" pButton class="ui-button green-btn" icon="fa fa-filter"
+              (click)="showFilterDialog()"></button>
+            <button type="button" pButton class="ui-button green-btn" icon="fa fa-file-excel-o" iconPos="left"
+              (click)="exportExcel()"></button>
+          </ng-template>
+
+        </div>
+      </p-toolbar>
+    </div>
+    <div class="ui-g-12">
+      <div class="ui-toolbar ui-widget ui-widget-header ui-corner-all ui-helper-clearfix"
+        *ngIf="chipsFilterValues?.length>0">
+        <div class="ui-chips ui-widget">
+          <ul class="ui-inputtext ui-state-default ui-corner-all">
+            <li *ngFor="let ci of chipsFilterValues;let i=index"
+              class="ui-chips-token ui-state-highlight ui-corner-all">
+              <span class="ui-chips-token-label" (click)="onRemoveChip(i)">{{ci}}
+                <span class="ui-chips-token-icon fa fa-fw fa-close"></span>
+              </span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div *ngIf="displayRequestList" align="center" style="width:100%">
+        <p-dataTable [value]="requestList" [rows]="defaultPageSize" [paginator]="true"
+          [emptyMessage]="shared.emptyListMsg" [lazy]="true" (onLazyLoad)="loadRequestsLazy($event)"
+          [loading]="dataTableLoading" [totalRecords]="totalRecords" [sortField]="sortF" [sortOrder]="sortO"
+          (onSort)="changeSort($event)" loadingicon="fa fa-spinner" expandableRows="true" [expandedRows]="expandedItems"
+          (onRowExpand)="onRowExpand($event)" [(first)]="first" (onPage)="paginate($event)" exportFilename="requestList"
+          #requestDataTable>
+
+          <p-headerColumnGroup>
+            <p-row>
+
+              <p-column [header]="shared.requestViewLabel" [colspan]="showStateFlag ? 6 : 5" [style]="{'width':'50%'}">
+              </p-column>
+              <p-column [header]="shared.clientViewLabel" colspan="3" [style]="{'width':'35%'}"></p-column>
+              <p-column [header]="shared.operationalViewLabel" colspan="4" [style]="{'width':'15%'}"></p-column>
+              <p-column [header]="shared.controlLabel" [hidden]="!permCancelFlag && !permCloseFlag && !permGoBackFlag"
+                [colspan]="colspan_control" [style]="{'width':'10%'}"></p-column>
+
+            </p-row>
+            <p-row>
+              <p-column field="1" [header]="shared.requestCodeLabel" [sortable]="true"></p-column>
+              <p-column [header]="shared.state" [hidden]="!showStateFlag"></p-column>
+              <p-column field="2" [header]="shared.titleLabel" [sortable]="true"></p-column>
+              <p-column field="3" [header]="shared.job_Category3Label" [sortable]="true"></p-column>
+              <p-column field="4" [sortable]="true" [header]="shared.state" [hidden]="!showRequestStateFlag"></p-column>
+              <p-column field="5" [sortable]="true" [header]="shared.registerTimeLabel" [hidden]="showRequestStateFlag">
+              </p-column>
+              <p-column field="10" [sortable]="true" [header]="shared.addressLabel"></p-column>
+              <p-column field="7" [sortable]="true" [header]="shared.firstNameLabel"></p-column>
+              <p-column field="8" [sortable]="true" [header]="shared.lastNameLabel"></p-column>
+              <p-column field="9" [sortable]="true" [header]="shared.contactNumberLabel"></p-column>
+              <p-column [header]="shared.suggestionLabel" [style]="{'width':'5%'}"></p-column>
+              <p-column [header]="shared.requestStateHisoryLabel" [style]="{'width':'5%'}"></p-column>
+              <p-column [header]="shared.acceptedSuggestionLabel" [style]="{'width':'5%'}"></p-column>
+              <p-column [header]="shared.followupLabel" [style]="{'width':'5%'}"></p-column>
+              <p-column [header]="shared.cancelReqLabel" [hidden]="!permCancelFlag" [style]="{'width':'5%'}"></p-column>
+              <p-column [header]="shared.closeReqLabel" [hidden]="!permCloseFlag" [style]="{'width':'5%'}"></p-column>
+              <p-column [header]="shared.backLabel" [hidden]="!permGoBackFlag" [style]="{'width':'5%'}"></p-column>
+            </p-row>
+          </p-headerColumnGroup>
+
+
+          <p-column [style]="{'width':'20%'}">
+            <ng-template let-col let-request="rowData" pTemplate="body">
+
+              <a (click)="showRequestDetail(request)">
+                <span class="latinFontStyle">{{request.code}}</span>
+              </a>
+              <div style="float:left" *ngIf="request.sourceType == 0">
+                <i class="fa fa-android" aria-hidden="true" pTooltip="Android"></i>
+              </div>
+              <div style="float:left" *ngIf="request.sourceType == 1">
+                <i class="fa fa-apple" aria-hidden="true" pTooltip="IOS"></i>
+              </div>
+              <div style="float:left" *ngIf="request.sourceType == 2">
+                <img src="../../assets/images/grid-world.png" style="vertical-align: middle;" pTooltip="Web" />
+              </div>
+              <div style="float:left" *ngIf="request.sourceType == 3">
+                <img src="../../assets/images/android-browser.png" style="vertical-align: middle;width:16px;height:16px"
+                  pTooltip="Android Browser" />
+              </div>
+              <div style="float:left" *ngIf="request.sourceType == 4">
+                <img src="../../assets/images/iphone-browser.png" style="vertical-align: middle;width:16px;height:16px"
+                  pTooltip="IOS Browser" />
+              </div>
+              <div style="float:left" *ngIf="request.sourceType == 5">
+                <i class="fa fa-chrome" aria-hidden="true" pTooltip="PWA Desktop">
+                  <span style="font-size:10px">
+                    PWA
+                  </span>
+                </i>
+              </div>
+              <div style="float:left" *ngIf="request.sourceType == 6">
+                <i class="fa fa-android" aria-hidden="true" pTooltip="PWA Android">
+                  <span style="font-size:10px">
+                    PWA
+                  </span>
+                </i>
+              </div>
+              <div style="float:left" *ngIf="request.sourceType == 7">
+                <i class="fa fa-apple" aria-hidden="true" pTooltip="PWA IOS">
+                  <span style="font-size:10px">
+                    PWA
+                  </span>
+                </i>
+              </div>
+            </ng-template>
+          </p-column>
+          <p-column field="state" [hidden]="!showStateFlag"></p-column>
+          <p-column field="title"></p-column>
+          <p-column field="cat3">
+            <ng-template let-col let-request="rowData" pTemplate="body">
+              {{request?.cat3}}
+              <div style="float:left" *ngIf="reqChangeFlag && request?.requestStateID == 1">
+                <button type="button" pButton icon="fa fa-edit" class="ui-button smallBtn"
+                  (click)="openJobCatEdit(request);"></button>
+              </div>
+            </ng-template>
+          </p-column>
+          <p-column field="state" [hidden]="!showRequestStateFlag"></p-column>
+          <p-column field="registerTime" [hidden]="showRequestStateFlag" styleClass="ltrDirection"></p-column>
+          <p-column>
+            <ng-template let-col let-request="rowData" pTemplate="body">
+
+              {{request.area}}
+
+            </ng-template>
+          </p-column>
+
+          <p-column field="clientFirstName"></p-column>
+          <p-column>
+            <ng-template let-col let-request="rowData" pTemplate="body">
+              {{request?.clientLastName}}
+              <div style="float:left">
+                <i class="fa fa-info-circle" (mouseenter)="showUserStat($event,request)"
+                  (mouseout)="userStatOP.hide($event)" style="font-size:20px;color:blue"></i>
+              </div>
+            </ng-template>
+          </p-column>
+          <p-column field="clientMobileNumber">
+            <ng-template let-col let-request="rowData" pTemplate="body">
+              {{request?.clientMobileNumber}}
+              <div style="float:left">
+                <button type="button" pButton class="ui-button orange-btn" icon="fa-comment"
+                  (click)="showSMSPanel(request?.clientMobileNumber)" [pTooltip]="shared.sendSMSPanel"
+                  [disabled]="!sensSMSCapable"></button>
+              </div>
+            </ng-template>
+          </p-column>
+          <p-column [style]="{'text-align':'center'}">
+            <ng-template let-col let-request="rowData" pTemplate="body">
+              <button type="button" class="green-btn" pButton icon="fa fa-info-circle"
+                (click)="showSuggestionListNew(request)">
+              </button>
+            </ng-template>
+          </p-column>
+          <p-column [style]="{'text-align':'center'}">
+            <ng-template let-col let-request="rowData" pTemplate="body">
+              <button type="button" class="green-btn" pButton icon="fa fa-info-circle"
+                (click)="showRequestStateHistoryList(request)">
+              </button>
+            </ng-template>
+          </p-column>
+
+          <p-column expander="true" [style]="{'text-align':'center'}" styleClass="col-icon">
+
+          </p-column>
+          <p-column [style]="{'text-align':'center'}">
+            <ng-template let-col let-request="rowData" pTemplate="body">
+              <button type="button" class="pink-btn" pButton icon="fa fa-eye" (click)="showFollowUP(request)">
+              </button>
+            </ng-template>
+          </p-column>
+          <p-column [style]="{'text-align':'center'}" [hidden]="!permCancelFlag">
+            <ng-template let-col let-request="rowData" pTemplate="body">
+              <button type="button" class="ui-button-danger" pButton icon="fa fa-ban" (click)="cancelRequest(request)">
+              </button>
+
+            </ng-template>
+          </p-column>
+          <p-column [style]="{'text-align':'center'}" [hidden]="!permCloseFlag">
+            <ng-template let-col let-request="rowData" pTemplate="body">
+              <button type="button" class="ui-button-danger" pButton icon="fa fa-check-circle"
+                (click)="closeRequest(request)">
+              </button>
+            </ng-template>
+          </p-column>
+
+          <p-column [style]="{'text-align':'center'}" [hidden]="!permGoBackFlag">
+            <ng-template let-col let-request="rowData" pTemplate="body">
+              <button type="button" class="ui-button-warning" pButton icon="fa fa-undo"
+                (click)="goBackRequest(request)">
+              </button>
+
+            </ng-template>
+          </p-column>
+          <ng-template let-request pTemplate="rowexpansion">
+            <div *ngIf="selectedRequest.workerCode==null">
+              <div class="ui-grid-row">
+                <div class="ui-grid-col-12">
+                  {{shared.noSelectedSuggestionForRequestMsg}}
+                </div>
+              </div>
+
+            </div>
+            <div class="ui-grid ui-grid-responsive " *ngIf="selectedRequest.workerCode!=null">
+              <div class="ui-grid-row">
+                <div class="ui-grid-col-4">
+                  <div class="ui-grid ui-grid-responsive">
+                    <div class="ui-grid-row">
+                      <div class="ui-grid-col-7">
+                        <label>
+                          <i class="fa fa-info-circle font-icon-style"></i>
+                          <span class="acceptedSuggestionLabelStyle">
+                            {{shared.workerCodeLabel}}
+                          </span>
+                        </label>
+                      </div>
+                      <div class="ui-grid-col-5 textPlaceHolderStyle acceptedSuggestionLabelStyle latinFontStyle">
+                        {{selectedRequest.workerCode}}
+
+                      </div>
+                    </div>
+                    <div class="ui-grid-row">
+                      <div class="ui-grid-col-7">
+                        <label>
+                          <i class="fa fa-info-circle font-icon-style"></i>
+                          <span class="acceptedSuggestionLabelStyle">
+                            {{shared.fullNameLabel}}
+                          </span>
+                        </label>
+                      </div>
+                      <div class="ui-grid-col-5 textPlaceHolderStyle acceptedSuggestionLabelStyle">
+                        {{selectedRequest?.workerFirstName}} {{selectedRequest?.workerLastName}}
+                      </div>
+                    </div>
+                    <div class="ui-grid-row">
+                      <div class="ui-grid-col-6">
+                        <label>
+                          <i class="fa fa-info-circle font-icon-style"></i>
+                          <span class="acceptedSuggestionLabelStyle">
+                            {{shared.contactNumberLabel}}
+                          </span>
+                        </label>
+                      </div>
+                      <div class="ui-grid-col-6 textPlaceHolderStyle acceptedSuggestionLabelStyle ltrDirection">
+                        {{selectedRequest?.workerMobileNumber}}
+                      </div>
+                    </div>
+                    <!-- <div class="ui-grid-row">
+                          <div class="ui-grid-col-5">
+                            <label>
+                              <i class="fa fa-info-circle font-icon-style"></i>
+                              {{shared.rcvTimeLabel}}
+                            </label>
+                          </div>
+                          <div class="ui-grid-col-7 textPlaceHolderStyle  ltrDirection">
+                            {{selectedRequest?.offerTime}}
+                          </div>
+                        </div>
+                        <div class="ui-grid-row">
+                          <div class="ui-grid-col-5">
+                            <label>
+                              <i class="fa fa-info-circle font-icon-style"></i>
+                              {{shared.offerTimeLabel}}
+                            </label>
+                          </div>
+      
+                          <div class="ui-grid-col-7 textPlaceHolderStyle ltrDirection">
+                            {{selectedRequest?.suggestionTime}}
+                          </div>
+                        </div>!-->
+                  </div>
+                </div>
+                <div class="ui-grid-col-4" style="margin-right: 30px;">
+                  <div class="ui-grid ui-grid-responsive">
+                    <div class="ui-grid-row">
+                      <div class="ui-grid-col-8">
+                        <label>
+                          <i class="fa fa-info-circle font-icon-style"></i>
+                          <span class="acceptedSuggestionLabelStyle">
+
+                            {{shared.performaInvoiceLabel}}
+                          </span>
+                        </label>
+                      </div>
+                      <div class="ui-grid-col-2 textPlaceHolderStyle">
+                        <span class="acceptedSuggestionLabelStyle">
+
+                          {{selectedRequest?.preInvoiceTotal | currency:'AFN':''}}
+                        </span>
+                      </div>
+                      <div class="ui-grid-col-2" *ngIf="selectedRequest?.preInvoiceTotal!=0">
+                        <button type="button" class="green-btn" pButton icon="fa fa-info-circle"
+                          (click)="showPreInvoiceItems(selectedRequest)">
+                        </button>
+                      </div>
+                    </div>
+                    <div class="ui-grid-row">
+                      <div class="ui-grid-col-8">
+                        <label>
+                          <i class="fa fa-info-circle font-icon-style"></i>
+                          <span class="acceptedSuggestionLabelStyle">
+
+                            {{shared.surveyFactorLabel}}
+                          </span>
+                        </label>
+                      </div>
+
+                      <div class="ui-grid-col-2 textPlaceHolderStyle acceptedSuggestionLabelStyle">
+                        {{selectedRequest?.proformaInvoiceTotal | currency:'AFN':''}}
+                      </div>
+                      <div class="ui-grid-col-2" *ngIf="selectedRequest?.proformaInvoiceTotal!=0">
+                        <button type="button" class="green-btn" pButton icon="fa fa-info-circle"
+                          (click)="showSurveyInvoiceItems(selectedRequest)">
+                        </button>
+                      </div>
+                    </div>
+                    <div class="ui-grid-row">
+                      <div class="ui-grid-col-8">
+                        <label>
+                          <i class="fa fa-info-circle font-icon-style"></i>
+                          <span class="acceptedSuggestionLabelStyle">
+
+                            {{shared.finalFactorLabel}}
+                          </span>
+                        </label>
+                      </div>
+
+                      <div class="ui-grid-col-2 textPlaceHolderStyle acceptedSuggestionLabelStyle">
+
+                        {{selectedRequest?.finalInvoiceTotal | currency:'AFN':''}}
+                      </div>
+                      <div class="ui-grid-col-2" *ngIf="selectedRequest?.finalInvoiceTotal!=0">
+                        <button type="button" class="green-btn" pButton icon="fa fa-info-circle"
+                          (click)="showFinalInvoiceItems(selectedRequest)">
+                        </button>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+                <div class="ui-grid-col-4" style="margin-right: 30px;" *ngIf="selectedRequest?.finalInvoiceTotal!=0">
+                  <div class="ui-grid ui-grid-responsive">
+                    <div class="ui-grid-row">
+                      <div class="ui-grid-col-6">
+                        <label>
+                          <i class="fa fa-info-circle font-icon-style"></i>
+                          <span class="acceptedSuggestionLabelStyle">
+
+                            {{shared.paymentMethodLabel}}
+                          </span>
+                        </label>
+                      </div>
+
+                      <div class="ui-grid-col-6 textPlaceHolderStyle acceptedSuggestionLabelStyle">
+                        <div *ngIf="selectedRequest?.cash; else elseBlock">
+                          {{shared.cacheLabel}}
+                        </div>
+                        <ng-template #elseBlock>
+                          {{shared.withCreditLabel}}
+                        </ng-template>
+                      </div>
+                    </div>
+                    <div class="ui-grid-row">
+
+                      <div class="ui-grid-col-6">
+                        <label>
+                          <i class="fa fa-info-circle font-icon-style"></i>
+                          <span class="acceptedSuggestionLabelStyle">
+
+                            {{shared.clientReviewPoints_PriceLabel}}
+                          </span>
+                        </label>
+                      </div>
+
+                      <div class="ui-grid-col-6 ">
+                        <p-rating [ngModel]="selectedRequest?.priceScore" readonly="true" stars="5" [cancel]="false">
+                        </p-rating>
+
+                      </div>
+                    </div>
+                    <div class="ui-grid-row">
+                      <div class="ui-grid-col-6">
+                        <label>
+                          <i class="fa fa-info-circle font-icon-style"></i>
+                          <span class="acceptedSuggestionLabelStyle">
+
+                            {{shared.clientReviewPoints_TimeLabel}}
+                          </span>
+                        </label>
+                      </div>
+
+                      <div class="ui-grid-col-6 ">
+                        <p-rating [ngModel]="selectedRequest?.timeScore" readonly="true" stars="5" [cancel]="false">
+                        </p-rating>
+
+                      </div>
+                    </div>
+                    <div class="ui-grid-row">
+                      <div class="ui-grid-col-6">
+                        <label>
+                          <i class="fa fa-info-circle font-icon-style"></i>
+                          <span class="acceptedSuggestionLabelStyle">
+
+                            {{shared.clientReviewPoints_WorkLabel}}
+                          </span>
+                        </label>
+                      </div>
+
+                      <div class="ui-grid-col-6 ">
+                        <p-rating [ngModel]="selectedRequest?.satisfactionScore" readonly="true" stars="5"
+                          [cancel]="false"></p-rating>
+
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+          </ng-template>
+
+        </p-dataTable>
+      </div>
+      <div *ngIf="displayJobOfferList">
+        <p-dataTable [value]="jobOfferList" [hidden]="!displayJobOfferList" [rows]="10" [paginator]="true"
+          [pageLinks]="5" [alwaysShowPaginator]="false" [emptyMessage]="shared.emptyListMsg"
+          [loading]="dataTableLoading" loadingicon="fa fa-spinner" #jobOfferdataTable>
+          <p-headerColumnGroup>
+            <p-row>
+              <p-column [header]="shared.workerViewLabel" colspan="4" [style]="{'width':'45%'}"></p-column>
+
+              <p-column [header]="shared.rcvTimeLabel" rowspan="2" [style]="{'width':'10%'}"></p-column>
+              <p-column [header]="shared.offerTimeLabel" rowspan="2" [style]="{'width':'10%'}"></p-column>
+              <p-column [header]="shared.offerStateLabel" rowspan="2" [style]="{'width':'10%'}"></p-column>
+              <p-column [header]="shared.suggestionStateLabel" rowspan="2" [style]="{'width':'10%'}"></p-column>
+              <p-column [header]="shared.performaInvoiceLabel" rowspan="2" [style]="{'width':'5%'}"></p-column>
+              <p-column [header]="shared.totalPriceLabel" rowspan="2" [style]="{'width':'5%'}"></p-column>
+            </p-row>
+            <p-row>
+              <p-column [header]="shared.workerCodeLabel"></p-column>
+              <p-column [header]="shared.firstNameLabel"></p-column>
+              <p-column [header]="shared.lastNameLabel"></p-column>
+              <p-column [header]="shared.contactNumberLabel"></p-column>
+            </p-row>
+          </p-headerColumnGroup>
+
+
+          <p-column>
+            <ng-template let-col let-jobOffer="rowData" pTemplate="body">
+              <a (click)="showWorkerViewDialog(jobOffer)">
+                {{jobOffer.worker.code}}
+              </a>
+
+            </ng-template>
+          </p-column>
+          <p-column field="worker.user.firstName"></p-column>
+          <p-column field="worker.user.lastName">
+            <i class="pi pi-info-circle" (mouseenter)="op2.show($event)" style="font-size:24px"></i>
+          </p-column>
+          <p-column>
+            <ng-template let-col let-jobOffer="rowData" pTemplate="body">
+              {{jobOffer?.worker.user.mobileNumber}}
+              <div style="float:left">
+                <button type="button" pButton class="ui-button orange-btn" icon="fa-comment"
+                  (click)="showSMSPanel(jobOffer?.worker.user.mobileNumber)" [pTooltip]="shared.sendSMSPanel"
+                  [disabled]="!sensSMSCapable"></button>
+              </div>
+            </ng-template>
+          </p-column>
+          <p-column field="registerTime" styleClass="ltrDirection"></p-column>
+          <p-column field="suggestion.registerTime" styleClass="ltrDirection"></p-column>
+          <p-column>
+            <ng-template let-col let-jobOffer="rowData" pTemplate="body">
+              {{jobOffer?.state}}
+              <div style="float:left" *ngIf="jobOffer?.reActiveEnable">
+                <button type="button" class="ui-button-warning" pButton icon="fa fa-undo" (click)="reActive(jobOffer)">
+                </button>
+              </div>
+              <div style="float:left">
+                <fa name="info-circle" class="ui-button-warning" pTooltip="{{jobOffer?.suggestion?.extra?.info}}"></fa>
+                <!-- <span *ngIf="jobOffer?.suggestion?.extra?.surveyRequired" style="padding-right: 10px">
+                  <fa name="fas fa-eye" style="color:green"></fa>
+                </span> -->
+                <span *ngIf="jobOffer?.suggestion?.seenByClient" style="padding-right: 10px"
+                  pTooltip="توسط کاربر دیده شده است">
+                  <fa name="fas fa-eye" style="color:green"></fa>
+                </span>
+              </div>
+
+            </ng-template>
+          </p-column>
+          <p-column field="suggestion.state"></p-column>
+          <p-column [style]="{'text-align':'center'}">
+            <ng-template let-col let-jobOffer="rowData" pTemplate="body">
+              <div *ngIf="jobOffer?.suggestion?.invoice">
+                <button type="button" class="green-btn" pButton icon="fa fa-info-circle"
+                  (click)="showPreInvoiceItemsByJobOffer(jobOffer)">
+                </button>
+              </div>
+            </ng-template>
+          </p-column>
+          <p-column>
+            <ng-template let-jobOffer="rowData" pTemplate="body">
+              <span style="float:left;direction:ltr">
+                {{jobOffer?.suggestion?.invoice?.totalPrice | currency:'AFN':''}}
+              </span>
+            </ng-template>
+          </p-column>
+
+        </p-dataTable>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<div *ngIf="displayFilterDialog">
+  <p-dialog [(visible)]="displayFilterDialog" [positionTop]="0" responsive="true" [resizable]="false" width="600"
+    [rtl]="true" [modal]="true" [header]="shared.showFilter" styleClass="ui-dialog">
+    <app-request-filter [jobCategory1List]="basicData.jobCategory1List" [selectedTitle]="filteredTitle"
+      [selectedCode]="filteredCode" [selectedJobCategory1]="filteredJobCategory1"
+      [selectedJobCategory2]="filteredJobCategory2" [selectedJobCategory3]="filteredJobCategory3"
+      [selectedRequestStateList]="filteredRequestStateList" [showStateFilter]="showStateFilter"
+      [requestStateList]="basicData.requestStateList" [selectedTransactionAmountStart]="filteredTransactionAmountStart"
+      [selectedTransactionAmountStop]="filteredTransactionAmountStop"
+      [selectedRegisterStartDate]="filteredRegisterStartDate" [selectedRegisterStopDate]="filteredRegisterStopDate"
+      [selectedUpdateStartDate]="filteredUpdateStartDate" [selectedUpdateStopDate]="filteredUpdateStopDate"
+      [selectedClientFirstName]="filteredClientFirstName" [selectedClientLastName]="filteredClientLastName"
+      [selectedClientMobileNumber]="filteredClientMobileNumber" [selectedCity]="filteredCity"
+      [selectedRegion]="filteredRegion" [selectedArea]="filteredArea" [provinceList]="basicData.chooseProvinceList"
+      [selectedWorkerCode]="filteredWorkerCode" [selectedWorkerFirstName]="filteredWorkerFirstName"
+      [selectedWorkerLastName]="filteredWorkerLastName" (onSearch)="onSearchFilterPanel($event)"
+      (onError)="onErrorFilterPanel($event)"></app-request-filter>
+  </p-dialog>
+</div>
+<div *ngIf="displayInvoiceDetail">
+  <p-dialog [(visible)]="displayInvoiceDetail" [positionTop]="0" responsive="true" [resizable]="false" width="600"
+    [rtl]="true" [modal]="true" [header]="shared.factorDetailLabel" styleClass="ui-dialog">
+    <div *ngIf="selectedInvoice!=null">
+      <p-dataTable [value]="selectedInvoice?.invoiceItems" [hidden]="!displayInvoiceDetail" [rows]="6"
+        [paginator]="true" [pageLinks]="5" [alwaysShowPaginator]="false" [emptyMessage]="shared.emptyListMsg"
+        [loading]="dataTableLoading" loadingicon="fa fa-spinner" #invoiceDataTable>
+        <p-headerColumnGroup>
+          <p-row>
+            <p-column [header]="shared.titleLabel" [style]="{'width':'25%'}"></p-column>
+            <p-column [header]="shared.totalNumberLabel" [style]="{'width':'25%'}"></p-column>
+            <p-column [header]="shared.priceLabel" [style]="{'width':'25%'}"></p-column>
+            <p-column [header]="shared.totalPriceLabel" [style]="{'width':'25%'}"></p-column>
+          </p-row>
+        </p-headerColumnGroup>ّ
+        <p-column field="title"></p-column>
+        <p-column field="quantity"></p-column>
+        <p-column>
+          <ng-template let-selectedInvoice="rowData" pTemplate="body">
+            <span style="float:left;direction:ltr">
+              {{selectedInvoice?.unitPrice | currency:'AFN':''}}
+            </span>
+          </ng-template>
+        </p-column>
+        <p-column>
+          <ng-template let-selectedInvoice="rowData" pTemplate="body">
+            <span style="float:left;direction:ltr">
+              {{selectedInvoice?.totalPrice | currency:'AFN':''}}
+            </span>
+          </ng-template>
+        </p-column>
+      </p-dataTable>
+
+      <div class="ui-grid ui-grid-responsive">
+        <div class="ui-grid-row">
+          <div class="ui-grid-col-5">
+            <label>
+              <i class="fa fa-info-circle font-icon-style"></i>
+              {{shared.wageLabel}}
+            </label>
+          </div>
+          <div class="ui-grid-col-7 textPlaceHolderStyle ltrDirection">
+            {{selectedInvoice?.wage | currency:'AFN':''}}
+          </div>
+        </div>
+        <div class="ui-grid-row">
+          <div class="ui-grid-col-5">
+            <label>
+              <i class="fa fa-info-circle font-icon-style"></i>
+              {{shared.transferLabel}}
+            </label>
+          </div>
+          <div class="ui-grid-col-7 textPlaceHolderStyle ltrDirection">
+            {{selectedInvoice?.transfer | currency:'AFN':''}}
+          </div>
+        </div>
+        <div class="ui-grid-row">
+          <div class="ui-grid-col-5">
+            <label>
+              <fa class="font-icon-style" name="dollar"></fa>
+              {{shared.totalLabel}}
+            </label>
+          </div>
+          <div class="ui-grid-col-7 textPlaceHolderStyleType2 ltrDirection">
+            {{selectedInvoice?.totalPrice | currency:'AFN':''}}
+          </div>
+        </div>
+
+      </div>
+
+
+    </div>
+    <div *ngIf="selectedInvoiceP!=null">
+      <p-dataTable [value]="selectedInvoiceP?.invoiceItems" [hidden]="!displayInvoiceDetail" [rows]="6"
+        [paginator]="true" [pageLinks]="5" [alwaysShowPaginator]="false" [emptyMessage]="shared.emptyListMsg"
+        [loading]="dataTableLoading" loadingicon="fa fa-spinner" #invoicepDataTable>
+        <p-headerColumnGroup>
+          <p-row>
+            <p-column [header]="shared.titleLabel" [style]="{'width':'25%'}"></p-column>
+            <p-column [header]="shared.totalNumberLabel" [style]="{'width':'25%'}"></p-column>
+            <p-column [header]="shared.priceLabel" [style]="{'width':'25%'}"></p-column>
+            <p-column [header]="shared.totalPriceLabel" [style]="{'width':'25%'}"></p-column>
+          </p-row>
+        </p-headerColumnGroup>
+        <p-column field="title"></p-column>
+        <p-column field="quantity"></p-column>
+        <p-column field="unitPrice"></p-column>
+        <p-column>
+          <ng-template let-selectedInvoiceP="rowData" pTemplate="body">
+            <span style="float:left;direction:ltr">
+              {{selectedInvoiceP?.totalPrice | currency:'AFN':''}}
+            </span>
+          </ng-template>
+        </p-column>
+
+      </p-dataTable>
+      <div class="ui-grid ui-grid-responsive">
+        <div class="ui-grid-row">
+          <div class="ui-grid-col-5">
+            <label>
+              <i class="fa fa-info-circle font-icon-style"></i>
+              {{shared.wageLabel}}
+            </label>
+          </div>
+          <div class="ui-grid-col-7 textPlaceHolderStyle ltrDirection">
+            {{selectedInvoiceP?.wage | currency:'AFN':''}}
+          </div>
+        </div>
+        <div class="ui-grid-row">
+          <div class="ui-grid-col-5">
+            <label>
+              <i class="fa fa-info-circle font-icon-style"></i>
+              {{shared.transferLabel}}
+            </label>
+          </div>
+          <div class="ui-grid-col-7 textPlaceHolderStyle ltrDirection">
+            {{selectedInvoiceP?.transfer | currency:'AFN':''}}
+          </div>
+        </div>
+        <div class="ui-grid-row">
+          <div class="ui-grid-col-5">
+            <label>
+
+              <fa class="font-icon-style" name="dollar"></fa>
+
+              {{shared.totalLabel}}
+            </label>
+          </div>
+          <div class="ui-grid-col-7 textPlaceHolderStyleType2 ltrDirection">
+            {{selectedInvoiceP?.totalPrice | currency:'AFN':''}}
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </p-dialog>
+
+
+</div>
+<div *ngIf="displayRequestView">
+
+  <p-dialog [(visible)]="displayRequestView" [resizable]="false" [closable]="true" [responsive]="true" [modal]="true"
+    [rtl]="true" [positionTop]="0" width="950">
+    <p-header>
+      {{shared.requestViewLabel}} {{selectedRequestCode}}
+
+    </p-header>
+    <app-request-view [requestp]="selectedRequestP" [loading]="loadingDialog" (onShowImage)="onShowImage($event)">
+    </app-request-view>
+  </p-dialog>
+</div>
+<div *ngIf="displayImageDialog">
+  <p-dialog [(visible)]="displayImageDialog" [positionTop]="0" [responsive]="true" [modal]="true" [resizable]="false"
+    [showHeader]="false" [closable]="true" [dismissableMask]="true">
+    <div class="ui-grid ui-grid-responsive ui-grid-pad">
+      <div class="ui-grid-row">
+        <div class="ui-grid-col-12" style="text-align:center">
+          <img src="{{selectedImagePath}}" style="max-width:256px;height:auto">
+        </div>
+      </div>
+    </div>
+  </p-dialog>
+</div>
+<div *ngIf="displayStateHistoryDialog">
+  <p-dialog [(visible)]="displayStateHistoryDialog" responsive="true" [resizable]="false" width="600" [rtl]="true"
+    [modal]="true" [header]="shared.requestStateHisoryLabel" styleClass="ui-dialog">
+    <p-dataTable [value]="requestStateHistory" [hidden]="!displayStateHistoryDialog" [rows]="9" [paginator]="true"
+      [pageLinks]="5" [alwaysShowPaginator]="false" [emptyMessage]="shared.emptyListMsg" [loading]="dataTableLoading"
+      loadingicon="fa fa-spinner" #requestStateHistoryDataTable>
+      <p-headerColumnGroup>
+        <p-row>
+          <p-column [header]="shared.titleLabel" [style]="{'width':'50%'}"></p-column>
+          <p-column [header]="shared.updateTimeLabel" [style]="{'width':'50%'}"></p-column>
+        </p-row>
+      </p-headerColumnGroup>
+      <p-column field="state"></p-column>
+      <p-column field="updateTime" styleClass="ltrDirection"></p-column>
+    </p-dataTable>
+  </p-dialog>
+
+</div>
+
+<div *ngIf="displayRequestCommentDialog">
+
+  <p-dialog [(visible)]="displayRequestCommentDialog" responsive="true" [resizable]="false" width="600" [rtl]="true"
+    [modal]="true" [header]="shared.followupLabel" styleClass="ui-dialog">
+    <div style="padding:10px" align="center" *ngIf="!displayAddCommentDialog">
+      <button type="button" pButton icon="fa fa-plus" (click)="showAdddComment()" label="{{shared.newFollowUp}}"
+        class="ui-button saveBtnStyle"></button>
+    </div>
+    <div *ngIf="displayAddCommentDialog;else contentx">
+      <form [formGroup]="requestCommentForm" (ngSubmit)="onSubmitRequestComment()">
+        <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+          <div class="ui-grid-row">
+            <div class="ui-grid-col-2">
+              <label>
+                <i class="fa fa-info-circle font-icon-style"></i>
+                {{shared.followUp}}
+              </label>
+            </div>
+            <div class="ui-grid-col-10">
+              <textarea pInputTextarea [rows]="6" formControlName="messageCntrl" style="width:100%"></textarea>
+              <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="requestCommentForm.controls['messageCntrl'].touched && requestCommentForm.controls['messageCntrl'].hasError('required')">
+                {{shared.requiredMsg}}
+              </div>
+              <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="requestCommentForm.controls['messageCntrl'].touched && requestCommentForm.controls['messageCntrl'].hasError('minlength')">
+                {{shared.minLengthValidatorNameMsg}} :
+                {{requestCommentForm.controls['messageCntrl'].errors.minlength.requiredLength}} {{shared.charLabel}}
+              </div>
+              <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="requestCommentForm.controls['messageCntrl'].touched && requestCommentForm.controls['messageCntrl'].hasError('maxlength')">
+                {{shared.maxLengthValidatorNameMsg}} :
+                {{requestCommentForm.controls['messageCntrl'].errors.maxlength.requiredLength}} {{shared.charLabel}}
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div align="center">
+          <div>
+            <button type="submit" pButton icon="fa fa-save" label="{{shared.saveLabel}}"
+              class="ui-button turquoise-btn saveBtnStyle" [disabled]="!this.requestCommentForm.valid"></button>
+          </div>
+        </div>
+      </form>
+    </div>
+    <ng-template #contentx>
+      <p-dataTable [value]="comments" [hidden]="!displayRequestCommentDialog" [rows]="4" [paginator]="true"
+        [pageLinks]="5" [alwaysShowPaginator]="false" [emptyMessage]="shared.emptyListMsg" [loading]="dataTableLoading"
+        loadingicon="fa fa-spinner" #requestCommentDataTable>
+        <p-headerColumnGroup>
+          <p-row>
+            <p-column [header]="shared.firstNameLabel" [style]="{'width':'10%'}"></p-column>
+            <p-column [header]="shared.lastNameLabel" [style]="{'width':'10%'}"></p-column>
+            <p-column [header]="shared.followUp" [style]="{'width':'60%'}"></p-column>
+            <p-column [header]="shared.registerTimeLabel" [style]="{'width':'20%'}"></p-column>
+          </p-row>
+        </p-headerColumnGroup>
+        <p-column field="firstName"></p-column>
+        <p-column field="lastName"></p-column>
+        <p-column field="message"></p-column>
+        <p-column field="registerTime"></p-column>
+      </p-dataTable>
+    </ng-template>
+  </p-dialog>
+
+</div>
+
+<div *ngIf="displayWorkerView">
+  <p-dialog [(visible)]="displayWorkerView" [resizable]="false" [closable]="false" [responsive]="true" [modal]="true"
+    [rtl]="true" width="700">
+    <p-header>
+      {{shared.workerViewLabel}} {{selectedWorkerFullName}}
+      <div style="float:left">
+        <button type="button" pButton icon="fa fa-close" class="ui-button pink-btn smallBtn"
+          (click)="closeViewDialog();"></button>
+      </div>
+    </p-header>
+    <workerViewComponent [workerID]="selectedWorkerID" (onShowImage)="onShowImage($event)"></workerViewComponent>
+  </p-dialog>
+</div>
+<p-confirmDialog header="{{shared.confirmHeader}}" width="425" rtl="true" #cd>
+  <p-footer>
+    <button type="button" pButton icon="fa fa-close" [label]="shared.noLabel" (click)="cd.reject()"
+      style="margin-right: 30%;"></button>
+    <button type="button" pButton icon="fa fa-check" [label]="shared.yesLabel" (click)="cd.accept()"></button>
+  </p-footer>
+</p-confirmDialog>
+
+<p-overlayPanel #userStatOP [dismissable]="false">
+  <table class="blueTable">
+    <tr>
+      <td>
+        {{shared.totalSuccessfullRequest}}
+        :
+        {{selectedRequest?.clientReqCntSuc}}
+      </td>
+
+    </tr>
+    <tr>
+      <td>
+        {{shared.totalFailSuccessfullRequest}}
+        :
+        {{selectedRequest?.clientReqCntFail}}
+      </td>
+    </tr>
+
+  </table>
+
+
+
+
+</p-overlayPanel>
+
+<div *ngIf="displayWorkerCandidateList">
+  <p-dialog [(visible)]="displayWorkerCandidateList" [resizable]="false" [closable]="false" [responsive]="true"
+    [modal]="true" [rtl]="true" width="700">
+    <p-header>
+      {{shared.candidateWorkerList}}
+      <div style="float:left">
+        <button type="button" pButton icon="fa fa-close" class="ui-button pink-btn smallBtn"
+          (click)="closeCandidateWorkerViewDialog();"></button>
+      </div>
+    </p-header>
+    <p-dataTable [value]="requestCandidateList" [hidden]="!displayWorkerCandidateList" [rows]="9" [paginator]="true"
+      [pageLinks]="5" [alwaysShowPaginator]="false" [emptyMessage]="shared.emptyListMsg" [loading]="dataTableLoading"
+      loadingicon="fa fa-spinner">
+      <p-headerColumnGroup>
+        <p-row>
+          <p-column [header]="shared.workerCodeLabel" [style]="{'width':'20%'}"></p-column>
+          <p-column [header]="shared.firstNameLabel" [style]="{'width':'15%'}"></p-column>
+          <p-column [header]="shared.lastNameLabel" [style]="{'width':'15%'}"></p-column>
+          <p-column [header]="shared.contactNumberLabel" [style]="{'width':'15%'}"></p-column>
+          <p-column [header]="shared.state" [style]="{'width':'10%'}"></p-column>
+          <p-column [header]="shared.creditnLabel" [style]="{'width':'10%'}"></p-column>
+          <p-column [header]="shared.regionLabel" [style]="{'width':'10%'}"></p-column>
+          <p-column [header]="shared.referenceLabel" [hidden]="!permCandidReferenceFlag" [style]="{'width':'10%'}">
+          </p-column>
+        </p-row>
+      </p-headerColumnGroup>
+      <p-column field="worker.code"></p-column>
+      <p-column field="worker.user.firstName" styleClass="ltrDirection"></p-column>
+      <p-column field="worker.user.lastName" styleClass="ltrDirection"></p-column>
+      <p-column field="worker.user.mobileNumber"></p-column>
+      <p-column>
+        <ng-template let-candidate="rowData" pTemplate="body">
+          <div align="center">
+            <i class="fa fa-circle" [ngClass]="{'greenStyle':candidate.active, 'grayStyle': !candidate.active}"></i>
+          </div>
+        </ng-template>
+      </p-column>
+      <p-column>
+        <ng-template let-candidate="rowData" pTemplate="body">
+          <div align="center">
+            <i class="fa fa-circle" [ngClass]="{'greenStyle':candidate.credit, 'grayStyle': !candidate.credit}"></i>
+          </div>
+        </ng-template>
+      </p-column>
+      <p-column>
+        <ng-template let-candidate="rowData" pTemplate="body">
+          <div align="center">
+            <i class="fa fa-circle" [ngClass]="{'greenStyle':candidate.region, 'grayStyle': !candidate.region}"></i>
+          </div>
+        </ng-template>
+      </p-column>
+      <p-column [hidden]="!permCandidReferenceFlag">
+        <ng-template let-candidate="rowData" pTemplate="body">
+          <div align="center">
+            <button type="button" class="ui-button blue-btn" pButton icon="fa fa-arrow-left"
+              (click)="sendOffer(candidate.worker.id)">
+            </button>
+          </div>
+        </ng-template>
+      </p-column>
+    </p-dataTable>
+  </p-dialog>
+</div>
+
+
+
+<div *ngIf="displayEditJobCatDialog">
+
+  <p-dialog [(visible)]="displayEditJobCatDialog" [resizable]="false" [closable]="true" [responsive]="true"
+    [modal]="true" [rtl]="true" [positionTop]="0" width="450">
+    <p-header>
+      {{shared.editJC3Label}} {{shared.requestLabel}} {{selectedRequestCode}}
+    </p-header>
+    <loadingCmp [loading]="iloading" spinnerStyleClass="spinnerClassBlack"></loadingCmp>
+    <div *ngIf="!iloading">
+      <form [formGroup]="jobCatEditForm" (ngSubmit)="onSubmitJobCat3Edit()">
+        <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+          <div class="ui-grid-row">
+            <div class="ui-grid-col-6">
+              <label>
+                <i class="fa fa-info-circle font-icon-style"></i>
+                {{shared.currentCat3}}
+              </label>
+            </div>
+            <div class="ui-grid-col-6 textPlaceHolderStyle">
+              {{selectedRequest?.cat3}}
+            </div>
+          </div>
+          <div class="ui-grid-row">
+            <div class="ui-grid-col-6">
+              <label>
+                <i class="fa fa-info-circle font-icon-style"></i>
+                {{shared.newCat3}} *
+              </label>
+            </div>
+            <div class="ui-grid-col-6" style="width:100%">
+              <p-autoComplete formControlName="jobCategory3FormCntrl" [inputStyle]="{'width':'100%'}" field="name"
+                appendTo="body" [suggestions]="jobCat3Result" (completeMethod)="searchJobCat3($event)">
+
+              </p-autoComplete>
+            </div>
+          </div>
+        </div>
+
+        <div align="center">
+          <div>
+            <button type="submit" pButton icon="fa fa-save" label="{{shared.saveLabel}}"
+              class="ui-button turquoise-btn saveBtnStyle" [disabled]="!this.jobCatEditForm.valid"></button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </p-dialog>
+
+
+</div>
+
+<div *ngIf="displaySMSPanel">
+  <p-dialog [(visible)]="displaySMSPanel" responsive="true" [resizable]="false" width="600" [rtl]="true" [modal]="true"
+    [header]="shared.sendSMSPanel" styleClass="ui-dialog" positionTop="0">
+    <app-send-sms [smsList]="filteredSMSList"></app-send-sms>
+  </p-dialog>
+</div>

@@ -1,0 +1,190 @@
+
+.dashboard{
+    
+}
+.chart-style{
+  height: 300px;
+  /*width:550px;*/
+  /* min-width: 550px; width: 100%; */
+  display: block;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -1px rgba(0, 0, 0, 0.12);
+  -webkit-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -1px rgba(0, 0, 0, 0.12);
+  -moz-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -1px rgba(0, 0, 0, 0.12);
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 5px;
+  padding: 5px;
+  background: #fffefe;
+}
+.highcharts-font-style{
+  font-family: 'B Nazanin', 'Arial','FontAwesome' !important;
+
+}
+.highcharts-axis .highcharts-yaxis .highcharts-font-style text {
+  font-family: 'B Nazanin', 'Arial','FontAwesome' !important;
+
+}
+.headerStyle{
+  font-weight: bolder;font-size: large;
+  background-color: #2d353c;color:whitesmoke;
+  padding: 7px;border-radius:6px;padding-left:100px;
+}
+.cardX {
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -1px rgba(0, 0, 0, 0.12);
+  -webkit-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -1px rgba(0, 0, 0, 0.12);
+  -moz-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -1px rgba(0, 0, 0, 0.12);
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+  background: #fffefe;
+  padding: 5px;
+  margin: 4px;
+  margin-bottom: 4px;
+  box-sizing: border-box; }
+  .cardChart {
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -1px rgba(0, 0, 0, 0.12);
+    -webkit-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -1px rgba(0, 0, 0, 0.12);
+    -moz-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -1px rgba(0, 0, 0, 0.12);
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 5px;
+    background: #fffefe;
+    padding: 5px;    
+    margin-bottom: 4px;
+    box-sizing: border-box; }
+  .cardNew {
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -1px rgba(0, 0, 0, 0.12);
+    -webkit-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -1px rgba(0, 0, 0, 0.12);
+    -moz-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -1px rgba(0, 0, 0, 0.12);
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+    background: #ecebeb;
+    padding: 6px;
+    margin: 6px;
+    margin-bottom: 8px;
+    box-sizing: border-box; }
+  
+.card {
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -1px rgba(0, 0, 0, 0.12);
+    -webkit-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -1px rgba(0, 0, 0, 0.12);
+    -moz-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -1px rgba(0, 0, 0, 0.12);
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+    background: rgb(3, 25, 48);
+    padding: 14px;
+    margin: 2px;
+    margin-bottom: 14px;
+    box-sizing: border-box; }
+    .card.card-w-title {
+      padding-bottom: 28px; }
+    .card h1 {
+      font-size: 20px;
+      font-weight: 400;
+      margin: 20px 0; }
+      .card h1:first-child {
+        margin-top: 16px; }
+    .card h2 {
+      font-size: 18px;
+      font-weight: 400; }
+    .card h3 {
+      font-size: 16px;
+      font-weight: 400; }
+    .card h4 {
+      font-size: 14px;
+      font-weight: 400; }
+
+.dashboard .status-bars ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none; }
+    .dashboard .status-bars ul li {
+      padding: 8px 150px 8px 0px;
+      position: relative; }
+      .dashboard .status-bars ul li span {
+        position: absolute;
+        right: 36px;
+        top: 8px; }
+      .dashboard .status-bars ul li i {
+        position: absolute;
+        right: 4px;
+        top: 4px; }
+  .dashboard .status-bars .status-bar {
+    height: 26px;
+    width: 90%;
+    background-color: #d8d8d8;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px; }
+    .dashboard .status-bars .status-bar .status-bar-value {
+      height: 100%;
+      color: #ffffff;
+      text-align: right;
+      padding-right: 4px;
+      padding-top: 1px;
+      -webkit-box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      box-sizing: border-box;
+      -moz-border-radius: 6px;
+      -webkit-border-radius: 6px;
+      border-radius: 6px;
+    font-weight: bold;
+  font-size: 22px; }
+    .dashboard .status-bars .status-bar.status-bar-1 .status-bar-value {
+      background-color: #e91e63; }
+    .dashboard .status-bars .status-bar.status-bar-1 ~ i {
+      color: #e91e63; }
+    .dashboard .status-bars .status-bar.status-bar-2 .status-bar-value {
+      background-color: #00bcd4; }
+    .dashboard .status-bars .status-bar.status-bar-2 ~ i {
+      color: #00bcd4; }
+    .dashboard .status-bars .status-bar.status-bar-3 .status-bar-value {
+      background-color: #ffc107; }
+    .dashboard .status-bars .status-bar.status-bar-3 ~ i {
+      color: #ffc107; }
+    .dashboard .status-bars .status-bar.status-bar-4 .status-bar-value {
+      background-color: #cddc39; }
+    .dashboard .status-bars .status-bar.status-bar-4 ~ i {
+      color: #cddc39; }
+    .dashboard .status-bars .status-bar.status-bar-5 .status-bar-value {
+      background-color: #ff9800; }
+    .dashboard .status-bars .status-bar.status-bar-5 ~ i {
+      color: #ff9800; }
+      .status-title{
+        font-weight: bold;
+        color:blue;
+      }
+      .status-title:hover {
+        cursor: pointer;
+        text-decoration: underline;
+    
+    }
+    .refreshTimeStyle{
+        float: left;
+        margin-right: 4px;
+        padding: 6px;
+        border-radius: 4px;
+        border-color:white;
+        color: white;
+        font-weight: bold;
+        border-width: 1px;
+        background-color: rgb(54, 165, 26);
+        
+
+      }  
+    .dateTimeStyle{
+      float:left;
+      margin-right: 4px;
+      padding: 6px;
+      border-radius: 4px;
+      border-color: turquoise;
+      border-width: 1px;
+      background-color: whitesmoke;
+      direction: ltr;
+    }
+
+    .xxxx{
+      direction: ltr !important;
+      font-family: 'Times New Roman', Times, serif !important;
+    }

@@ -1,0 +1,452 @@
+<p-growl [value]="hmsgs" life="6000"></p-growl>
+
+<div class="ui-g ui-g-pad ui-g-reponsive dashboard " *ngIf="!loading">
+    <div class="ui-g-12">
+        <p-toolbar styleClass="toolbarstyle">
+            <div class="ui-toolbar-group-right headerLabel">
+                <img src="../assets/images/biz.png" style="vertical-align: middle;" /> {{activeLabel}}
+                <span class="totalFilteredClass" *ngIf="!displayDialog">
+                    {{shared.totalNumberLabel}} : {{workStations.length}}
+                </span>
+            </div>
+            <div class="ui-toolbar-group-left">
+
+                <button type="button" pButton icon="fa-filter" (click)="showFilterDialog()" [pTooltip]="shared.showFilter"
+                    *ngIf="!displayDialog"></button>
+                <button type="button" pButton icon="fa-refresh" (click)="refreshWorkStationList()" [pTooltip]="shared.refreshLabel"
+                    *ngIf="!displayDialog && !displayWorkStationDetailDialog"></button>
+                <button type="button" pButton icon="fa-map" (click)="doShowOnMap()" [pTooltip]="shared.showOnMap" *ngIf="!showOnMapFlag"></button>
+            </div>
+        </p-toolbar>
+    </div>
+    <div class="ui-g-12">
+        <div class="ui-toolbar ui-widget ui-widget-header ui-corner-all ui-helper-clearfix" *ngIf="chipsFilterValues?.length>0">
+            <div class="ui-chips ui-widget">
+                <ul class="ui-inputtext ui-state-default ui-corner-all">
+                    <li *ngFor="let ci of chipsFilterValues;let i=index" class="ui-chips-token ui-state-highlight ui-corner-all">
+                        <span class="ui-chips-token-label" (click)="onRemoveChip(i)">{{ci}}
+                            <span class="ui-chips-token-icon fa fa-fw fa-close"></span>
+                        </span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div *ngIf="showOnMapFlag">
+            <agm-map [latitude]="latitude" [longitude]="longitude" [scrollwheel]="false" [zoom]="zoom"
+                [disableDefaultUI]="false" [streetViewControl]="false">
+                <agm-marker *ngFor="let m of wsMarkerList; let i = index" [latitude]="m.lat" [longitude]="m.lng"
+                    iconUrl="../assets/images/map-pin.png">
+                    <agm-info-window>
+                        <strong>{{m.label}}</strong>
+                    </agm-info-window>
+                </agm-marker>
+
+            </agm-map>
+        </div>
+
+        <div *ngIf="displayMgmPanel">
+            <p-dataTable [value]="workStations" [hidden]="!showWorkStationList" [rows]="6" [paginator]="true"
+                [pageLinks]="5" [alwaysShowPaginator]="false" emptyMessage="" [loading]="loading" loadingIcon="fa-spinner"
+                expandableRows="true" [expandedRows]="expandedItems" (onRowExpand)="onRowExpand($event)" #dataTable>
+                <p-headerColumnGroup>
+                    <p-row>
+                        <p-column [header]="shared.jobDataLabel" [style]="{'width':'16%'}" colspan="2"></p-column>
+                        <p-column [header]="shared.BizInfo" colspan="2" [style]="{'width':'16%'}"></p-column>
+                        <p-column [header]="shared.personalWorkerDataSumLabel" colspan="3" [style]="{'width':'20%'}"></p-column>
+                        <p-column [header]="shared.locationDataSumLabel" colspan="3" [style]="{'width':'15%'}"></p-column>
+                        <p-column [header]="shared.contactDataLabel" rowspan="2" [style]="{'width':'5%'}"></p-column>
+                        <p-column [header]="shared.documentLabel" rowspan="2" [style]="{'width':'5%'}"></p-column>
+                        <p-column [header]="shared.workerDataLabel" rowspan="2" [style]="{'width':'5%'}"></p-column>
+                        <p-column [header]="shared.state" colspan="2" [style]="{'width':'10%'}"></p-column>
+                        <p-column [header]="shared.showLabel" rowspan="2" [style]="{'width':'5%'}"></p-column>
+                        <p-column [header]="shared.delLabelFa" [hidden]="!editCapable" rowspan="2" [style]="{'width':'5%'}"></p-column>
+                    </p-row>
+                    <p-row>
+                        <p-column [header]="shared.job_Category1Label" [style]="{'overflow':'visible'}" styleClass="jobCategory1FilterStyle">
+                        </p-column>
+                        <p-column [header]="shared.detailLabel" [style]="{'width':'8%'}"></p-column>
+                        <p-column [header]="shared.nameLabel" field="title" [filter]="true" [style]="{'width':'15%'}"></p-column>
+                        <p-column [header]="shared.detailLabel" [style]="{'width':'3%'}"></p-column>
+                        <p-column [header]="shared.firstNameLabel" [filter]="true" field="owner.firstName"></p-column>
+                        <p-column [header]="shared.lastNameLabel" [filter]="true" field="owner.lastName"></p-column>
+                        <p-column [header]="shared.detailLabel"></p-column>
+                        <p-column [header]="shared.regionLabel"></p-column>
+                        <p-column [header]="shared.areaLabel"></p-column>
+                        <p-column [header]="shared.detailLabel"></p-column>
+                        <p-column [header]="shared.nameLabel"></p-column>
+                        <p-column [header]="shared.detailLabel"></p-column>
+                    </p-row>
+
+                </p-headerColumnGroup>
+                <p-column [style]="{'overflow':'visible'}" styleClass="jobCategory1FilterStyle">
+                    <ng-template let-col let-workStation="rowData" pTemplate="body">
+                        <p-dataGrid [value]="workStation.workStationJobs">
+                            <ng-template let-ws pTemplate="item">
+                                <div class="ui-g-12 tooltip">
+                                    <div style="overflow: hidden;text-overflow: ellipsis;">
+                                        {{ws.jobCategory1.name}}
+                                    </div>
+                                    <span class="tooltiptext">{{ws.jobCategory1.name}}</span>
+                                </div>
+                            </ng-template>
+                        </p-dataGrid>
+                    </ng-template>
+                </p-column>
+                <p-column [style]="{'text-align':'center'}">
+
+                    <ng-template let-col let-workStation="rowData" pTemplate="body">
+                        <button type="button" class="green-btn" pButton icon="fa-wrench" (click)="showJobData(workStation);"
+                            [pTooltip]="shared.showJobInfo"></button>
+                    </ng-template>
+                </p-column>
+                <p-column field="title"></p-column>
+                <p-column [style]="{'text-align':'center'}">
+                    <ng-template let-col let-workStation="rowData" pTemplate="body">
+                        <button type="button" class="green-btn" pButton icon="fa-info-circle" (click)="showBizData(workStation)"
+                            [pTooltip]="shared.showBizInfo"></button>
+                    </ng-template>
+                </p-column>
+                <p-column field="owner.firstName"></p-column>
+                <p-column field="owner.lastName"></p-column>
+
+                <p-column [style]="{'text-align':'center'}">
+                    <ng-template let-col let-workStation="rowData" pTemplate="body">
+                        <button type="button" class="green-btn" pButton icon="fa-user-circle" (click)="showPersonalPanelData(workStation)"
+                            [pTooltip]="shared.showPersonalInfo"></button>
+                    </ng-template>
+                </p-column>
+                <p-column field="area.region.name"></p-column>
+                <p-column field="area.name"></p-column>
+                <p-column [style]="{'text-align':'center'}">
+                    <ng-template let-col let-workStation="rowData" pTemplate="body">
+                        <button type="button" class="green-btn" pButton icon="fa-map" (click)="showLocationData(workStation)"
+                            [pTooltip]="shared.showLocationInfo"></button>
+                    </ng-template>
+                </p-column>
+                <p-column [style]="{'text-align':'center'}">
+                    <ng-template let-col let-workStation="rowData" pTemplate="body">
+                        <button type="button" class="green-btn" pButton icon="fa-phone-square" (click)="showContactData(workStation)"
+                            [pTooltip]="shared.showContactInfo"></button>
+                    </ng-template>
+                </p-column>
+                <p-column [style]="{'text-align':'center'}">
+                    <ng-template let-col let-workStation="rowData" pTemplate="body">
+                        <button type="button" pButton icon="fa-file-o" (click)="showDocumentDialog(workStation)"></button>
+                    </ng-template>
+                </p-column>
+                <p-column expander="true" [style]="{'text-align':'center'}" styleClass="col-icon">
+                </p-column>
+                <p-column [style]="{'text-align':'center'}">
+                    <ng-template let-col let-workStation="rowData" pTemplate="body">
+                        {{workStation.registerState.name}}
+                    </ng-template>
+                </p-column>
+                <p-column [style]="{'text-align':'center'}">
+                    <ng-template let-col let-workStation="rowData" pTemplate="body">
+                        <button pButton type="button" (click)="showRegisterStateData(workStation)" icon="fa-dot-circle-o"></button>
+                    </ng-template>
+                </p-column>
+                <p-column [style]="{'text-align':'center'}">
+
+                    <ng-template let-col let-workStation="rowData" pTemplate="body">
+                        <button type="button" pButton icon="fa-tasks" class="green-btn" (click)="showWorkStationInfo(workStation)"
+                            [pTooltip]="shared.showDetialLabel"></button>
+                    </ng-template>
+                </p-column>
+                <p-column [hidden]="!editCapable" [style]="{'text-align':'center'}">
+                    <ng-template let-col let-workStation="rowData" pTemplate="body">
+                        <button type="button" pButton icon="fa-close" class="pink-btn" (click)="delete(workStation)"
+                            [pTooltip]="shared.delLabelFa"></button>
+                    </ng-template>
+                </p-column>
+                <ng-template let-workStation pTemplate="rowexpansion">
+                    <div class="ui-grid ui-grid-responsive ui-fluid" style="font-size:16px;padding:20px">
+                        <div class="ui-grid-row">
+                            <div class="ui-grid-col-9" style="text-align:center">
+                                <p-dataTable [value]="selectedWorkStation.workers" [emptyMessage]="shared.noWorkerInWorkStation">
+
+                                    <p-column [header]="shared.firstNameLabel">
+                                        <ng-template let-col let-worker="rowData" pTemplate="body">
+                                            <div *ngIf="worker.user.id == selectedWorkStation.owner.id; else elseBlock">
+                                                <div style="float:right;"><img src="../assets/images/owner-flag.png"
+                                                        style="vertical-align: middle;" /></div>
+                                                <span>{{worker.user.firstName}}</span>
+                                            </div>
+                                            <ng-template #elseBlock>
+                                                {{worker.user.firstName}}
+                                            </ng-template>
+                                        </ng-template>
+                                    </p-column>
+                                    <p-column field="user.lastName" [header]="shared.lastNameLabel"></p-column>
+                                    <p-column field="user.mobileNumber" [header]="shared.mobileLabel"></p-column>
+                                    <p-column [header]="shared.job_Category3Label">
+                                        <ng-template let-col let-worker="rowData" pTemplate="body">
+                                            <p-dataGrid [value]="worker.workerToJobsMaps" [emptyMessage]="shared.emptyListMsg">
+                                                <ng-template let-wr pTemplate="item">
+                                                    <div class="ui-g-12">
+                                                        <div *ngIf="wr?.jobCategory3; else elseBlock">
+                                                            {{wr?.jobCategory3?.jobCategory2?.name}} //
+                                                            {{wr?.jobCategory3?.name}}
+                                                        </div>
+                                                        <ng-template #elseBlock>
+                                                            {{wr?.jobCategory3?.jobCategory2?.name}}
+                                                        </ng-template>
+                                                    </div>
+                                                </ng-template>
+                                            </p-dataGrid>
+                                        </ng-template>
+                                    </p-column>
+                                    <p-column [header]="shared.editLabelFa" [hidden]="!editCapable" [style]="{'width':'10%'}">
+                                        <ng-template let-col let-worker="rowData" pTemplate="body">
+                                            <button type="button" pButton icon="fa-edit" class="black-btn" (click)="showEditWorker(worker)"></button>
+                                        </ng-template>
+                                    </p-column>
+                                    <p-column [header]="shared.delLabelFa" [hidden]="!editCapable" [style]="{'width':'10%'}">
+                                        <ng-template let-col let-worker="rowData" pTemplate="body">
+                                            <button type="button" pButton icon="fa-close" class="pink-btn" (click)="deleteWorker(worker)"></button>
+                                        </ng-template>
+                                    </p-column>
+
+                                </p-dataTable>
+                            </div>
+                            <div class="ui-grid-col-3" *ngIf="editCapable">
+
+                                <button type="button" pButton icon="fa-random" class="deep-purple-btn" (click)="showChangeWsOwnerPanel(workStation)"
+                                    label="{{shared.changeWorkStationOwnerLabel}}"></button>
+                                <br />
+                                <button type="button" pButton icon="fa-plus" class="orange-btn" (click)="showAddWorkerPanel(workStation)"
+                                    label="{{shared.registerNewWorkerLabel}}"></button>
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+            </p-dataTable>
+        </div>
+
+
+    </div>
+</div>
+
+<div *ngIf="showBizInfoPanel">
+    <p-dialog [(visible)]="showBizInfoPanel" [responsive]="true" [resizable]="false" width="600" [modal]="true" [rtl]="true"
+        [closable]="false" styleClass="ui-dialog">
+        <p-header>
+            {{shared.BizInfo}}
+            <div style="float:left">
+                <span style="font-size:11px;">
+                    {{shared.editModeLabel}} :
+                    {{editMode ? shared.activeModeLabel:shared.inactiveModeLabel}}
+                </span>
+                <button type="button" pButton icon="fa-edit" class="ui-button turquoise-btn smallBtn" (click)="toggleEditMode();"></button>
+                <button type="button" pButton icon="fa-close" class="ui-button pink-btn smallBtn" (click)="closeBizPanel();"></button>
+
+            </div>
+        </p-header>
+        <wsBizInfoComponent [inputWorkStation]="selectedWorkStation" [workTypeList]="workTypeList" [editMode]="editMode"
+            (onClose)="onCloseBizInfoPanel($event)" [loading]="showBizInfoPanel_Loading" [setupDate]="true"
+            (onDisplayCatalogImageDialog)="onDisplayCatalogImageDialog($event)" (onUploadT)="onUploadBizInfoPanel($event)"
+            (onSave)="onSaveBizInfoPanel($event)"></wsBizInfoComponent>
+    </p-dialog>
+
+</div>
+<div *ngIf="displayCatalogImageDialog">
+    <p-dialog [(visible)]="displayCatalogImageDialog" [responsive]="true" [modal]="true" [resizable]="false"
+        [showHeader]="false" [dismissableMask]="true">
+        <div class="ui-grid ui-grid-responsive ui-grid-pad" *ngIf="selectedImageCatalog">
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-12" style="text-align:center">
+                    <img src="{{selectedImageCatalog.source}}" style="max-width:512px;height:auto"></div>
+            </div>
+        </div>
+    </p-dialog>
+</div>
+<div *ngIf="showPersonalInfoPanel">
+    <p-dialog [(visible)]="showPersonalInfoPanel" [responsive]="true" [resizable]="false" width="600" [rtl]="true"
+        [modal]="true" [closable]="false" styleClass="ui-dialog">
+        <p-header>
+            {{shared.personalWorkerDataLabel}}
+            <div style="float:left">
+                <span style="font-size:11px;">
+                    {{shared.editModeLabel}} :
+                    {{editMode ? shared.activeModeLabel:shared.inactiveModeLabel}}
+                </span>
+                <button type="button" pButton icon="fa-edit" class="ui-button turquoise-btn smallBtn" (click)="toggleEditMode();"></button>
+                <button type="button" pButton icon="fa-close" class="ui-button pink-btn smallBtn" (click)="closePersonalPanel();"></button>
+            </div>
+
+        </p-header>
+        <wsPersonalInfoComponent [inputWorkStation]="selectedWorkStation" [positionTypeList]="positionTypeList"
+            [editMode]="editMode" [loading]="showPersonalInfoPanel_Loading" (onClose)="onClosePersonalInfoPanel($event)"
+            (onSave)="onSavePersonalInfoPanel($event)"></wsPersonalInfoComponent>
+    </p-dialog>
+</div>
+<div *ngIf="showContactInfoPanel">
+    <p-dialog [(visible)]="showContactInfoPanel" responsive="true" [resizable]="false" width="650" [rtl]="true" [modal]="true"
+        [closable]="false" styleClass="ui-dialog">
+        <p-header>
+            {{shared.contactDataLabel}}
+            <div style="float:left">
+                <span style="font-size:11px;">
+                    {{shared.editModeLabel}} :
+                    {{editMode ? shared.activeModeLabel:shared.inactiveModeLabel}}
+                </span>
+                <button type="button" pButton icon="fa-edit" class="ui-button turquoise-btn smallBtn" (click)="toggleEditMode();"></button>
+                <button type="button" pButton icon="fa-close" class="ui-button pink-btn smallBtn" (click)="closeContactPanel();"></button>
+
+            </div>
+        </p-header>
+        <wsContactInfoComponent [inputWorkStation]="selectedWorkStation" [editMode]="editMode" (onClose)="onCloseContactInfoPanel($event)"
+            (onError)="onErrorContactInfoPanel($event)" (onShowWorkStationPhoneToAdd)="onShowPhoneDialogToAdd($event)"
+            (onShowWorkStationPhoneToEdit)="onShowPhoneDialogToEdit($event)" (onSave)="onSaveContactInfoPanel($event)"
+            [filterPhoneTypeList]="filterPhoneTypeList"></wsContactInfoComponent>
+    </p-dialog>
+</div>
+<div *ngIf="displayPhoneDialog">
+    <p-dialog [header]="shared.phoneEditMsg" [(visible)]="displayPhoneDialog" [resizable]="false" [responsive]="true"
+        [modal]="true" [modal]="true" [rtl]="true">
+        <wsPhoneInfoComponent [inputWorkStation]="panelWorkStation" [editMode]="editMode" (onClose)="onClosePhoneInfoPanel($event)"
+            (onError)="onErrorPhoneInfoPanel($event)" [workStationPhone]="workStationPhone" [newWorkStationPhone]="newWorkStationPhone"
+            (onSave)="onSavePhoneInfoPanel($event)" [filterPhoneTypeList]="filterPhoneTypeList"></wsPhoneInfoComponent>
+    </p-dialog>
+</div>
+<div *ngIf="showJobInfoPanel">
+    <p-dialog [(visible)]="showJobInfoPanel" responsive="true" [resizable]="false" width="700" [rtl]="true" [modal]="true"
+        [closable]="false" styleClass="ui-dialog">
+        <p-header>
+            {{shared.jobDataLabel}}
+            <div style="float:left">
+                <span style="font-size:11px;">
+                    {{shared.editModeLabel}} :
+                    {{editMode ? shared.activeModeLabel:shared.inactiveModeLabel}}
+                </span>
+                <button type="button" pButton icon="fa-edit" class="ui-button turquoise-btn smallBtn" (click)="toggleEditMode();"></button>
+                <button type="button" pButton icon="fa-close" class="ui-button pink-btn smallBtn" (click)="closeJobPanel();"></button>
+
+            </div>
+        </p-header>
+        <wsJobInfoComponent [inputWorkStation]="selectedWorkStation" [loading]="showJobInfoPanel_Loading" [editMode]="editMode"
+            [jobCategory1List]="jobCategory1List" (onClose)="onCloseJobInfoPanel($event)" (onSave)="onSaveJobInfoPanel($event)"
+            (onDelete)="onDeleteJobCategoryPanel($event)"></wsJobInfoComponent>
+    </p-dialog>
+</div>
+
+<div *ngIf="showLocationInfoPanel">
+    <p-dialog [(visible)]="showLocationInfoPanel" [responsive]="true" [resizable]="false" width="500" [rtl]="true"
+        [modal]="true" [closable]="false" styleClass="ui-dialog">
+        <p-header>
+            {{shared.locationDataLabel}}
+            <div style="float:left">
+                <span style="font-size:11px;">
+                    {{shared.editModeLabel}} :
+                    {{editMode ? shared.activeModeLabel:shared.inactiveModeLabel}}
+                </span>
+                <button type="button" pButton icon="fa-edit" class="ui-button turquoise-btn smallBtn" (click)="toggleEditMode();"></button>
+                <button type="button" pButton icon="fa-close" class="ui-button pink-btn smallBtn" (click)="closeLocationPanel();"></button>
+
+            </div>
+        </p-header>
+        <wsLocationInfoComponent [inputWorkStation]="selectedWorkStation" [provinceList]="basicData.chooseProvinceList" 
+            [loading]="showLocationInfoPanel_Loading" 
+            [editMode]="editMode" (onClose)="onCloseLocationInfoPanel($event)" (onSave)="onSaveLocationInfoPanel($event)"></wsLocationInfoComponent>
+    </p-dialog>
+</div>
+<div *ngIf="showRegisterStateInfoPanel">
+    <p-dialog [(visible)]="showRegisterStateInfoPanel" [responsive]="true" [resizable]="false" width="500" [rtl]="true"
+        [modal]="true" [closable]="false" styleClass="ui-dialog">
+        <p-header>
+            {{shared.registerStateLabel}}
+            <div style="float:left">
+                <span style="font-size:11px;">
+                    {{shared.editModeLabel}} :
+                    {{editMode ? shared.activeModeLabel:shared.inactiveModeLabel}}
+                </span>
+                <button type="button" pButton icon="fa-edit" class="ui-button turquoise-btn smallBtn" (click)="toggleEditMode();"></button>
+                <button type="button" pButton icon="fa-close" class="ui-button pink-btn smallBtn" (click)="closeRegisterStatePanel();"></button>
+
+            </div>
+        </p-header>
+        <wsRegisterInfoComponent [inputWorkStation]="selectedWorkStation" [registerStateList]="registerStateList"
+            [editMode]="editMode" [loading]="showRegisterStateInfoPanel_Loading" (onClose)="onCloseRegisterInfoPanel($event)"
+            (onSave)="onSaveRegisterInfoPanel($event)"></wsRegisterInfoComponent>
+    </p-dialog>
+</div>
+<div *ngIf="showDocumentInfoPanel">
+    <p-dialog [(visible)]="showDocumentInfoPanel" [responsive]="true" [resizable]="false" width="650" [rtl]="true"
+        [modal]="true" [closable]="false" styleClass="ui-dialog">
+        <p-header>
+            {{shared.documentsLabel}}
+            <div style="float:left">
+                <span style="font-size:11px;">
+                    {{shared.editModeLabel}} :
+                    {{editMode ? shared.activeModeLabel:shared.inactiveModeLabel}}
+                </span>
+                <button type="button" pButton icon="fa-edit" class="ui-button turquoise-btn smallBtn" (click)="toggleEditMode();"></button>
+                <button type="button" pButton icon="fa-close" class="ui-button pink-btn smallBtn" (click)="closeDocumentPanel();"></button>
+
+            </div>
+        </p-header>
+        <wsDocumentInfoComponent [inputWorkStation]="selectedWorkStation" [documentTypeList]="docTypeList" (onClose)="onCloseDocumentInfoPanel($event)"
+            [loading]="showDocumentInfoPanel_Loading" (onSave)="onSaveDocumentInfoPanel($event)" (onShowImage)="onShowImage($event)"></wsDocumentInfoComponent>
+    </p-dialog>
+</div>
+
+<div *ngIf="displayFilterDialog">
+    <p-dialog [(visible)]="displayFilterDialog" responsive="true" [resizable]="false" width="500" [rtl]="true" [modal]="true"
+        [header]="shared.showFilter" styleClass="ui-dialog">
+        <wsFilterComponent [selectedJobCategory1]="filteredJobCategory1" [jobCategory1Map]="jobCategory1Map"
+            [selectedCode]="filteredCode" [selectedWorkStationTitle]="filteredWorkStationTitle" [selectedWorkType]="filteredWorkType"
+            [selectedWorkStationWorkerTelNumber]="filteredWorkStationWorkerTelNumber" [selectedOfficeRegisterNumber]="filteredOfficeRegisterNumber"
+            [selectedOfficeNationalCode]="filteredOfficeNationalCode" [selectedStoreLicenseNumber]="filteredStoreLicenseNumber"
+            [selectedCity]="filteredCity" [selectedRegion]="filteredRegion" [selectedArea]="filteredArea"
+            [selectedWorkStationRegisteredBy]="filteredWorkStationRegisteredBy" [selectedWorkStationVerifiedBy]="filteredWorkStationVerifiedBy"
+            [selectedVerfied]="filteredVerfied" 
+             (onSearch)="onSearchFilterPanel($event)"
+            (onError)="onErrorFilterPanel($event)"></wsFilterComponent>
+    </p-dialog>
+</div>
+<div *ngIf="displayWorkStationDetailDialog">
+    <p-dialog [(visible)]="displayWorkStationDetailDialog" responsive="true" [resizable]="false" showEffect="fade"
+        width="700" [rtl]="true" modal="modal" [header]="shared.workStationLabelFa" styleClass="ui-dialog">
+        <workStationViewComponent [loading]="displayWorkStationDetailDialog_Loading" [workStation]="workStation"
+            (onDisplayCatalogImageDialog)="onDisplayCatalogImageDialog($event)"></workStationViewComponent>
+    </p-dialog>
+</div>
+<div *ngIf="displayAddWorkerDialog">
+    <p-dialog [(visible)]="displayAddWorkerDialog" responsive="true" [resizable]="false" showEffect="fade" width="900"
+        [rtl]="true" modal="modal" [header]="shared.registerNewWorkerLabel" styleClass="ui-dialog">
+        <addWorkerComponent [inputWorkStation]="selectedWorkStation" [jobCategory1List]="specifiedJobCategory1List"
+            (onSave)="onAddWorker($event)"></addWorkerComponent>
+    </p-dialog>
+</div>
+<div *ngIf="displayEditWorkerDialog">
+    <p-dialog [(visible)]="displayEditWorkerDialog" responsive="true" [resizable]="false" showEffect="fade" width="900"
+        [rtl]="true" modal="modal" [header]="shared.editWorkerLabel" styleClass="ui-dialog">
+        <editWorkerComponent [inputWorkStation]="selectedWorkStation" [inputWorker]="selectedWorker" [jobCategory1List]="specifiedJobCategory1List"
+            (onSave)="onEditWorker($event)">
+        </editWorkerComponent>
+    </p-dialog>
+</div>
+<div *ngIf="displayChangleWorkstationOwner">
+    <p-dialog [(visible)]="displayChangleWorkstationOwner" responsive="true" [resizable]="false" showEffect="fade"
+        width="300" [rtl]="true" modal="modal" [header]="shared.changeWorkStationOwnerLabel" styleClass="ui-dialog">
+        <form [formGroup]="changeWSOwnerForm" (ngSubmit)="onSubmiChangeWSOwnerForm()">
+            <div *ngFor="let user of selectedWs_UserList">
+                <p-radioButton name="ownerCandidateList" [value]="user.id" label="{{user.firstName}} {{user.lastName}}"
+                    [(ngModel)]="selectedWSOwnerID" formControlName="isOwner"></p-radioButton>
+            </div>
+            <div align="center">
+                <button type="submit" pButton icon="fa-save" label="{{shared.saveLabel}}" class="ui-button turquoise-btn"></button>
+            </div>
+        </form>
+    </p-dialog>
+</div>
+<p-dialog [(visible)]="loading" responsive="true" [resizable]="false" width="300" [rtl]="true" [showHeader]="false"
+    styleClass="ui-dialog">
+    <loadingCmp [loading]="loading" spinnerStyleClass="spinnerClassBlack"></loadingCmp>
+</p-dialog>
+<p-confirmDialog header="{{shared.confirmHeader}}" width="425" rtl="true" #cd>
+    <p-footer>
+        <button type="button" pButton icon="fa-close" [label]="shared.noLabel" (click)="cd.reject()" style="margin-right: 30%;"></button>
+        <button type="button" pButton icon="fa-check" [label]="shared.yesLabel" (click)="cd.accept()"></button>
+    </p-footer>
+</p-confirmDialog>

@@ -1,0 +1,67 @@
+<p-table [value]="selectedTransactionList">
+
+  <ng-template pTemplate="header">
+
+    <tr>
+      <th style="width:5%;padding: 0px!important"></th>
+      <th style="width:10%;padding: 0px!important">{{shared.amountLabel}}</th>
+      <th style="width:15%;padding: 0px!important">{{shared.paymentMethodLabel}}</th>
+      <th style="width:15%;padding: 0px!important">{{shared.trackingCodeLabel}}</th>
+      <th style="width:15%;padding: 0px!important">{{shared.creditAfterPayment}}</th>
+      <th style="width:15%;padding: 0px!important">{{shared.typeLabel}}</th>
+      <th style="width:25%;padding: 0px!important">{{shared.registerTimeLabel}}</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-transaction>
+    <tr>
+      <td>
+        <div *ngIf="transaction.inc">
+          <i class="fa fa-plus"></i>
+        </div>
+        <div *ngIf="!transaction.inc">
+          <i class="fa fa-minus"></i>
+        </div>
+      </td>
+      <td>
+        <div style="float:left">
+          {{transaction.amount | currency:'AFN':''}}
+        </div>
+      </td>
+
+      <td>
+        <div *ngIf="transaction.cash; else elseBlock">
+          {{shared.cacheLabel}}
+        </div>
+        <ng-template #elseBlock>
+          {{shared.withCreditLabel}}
+        </ng-template>
+      </td>
+      <td>
+        {{transaction.trackingCode}}
+      </td>
+      <td>
+        <div style="float:left">
+          {{transaction.balance | currency:'AFN':''}}
+        </div>
+      </td>
+      <td>
+        {{transaction.transactionType}}
+      </td>
+      <td>
+        <div style="direction: ltr">
+          {{transaction.registerTime}}
+        </div>
+      </td>
+
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="emptymessage">
+    <tr>
+      <td [attr.colspan]="6">
+        {{shared.emptyListMsg}}
+      </td>
+    </tr>
+  </ng-template>
+
+</p-table>

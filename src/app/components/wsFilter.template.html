@@ -1,0 +1,233 @@
+<p-growl [value]="msgs" life="3000"></p-growl>
+
+<form [formGroup]="filterForm" (ngSubmit)="onSubmitFilterform()">
+    <p-accordion>
+        <p-accordionTab id="filterWorkStationJCID" [header]="shared.jobDataLabel" [selected]="true">
+            <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-4">
+                        <label for="storeLicense">
+                                <i class="fa fa-info-circle font-icon-style"></i>
+                                    {{shared.bizCodeLabel}}
+                                </label>
+                    </div>
+                    <div class="ui-grid-col-8">
+                        <input pInputText id="bizCodeID" [(ngModel)]="selectedCode" type="text" size="30" formControlName="code"
+                            class="width100p latinFontStyle" />
+                    </div>
+                </div>
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-4">
+                        <label for="jcF1ID">
+                                    <i class="fa fa-dot-circle-o font-icon-style"></i>
+                                    {{shared.job_Category1Label}}
+                                </label>
+                    </div>
+                    <div class="ui-grid-col-8">
+                        <p-dropdown id="jcF1ID" [(ngModel)]="selectedJobCategory1" [options]="basicData.jobCategory1List" (onChange)="onJobCategory1Change($event)"
+                            [style]="{'width':'100%'}" formControlName="jobCategory1FormCntrl" filter="filter"></p-dropdown>
+                    </div>
+                </div>
+
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-4">
+                        <label for="filterWorkStationNameID">
+                                     <i class="fa fa-info-circle font-icon-style"></i>
+                                    {{shared.workStationLabelFa}}                                    
+                                </label>
+                    </div>
+                    <div class="ui-grid-col-8">
+                        <input pInputText id="filterWorkStationNameID" [(ngModel)]="selectedWorkStationTitle" type="text" size="30" formControlName="title"
+                            class="width100p" />
+                    </div>
+                </div>
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-4">
+                        <label for="filterWorkStationTypeID">
+                                     <i class="fa fa-info-circle font-icon-style"></i>
+                                    {{shared.workTypeLabelFa}}
+                                </label>
+                    </div>
+                    <div class="ui-grid-col-8">
+                        <p-dropdown id="filterWorkStationTypeID" [(ngModel)]="selectedWorkType" [options]="basicData.filterWorkTypeList" (onChange)="onWorkTypeChange($event)"
+                            formControlName="workStationType" [style]="{'width':'100%'}"></p-dropdown>
+                    </div>
+                </div>
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-4">
+                        <label for="storeLicense">
+                                <i class="fa fa-info-circle font-icon-style"></i>
+                                    {{shared.telLabel}}
+                                </label>
+                    </div>
+                    <div class="ui-grid-col-8">
+                        <input pInputText id="telNumberID" [(ngModel)]="selectedWorkStationWorkerTelNumber" type="text" size="30" formControlName="phoneNumber"
+                            class="width100p ltrDirection" />
+                    </div>
+                </div>
+                <div class="ui-grid-row" *ngIf="showCompanyPanel">
+                    <div class="ui-grid-col-5">
+                        <label for="officeNCode">
+                                    <i class="fa fa-info-circle font-icon-style"></i>
+                                    {{shared.officeNationalCodeLabel}}
+                                </label>
+                    </div>
+                    <div class="ui-grid-col-7">
+                        <input pInputText id="officeNCode" [(ngModel)]="selectedOfficeNationalCode" type="text" size="30" formControlName="officeNationalCode"
+                            class="width100p ltrDirection" />
+                    </div>
+                </div>
+                <div class="ui-grid-row" *ngIf="showCompanyPanel">
+                    <div class="ui-grid-col-5">
+                        <label for="officeRegisterCode">
+                                    <i class="fa fa-info-circle font-icon-style"></i>
+                                    {{shared.officeRegisterCodeLabel}}
+                                </label>
+                    </div>
+                    <div class="ui-grid-col-7">
+                        <input pInputText id="officeRegisterCode" [(ngModel)]="selectedOfficeRegisterNumber" type="text" size="30" formControlName="officeRegisterCode"
+                            class="width100p ltrDirection" />
+                    </div>
+                </div>
+                <div class="ui-grid-row" *ngIf="showStorePanel">
+                    <div class="ui-grid-col-4">
+                        <label for="storeLicense">
+                                <i class="fa fa-info-circle font-icon-style"></i>
+                                    {{shared.storeLicenseLabel}}
+                                </label>
+                    </div>
+                    <div class="ui-grid-col-8">
+                        <input pInputText id="storeLicense" [(ngModel)]="selectedStoreLicenseNumber" type="text" size="30" formControlName="storeLicenseNumber"
+                            class="width100p ltrDirection" />
+                    </div>
+                </div>
+
+            </div>
+        </p-accordionTab>
+
+        <p-accordionTab id="filterWorkStationLocationID" [header]="shared.locationDataLabel">
+            <div formGroupName="location" class="ui-grid ui-grid-responsive  ui-grid-pad">
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-4">
+                        <label for="feprovinceID">
+                                    <i class="fa fa-dot-circle-o font-icon-style"></i>
+                                    {{shared.provinceLabel}}
+                                </label>
+                    </div>
+                    <div class="ui-grid-col-8">
+                        <p-dropdown id="feprovinceID" [(ngModel)]="selectedProvinceID" [options]="basicData.chooseProvinceList" (onChange)="onProvinceChange($event)"
+                            [style]="{'width':'100%'}" formControlName="province" filter="filter"></p-dropdown>
+                    </div>
+
+                </div>
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-4">
+                        <label for="fetownshipID">
+                                    <i class="fa fa-dot-circle-o font-icon-style"></i>
+                                    {{shared.townshipLabel}}
+                                </label>
+                    </div>
+                    <div class="ui-grid-col-8">
+                        <p-dropdown id="fetownshipID" [(ngModel)]="selectedTownshipID" [options]="townshipList" (onChange)="onTownshipChange($event)"
+                            [style]="{'width':'100%'}" formControlName="township" filter="filter"></p-dropdown>
+                    </div>
+
+                </div>
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-4">
+                        <label for="fecityID">
+                                    <i class="fa fa-dot-circle-o font-icon-style"></i>
+                                    {{shared.cityLabel}}
+                                </label>
+                    </div>
+                    <div class="ui-grid-col-8">
+                        <p-dropdown id="fecityID" [(ngModel)]="selectedCity" [options]="cityList" (onChange)="onCityChange($event)" [style]="{'width':'100%'}"
+                            formControlName="city" filter="filter"></p-dropdown>
+                    </div>
+                </div>
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-4">
+                        <label for="feregionID">
+                                    <i class="fa fa-dot-circle-o font-icon-style"></i>
+                                    {{shared.regionLabel}}
+                                </label>
+                    </div>
+                    <div class="ui-grid-col-8">
+                        <p-dropdown id="eregionID" [(ngModel)]="selectedRegionID" [options]="regionList" (onChange)="onRegionChange($event)" [style]="{'width':'100%'}"
+                            formControlName="region" filter="filter"></p-dropdown>
+                    </div>
+                </div>
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-4">
+                        <label for="feareaID">
+                                    <i class="fa fa-dot-circle-o font-icon-style"></i>
+                                    {{shared.areaLabel}}
+                                </label>
+                    </div>
+                    <div class="ui-grid-col-8">
+                        <p-dropdown id="feareaID" [(ngModel)]="selectedArea" (onChange)="onAreaChange($event)" [options]="areaList" [style]="{'width':'100%'}"
+                            formControlName="area" filter="filter"></p-dropdown>
+                    </div>
+                </div>
+            </div>
+        </p-accordionTab>
+
+        <p-accordionTab id="filterWorkStationRegisterID" [header]="shared.registerDataLabel">
+            <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-4">
+                        <label for="firstName">
+                                     <i class="fa fa-info-circle font-icon-style"></i>
+                                    {{shared.registerWsUserName}}                                   
+                                </label>
+                    </div>
+                    <div class="ui-grid-col-8">
+                        <p-dropdown id="userListID" [(ngModel)]="selectedWorkStationRegisteredBy" [options]="basicData.usersList" [style]="{'width':'100%'}"
+                            formControlName="registerById" filter="filter"></p-dropdown>
+                    </div>
+                </div>
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-4">
+                        <label for="firstName">
+                                     <i class="fa fa-info-circle font-icon-style"></i>
+                                    {{shared.verifierWsUserName}}                                   
+                                </label>
+                    </div>
+                    <div class="ui-grid-col-8">
+                        <p-dropdown id="userListID" [(ngModel)]="selectedWorkStationVerifiedBy" [options]="basicData.usersList" [style]="{'width':'100%'}"
+                            formControlName="verifyById" filter="filter"></p-dropdown>
+                    </div>
+
+                </div>
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-4">
+                        <label for="firstName">
+                                     <i class="fa fa-info-circle font-icon-style"></i>
+                                    {{shared.state}}                                   
+                                </label>
+                    </div>
+                    <div class="ui-grid-col-8">
+                        <div class="ui-g-6">
+                            <p-radioButton name="verifyGroup" value="0" [label]="shared.unverifiedLabel" [(ngModel)]="selectedVerfied" formControlName="verified"></p-radioButton>
+                        </div>
+                        <div class="ui-g-6">
+                            <p-radioButton name="verifyGroup" value="1" [label]="shared.verifiedLabel" [(ngModel)]="selectedVerfied" formControlName="verified"></p-radioButton>
+                        </div>
+
+                    </div>
+                </div>
+
+
+            </div>
+        </p-accordionTab>
+
+    </p-accordion>
+    <div align="center" style="padding:4px">
+        <button type="submit" pButton icon="fa-save" label="{{shared.showFilter}}" class="ui-button turquoise-btn"></button>
+    </div>
+
+
+</form>
+<p-dialog [(visible)]="loading" responsive="true" [resizable]="false" width="300" [rtl]="true" [showHeader]="false" styleClass="ui-dialog">
+    <loadingCmp [loading]="loading" spinnerStyleClass="spinnerClassBlack"></loadingCmp>
+</p-dialog>

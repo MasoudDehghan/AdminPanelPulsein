@@ -1,0 +1,190 @@
+<p-growl [value]="hmsgs" life="6000"></p-growl>
+<div *ngIf="loading;else content">
+    <p-dialog [(visible)]="loading" responsive="true" [resizable]="false" width="300" [rtl]="true" [showHeader]="false"
+        styleClass="ui-dialog">
+        <loadingCmp [loading]="loading" spinnerStyleClass="spinnerClassBlack"></loadingCmp>
+    </p-dialog>
+</div>
+<ng-template #content>
+    <div class="ui-g ui-g-pad dashboard">
+        <div class="ui-g-12">
+            <p-toolbar styleClass="toolbarstyle">
+                <div class="ui-toolbar-group-right headerLabel">
+                    <img src="../assets/images/review.png" style="vertical-align: middle;" /> {{activeLabel}}
+                </div>
+                <div class="ui-toolbar-group-left">
+                    <button type="button" pButton icon="fa fa-refresh" (click)="refreshCurrentDashboard()" [pTooltip]="shared.refreshLabel"></button>
+                </div>
+            </p-toolbar>
+        </div>
+        <div class="ui-g-12">
+            <div class="ui-g-12 ui-md-6 ui-lg-4">
+                <div class="ui-g card ui-shadow-2 overview-box request-box-10" (click)="onClickAll()">
+                    <div class="ui-g-4 ">
+                        <i class="fa fa-bolt "></i>
+                    </div>
+                    <div class="ui-g-8 ">
+                        <span class="overview-box-count ">{{allReqCounter}}</span>
+                        <span class="overview-box-name ">{{allRequestLabel}}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="ui-g-12 ui-md-6 ui-lg-4" *ngIf="!showFinishedRequests">
+                <div class="ui-g card ui-shadow-2 overview-box request-box-1 " (click)="onClickWait4SuggestRequest()">
+                    <div class="ui-g-4 ">
+                        <i class="fa fa-bolt "></i>
+                    </div>
+                    <div class="ui-g-8 ">
+                        <span class="overview-box-count ">{{stat.reqWait4Suggest}}</span>
+                        <span class="overview-box-name ">{{shared.reqWait4Suggest}}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="ui-g-12 ui-md-6 ui-lg-4 " *ngIf="!showFinishedRequests">
+                <div class="ui-g card ui-shadow-2 overview-box request-box-2 " (click)="onClickSuggestFinishedRequest()">
+                    <div class="ui-g-4 ">
+                        <i class="fa fa-bolt "></i>
+                    </div>
+                    <div class="ui-g-8 ">
+                        <span class="overview-box-count ">{{stat.reqSuggestFinished}}</span>
+                        <span class="overview-box-name ">{{shared.reqSuggestFinished}}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ui-g-12 ui-md-6 ui-lg-4 " *ngIf="!showFinishedRequests">
+                <div class="ui-g card ui-shadow-2 overview-box request-box-4" (click)="onClickWait4DoAckRequest()">
+                    <div class="ui-g-4 ">
+                        <i class="fa fa-bolt"></i>
+                    </div>
+                    <div class="ui-g-8 ">
+                        <span class="overview-box-count ">{{stat.reqWait4DoAck}}</span>
+                        <span class="overview-box-name ">{{shared.reqWait4DoAck}}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ui-g-12 ui-md-6 ui-lg-4 " *ngIf="!showFinishedRequests">
+                <div class="ui-g card ui-shadow-2 overview-box request-box-6" (click)="onClickInProgressRequest()">
+                    <div class="ui-g-4 ">
+                        <i class="fa fa-bolt "></i>
+                    </div>
+                    <div class="ui-g-8 ">
+
+                        <span class="overview-box-namex ">{{shared.reqInProgress}}</span>
+                        <span class="overview-box-countx ">{{stat.reqInProgress}}</span>
+                        <hr />
+                        <span class="overview-box-namex ">{{shared.expiredLabel}}</span>
+                        <span class="overview-box-countx ">{{stat.reqInProgressExpired}}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="ui-g-12 ui-md-6 ui-lg-4 " *ngIf="!showFinishedRequests">
+                <div class="ui-g card ui-shadow-2 overview-box request-box-7">
+                    <div class="ui-g-4 ">
+                        <i class="fa fa-bolt "></i>
+                    </div>
+                    <div class="ui-g-8">
+                        <div class="ui-g ui-g-nopad">
+                            <div class="ui-g-12 ui-g-nopad" (click)="onClickWait4PaymentRequest()">
+                                <span class="overview-box-namex ">{{shared.reqWait4Payment}}</span>
+                                <span class="overview-box-countx ">{{stat.reqWait4Payment}}</span>
+                                <hr />
+                            </div>
+                            <div class="ui-g-12 ui-g-nopad" (click)="onClickWait4PaymentRequestExpired()">
+                                <span class="overview-box-namex ">{{shared.expiredLabel}}</span>
+                                <span class="overview-box-countx ">{{stat.reqWait4PaymentExpired}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ui-g-12 ui-md-6 ui-lg-4 " *ngIf="!showFinishedRequests">
+                <div class="ui-g card ui-shadow-2 overview-box request-box-8" (click)="onClickWait4PollRequest()">
+                    <div class="ui-g-4 ">
+                        <i class="fa fa-bolt "></i>
+                    </div>
+                    <div class="ui-g-8 ">
+                        <span class="overview-box-count ">{{stat.reqWait4Nazarsanji}}</span>
+                        <span class="overview-box-name ">{{shared.reqWait4Nazarsanji}}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="ui-g-12 ui-md-6 ui-lg-4 " *ngIf="showFinishedRequests">
+                <div class="ui-g card ui-shadow-2 overview-box request-box-1" (click)="onClickFinishedRequest()">
+                    <div class="ui-g-4 ">
+                        <i class="fa fa-bolt "></i>
+                    </div>
+                    <div class="ui-g-8 ">
+                        <span class="overview-box-namex ">{{shared.reqFinished}}</span>
+                        <span class="overview-box-countx ">{{stat.reqFinished}}</span>
+                        <hr />
+                        <span class="overview-box-namex ">{{shared.todayLabel}}</span>
+                        <span class="overview-box-countx ">{{stat.reqFinishedToday}}</span>
+                    </div>
+
+                </div>
+            </div>
+            <div class="ui-g-12 ui-md-6 ui-lg-4" *ngIf="showFinishedRequests">
+                <div class="ui-g card ui-shadow-2 overview-box request-box-2" (click)="onClickCanceledCRequest()">
+                    <div class="ui-g-4 ">
+                        <i class="fa fa-bolt "></i>
+                    </div>
+                    <div class="ui-g-8 ">
+                        <span class="overview-box-namex ">{{shared.reqCancelByC}}</span>
+                        <span class="overview-box-countx ">{{stat.reqCanceledC}}</span>
+                        <hr />
+                        <span class="overview-box-namex ">{{shared.todayLabel}}</span>
+                        <span class="overview-box-countx ">{{stat.reqCanceledTodayC}}</span>
+                    </div>
+
+                </div>
+            </div>
+            <div class="ui-g-12 ui-md-6 ui-lg-4 " *ngIf="showFinishedRequests">
+                <div class="ui-g card ui-shadow-2 overview-box request-box-3" (click)="onClickCanceledWRequest()">
+                    <div class="ui-g-4 ">
+                        <i class="fa fa-bolt "></i>
+                    </div>
+                    <div class="ui-g-8 ">
+                        <span class="overview-box-namex ">{{shared.reqCancelByW}}</span>
+                        <span class="overview-box-countx ">{{stat.reqCanceledW}}</span>
+                        <hr />
+                        <span class="overview-box-namex ">{{shared.todayLabel}}</span>
+                        <span class="overview-box-countx ">{{stat.reqCanceledTodayW}}</span>
+                    </div>
+
+                </div>
+            </div>
+            <div class="ui-g-12 ui-md-6 ui-lg-4 " *ngIf="showFinishedRequests">
+                <div class="ui-g card ui-shadow-2 overview-box request-box-4" (click)="onClickCanceledORequest()">
+                    <div class="ui-g-4 ">
+                        <i class="fa fa-bolt "></i>
+                    </div>
+                    <div class="ui-g-8 ">
+                        <span class="overview-box-namex ">{{shared.reqCancelByO}}</span>
+                        <span class="overview-box-countx ">{{stat.reqCanceledO}}</span>
+                        <hr />
+                        <span class="overview-box-namex ">{{shared.todayLabel}}</span>
+                        <span class="overview-box-countx ">{{stat.reqCanceledTodayO}}</span>
+                    </div>
+
+                </div>
+            </div>
+            <div class="ui-g-12 ui-md-6 ui-lg-4 " *ngIf="showFinishedRequests">
+                <div class="ui-g card ui-shadow-2 overview-box request-box-5" (click)="onClickExpiredRequest()">
+                    <div class="ui-g-4 ">
+                        <i class="fa fa-bolt "></i>
+                    </div>
+                    <div class="ui-g-8 ">
+                        <span class="overview-box-namex ">{{shared.expiredLabel}}</span>
+                        <span class="overview-box-countx ">{{stat.reqExpire}}</span>
+                        <hr />
+                        <span class="overview-box-namex ">{{shared.todayLabel}}</span>
+                        <span class="overview-box-countx ">{{stat.reqExpireToday}}</span>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>

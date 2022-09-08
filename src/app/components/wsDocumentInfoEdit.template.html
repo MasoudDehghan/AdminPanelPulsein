@@ -1,0 +1,155 @@
+<p-growl [value]="msgs" life="3000"></p-growl>
+<loadingCmp [loading]="loading" spinnerStyleClass="spinnerClassBlack"></loadingCmp>
+
+<div *ngIf="!loading" class="ui-rtl" dir="rtl">
+    <p-panel [header]="shared.docListLabel">
+        <p-table [value]="workStationDocuments" [rows]="4"
+         [paginator]="true" [alwaysShowPaginator]="false" [pageLinks]="5"
+         [loading]="inLoading"
+         (onEditInit)="onEditInit($event)"
+         (onEditComplete)="onEditComplete($event)"
+         (onEditCancel)="onEditCancel($event)" #table>
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="width:30%">{{shared.nameLabel}}</th>
+                    <th style="width:35%">{{shared.typeLabel}}</th>
+                    <th style="width:15%">{{shared.state}}</th>
+                    <th style="width:10%">{{shared.showLabel}}</th>
+                    <th style="width:10%">{{shared.delLabelFa}}</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-doc>
+                <tr>
+                    <td [pEditableColumn]="doc" [pEditableColumnField]="'info'">
+                        <p-cellEditor>
+                            <ng-template pTemplate="input">
+                                <input type="text" [(ngModel)]="doc.info">
+                            </ng-template>
+                            <ng-template pTemplate="output">
+                                {{doc.info}}
+                            </ng-template>
+                        </p-cellEditor>
+
+                    </td>
+                    <td [pEditableColumn]="doc" [pEditableColumnField]="'documentType'" style="width: 50%">
+                        <p-cellEditor>
+                            <ng-template pTemplate="input">
+                                <p-dropdown id="docTypeID" [(ngModel)]="doc.documentType" [options]="documentTypeList" [style]="{'width':'100%'}" required="true"
+                                    appendTo="body">
+                                </p-dropdown>
+                            </ng-template>
+                            <ng-template pTemplate="output">
+                                {{doc.documentType.name}}
+                            </ng-template>
+                        </p-cellEditor>
+
+
+                    </td>
+                    <td>
+                        <div *ngIf="doc.verifyFlag==0">
+                            {{shared.waitToVerifyLabel}}
+                        </div>
+                        <div *ngIf="doc.verifyFlag==1">
+                            {{shared.acceptLabel}}
+                        </div>
+                        <div *ngIf="doc.verifyFlag==2">
+                            {{shared.rejectLabel}}
+                        </div>
+                    </td>
+                    <td>
+                        <div align="center">
+                            <button type="button" class="green-btn" pButton icon="fa-file-image-o" (click)="selectImage(doc)"></button>
+                        </div>
+                    </td>
+                    <td>
+                        <div align="center">
+                            <button type="button" pButton icon="fa-close" (click)="removeDocument(doc)" class="ui-button pink-btn" [pTooltip]="shared.delLabelFa"></button>
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td [attr.colspan]="5">
+                        {{shared.emptyListMsg}}
+                    </td>
+                </tr>
+            </ng-template>
+
+        </p-table>
+        <p-footer>
+            <div align="center" style="direction: rtl">
+                    <i class="fa fa-info-circle font-icon-style">
+                           <span style="direction: rtl"> {{shared.editDocMsg}}</span>   
+                    </i>
+
+
+            </div>
+
+        </p-footer>
+    </p-panel>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <p-panel [header]="shared.registerNewDoc" id="docPanelID">
+            <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-4">
+                        <label for="titleID">
+                            <i class="fa fa-info-circle font-icon-style"></i>
+                            {{shared.titleLabel}}</label>
+                    </div>
+                    <div class="ui-grid-col-8">
+                        <input pInputText id="titleID" [(ngModel)]="selectedDocumentInfo" formControlName="name" class="width100p" />
+                    </div>
+                </div>
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-12">
+                        <div class="ui-message ui-messages-error ui-corner-all" *ngIf="form.controls['name'].touched && form.controls['name'].hasError('required') ">
+                            {{shared.docValidMsg}}
+                        </div>
+                        <div class="ui-message ui-messages-error ui-corner-all" *ngIf="form.controls['name'].touched && form.controls['name'].hasError('minlength') ">
+                            {{shared.docinValidMsg}}
+                        </div>
+
+                    </div>
+                </div>
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-4">
+                        <label for="typeID">
+                            <i class="fa fa-info-circle font-icon-style"></i>
+                            {{shared.typeLabel}}</label>
+                    </div>
+                    <div class="ui-grid-col-8">
+                        <p-dropdown id="typeID" [(ngModel)]="selectedDocumentType" [options]="documentTypeList" [style]="{'width':'100%'}" required="true"
+                            formControlName="type"></p-dropdown>
+                    </div>
+                </div>
+
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-4">
+                        <label for="uploadID">
+                            <i class="fa fa-info-circle font-icon-style"></i>
+                            {{shared.uploadImageLabel}}</label>
+                    </div>
+                    <div class="ui-grid-col-8">
+                        <p-fileUpload name="demo" [url]="uploadURL" (onUpload)="onUpload($event)" accept="image/*" [invalidFileSizeMessageSummary]="shared.invalidFileSize"
+                            [invalidFileSizeMessageDetail]="shared.invalidFileSizeMessageDetail" [chooseLabel]="shared.chooseFileLabel"
+                            [uploadLabel]="shared.uploadLabel" [cancelLabel]="shared.cancelLabel" [maxFileSize]="shared.maximumFileSize">
+                            <ng-template pTemplate="content">
+                                <ul *ngIf="uploadedFiles?.length" style="font-family:Arial">
+                                    <li *ngFor="let file of uploadedFiles">{{file.name}} - {{file.size}} {{shared.byteLabel}}</li>
+                                </ul>
+                            </ng-template>
+                        </p-fileUpload>
+                    </div>
+                </div>
+            </div>
+        </p-panel>
+        <div align="center">
+            <div>
+                <button type="submit" pButton icon="fa fa-plus-circle" label="{{shared.saveLabel}}" class="ui-button green-btn saveBtnStyle"
+                    [disabled]="!form.valid"></button>
+            </div>
+        </div>
+    </form>
+</div>

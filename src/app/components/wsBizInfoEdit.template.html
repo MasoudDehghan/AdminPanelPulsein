@@ -1,0 +1,253 @@
+<p-growl [value]="msgs" life="3000"></p-growl>
+<loadingCmp [loading]="loading" spinnerStyleClass="spinnerClassBlack"></loadingCmp>
+<div *ngIf="!loading">
+    <form [formGroup]="bizForm" (ngSubmit)="onSubmitBizform()">
+        <p-panel id="bizFormPanelID" [style]="{'width':'95%'}">
+            <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+                <div class="ui-grid-row">
+                    <div class="{{editMode ? 'ui-grid-col-4':'ui-grid-col-5'}}">
+                        <label for="workStationName">
+                                <i class="fa fa-info-circle font-icon-style"></i>
+                                {{shared.bizCodeLabel}}
+                            </label>
+                    </div>
+                    <div class="ui-grid-col-7 textPlaceHolderStyle latinFontStyle">
+                        {{selectedWorkStation?.code}}
+                    </div>
+                </div>
+                <div class="ui-grid-row">
+                    <div class="{{editMode ? 'ui-grid-col-4':'ui-grid-col-5'}}">
+                        <label for="workStationName">
+                                <i class="fa fa-info-circle font-icon-style"></i>
+                                {{shared.workStationLabelFa}}
+                              <span  *ngIf="editMode"  style="color:red;">*</span>
+                            </label>
+                    </div>
+                    <div *ngIf="!editMode" class="ui-grid-col-7 textPlaceHolderStyle">
+                        {{selectedWorkStation?.title}}
+                    </div>
+                    <div *ngIf="editMode" class="ui-grid-col-8">
+                        <input pInputText id="workStationName" [(ngModel)]="selectedWorkStation.title" type="text" size="30" formControlName="title"
+                            class="width100p" />
+                    </div>
+
+                </div>
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-12">
+                        <div class="ui-message ui-messages-error ui-corner-all" *ngIf="bizForm.controls['title'].touched && (bizForm.controls['title'].hasError('required') || bizForm.controls['title'].hasError('minlength') || bizForm.controls['title'].hasError('maxlength'))">
+                            {{shared.InnerCode_InvalidTitleMsg}}
+                        </div>
+                        <div class="ui-grid-col-12 ui-message ui-messages-error ui-corner-all" *ngIf="bizForm.controls['title'].touched && bizForm.controls['title'].hasError('duplicated')">
+                            {{shared.workstationTitleDuplicatedMsg}}
+                        </div>
+                    </div>
+                </div>
+                <div class="ui-grid-row">
+                    <div class="{{editMode ? 'ui-grid-col-4':'ui-grid-col-5'}}">
+                        <label for="workStationTypeID"> 
+                            <i class="fa fa-info-circle font-icon-style"></i>                                    
+                            {{shared.workTypeLabelFa}}
+                            <span *ngIf="editMode" style="color:red;">*</span>                                   
+                        </label>
+                    </div>
+                    <div *ngIf="editMode" class="ui-grid-col-8">
+                        <p-dropdown id="workStationTypeID" [(ngModel)]="selectedWorkStation.workType" [options]="workTypeList" (onChange)="onEditWorkTypeChange($event)"
+                            formControlName="workStationType" [style]="{'width':'100%'}"></p-dropdown>
+                    </div>
+                    <div *ngIf="!editMode" class="ui-grid-col-7 textPlaceHolderStyle">
+                        {{selectedWorkStation?.workType?.name}}
+                    </div>
+                </div>
+                <div class="ui-grid-row">
+                    <div class="{{editMode ? 'ui-grid-col-4':'ui-grid-col-5'}}">
+                        <label for="eaboutID">
+                          <i class="fa fa-dot-circle-o font-icon-style"></i>
+                                    {{shared.aboutJobLabel}}
+                                </label>
+                    </div>
+                    <div *ngIf="editMode" class="ui-grid-col-8">
+                        <textarea pInputTextarea id="eaboutID" [(ngModel)]="selectedWorkStation.info" formControlName="aboutWorkStation" class="width100p"
+                            rows="3"></textarea>
+                    </div>
+                    <div *ngIf="!editMode" class="ui-grid-col-7 textPlaceHolderStyle">
+                        {{selectedWorkStation?.info}}
+                    </div>
+                </div>
+            </div>
+        </p-panel>
+        <p-panel [header]="shared.companyDataLabel" [style]="{'width':'95%'}" *ngIf="showCompanyPanel">
+            <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+                <div class="ui-grid-row">
+                    <div class="{{editMode ? 'ui-grid-col-4':'ui-grid-col-5'}}">
+                        <label for="eofficeName">
+                                    <i class="fa fa-building font-icon-style"></i>
+                                    {{shared.officeNameLabel}}
+                                    <span *ngIf="editMode" style="color:red;">*</span>
+                                </label>
+                    </div>
+                    <div *ngIf="editMode" class="ui-grid-col-8">
+                        <input pInputText id="eofficeName" [(ngModel)]="selectedWorkStation.name" type="text" size="30" formControlName="officeName"
+                            class="width100p" />
+                    </div>
+                    <div *ngIf="!editMode" class="ui-grid-col-7 textPlaceHolderStyle">
+                        {{selectedWorkStation?.name}}
+                    </div>
+                </div>
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-12">
+                        <div class="ui-message ui-messages-error ui-corner-all" *ngIf="bizForm.controls['officeName'].touched && bizForm.controls['officeName'].hasError('required')">
+                            {{shared.InnerCode_InvalidNameMsg}}
+                        </div>
+                    </div>
+                </div>
+                <div class="ui-grid-row">
+                    <div class="{{editMode ? 'ui-grid-col-4':'ui-grid-col-5'}}">
+                        <label for="eofficeRegisterCode">
+                                    <i class="fa fa-info-circle font-icon-style"></i>
+                                    {{shared.officeRegisterCodeLabel}}
+                                </label>
+                    </div>
+                    <div *ngIf="editMode" class="ui-grid-col-8">
+                        <input pInputText id="eofficeRegisterCode" [(ngModel)]="selectedWorkStation.officeRegisterNumber" type="text" size="30" formControlName="officeRegisterCode"
+                            class="width100p" />
+                    </div>
+                    <div *ngIf="!editMode" class="ui-grid-col-7 textPlaceHolderStyle">
+                        {{selectedWorkStation?.officeRegisterNumber}}
+                    </div>
+                </div>
+                <div class="ui-grid-row">
+                    <div class="{{editMode ? 'ui-grid-col-4':'ui-grid-col-5'}}">
+                        <label for="eofficeNCode">
+                                    <i class="fa fa-info-circle font-icon-style"></i>
+                                    {{shared.officeNationalCodeLabel}}
+                                </label>
+                    </div>
+                    <div *ngIf="editMode" class="ui-grid-col-8">
+                        <input pInputText id="eofficeNCode" [(ngModel)]="selectedWorkStation.officeNationalCode" type="text" size="30" formControlName="officeNationalCode"
+                            class="width100p ltrDirection" />
+                    </div>
+                    <div *ngIf="!editMode" class="ui-grid-col-7 textPlaceHolderStyle">
+                        {{selectedWorkStation?.officeNationalCode}}
+                    </div>
+                </div>
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-12">
+                        <div class="ui-message ui-messages-error ui-corner-all" *ngIf="bizForm.controls['officeNationalCode'].touched &&  bizForm.controls['officeNationalCode'].hasError('minlength')">
+                            {{shared.InnerCode_InvalidOfficeNationalCodeMsg}}
+                        </div>
+                    </div>
+                </div>
+                <div class="ui-grid-row">
+                    <div class="{{editMode ? 'ui-grid-col-4':'ui-grid-col-5'}}">
+                        <label for="officeRegisteDateID">
+                                    <i class="fa fa-calendar font-icon-style"></i>
+                                    {{shared.officeRegisterDateLabel}}
+                                </label>
+                    </div>
+                    <div *ngIf="editMode" class="ui-grid-col-7">
+                            <dp-date-picker [(ngModel)]="companyRegisterDate" mode="daytime" [config]="datePickerConfig" theme="dp-material" [ngModelOptions]="{standalone: true}">
+                            </dp-date-picker>
+                    </div>
+                    <div *ngIf="!editMode" class="ui-grid-col-7 textPlaceHolderStyle ltrDirection" >
+                        {{selectedWorkStation?.officeRegisterDateS}}
+                    </div>
+                </div>
+            </div>
+        </p-panel>
+        <p-panel [header]="shared.storeDataLabel" [style]="{'width':'95%'}" *ngIf="showStorePanel">
+            <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+                <div class="ui-grid-row">
+                    <div class="{{editMode ? 'ui-grid-col-4':'ui-grid-col-5'}}">
+                        <label for="estoreName">
+                                    <i class="fa fa-building font-icon-style"></i>
+                                    {{shared.storeNameLabel}}
+                                    <span *ngIf="editMode" style="color:red;">*</span>
+                                </label>
+                    </div>
+                    <div *ngIf="editMode" class="ui-grid-col-8">
+                        <input pInputText id="estoreName" [(ngModel)]="selectedWorkStation.name" type="text" size="30" formControlName="storeName"
+                            class="width100p  ltrDirection" />
+                    </div>
+                    <div *ngIf="!editMode" class="ui-grid-col-7 textPlaceHolderStyle">
+                        {{selectedWorkStation?.name}}
+                    </div>
+                </div>
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-12">
+                        <div class="ui-message ui-messages-error ui-corner-all" *ngIf="bizForm.controls['storeName'].touched && bizForm.controls['storeName'].hasError('required')">
+                            {{shared.InnerCode_InvalidNameMsg}}
+                        </div>
+                    </div>
+                </div>
+                <div class="ui-grid-row">
+                    <div class="{{editMode ? 'ui-grid-col-4':'ui-grid-col-5'}}">
+                        <label for="estoreLicense">
+                                <i class="fa fa-info-circle font-icon-style"></i>
+                                    {{shared.storeLicenseLabel}}
+                                </label>
+                    </div>
+                    <div *ngIf="editMode" class="ui-grid-col-8">
+                        <input pInputText id="estoreLicense" [(ngModel)]="selectedWorkStation.storeLicenseNumber" type="text" size="30" formControlName="officeRegisterCode"
+                            class="width100p" />
+                    </div>
+                    <div *ngIf="!editMode" class="ui-grid-col-7 textPlaceHolderStyle">
+                        {{selectedWorkStation?.storeLicenseNumber}}
+                    </div>
+                </div>
+                <div class="ui-grid-row">
+                    <div class="{{editMode ? 'ui-grid-col-4':'ui-grid-col-6'}}">
+                        <label for="storeRegisterDate_input">
+                                    <i class="fa fa-calendar font-icon-style"></i>
+                                    {{shared.storeRegisterDateLabel}}
+                                </label>
+                    </div>
+                    <div *ngIf="editMode" class="ui-grid-col-7">
+                            <dp-date-picker [(ngModel)]="storeRegisterDate" mode="daytime" [config]="datePickerConfig" theme="dp-material" [ngModelOptions]="{standalone: true}">
+                            </dp-date-picker>
+                    </div>
+
+                    <div *ngIf="!editMode" class="ui-grid-col-6 textPlaceHolderStyle  ltrDirection" >
+                        {{selectedWorkStation?.storeLicenseDateS}}
+                    </div>
+                </div>
+            </div>
+        </p-panel>
+        <div *ngIf="selectedWorkStationCatalogImgs?.length>0">
+            <p-panel [header]="shared.imageCatalogLabel" [style]="{'width':'95%'}">
+                <p-dataGrid [value]="selectedWorkStationCatalogImgs">
+                    <ng-template let-catalogImage pTemplate="item">
+                        <div style="padding:3px" class="ui-g-12 ui-md-3">
+                            <p-panel [header]="catalogImage.title" [style]="{'text-align':'center'}">
+                                <a class="wsCatalogImageStyle" (click)="selectCatalogImage(catalogImage)"><img src="{{catalogImage.source}}" style="width:50px;height:50px"></a>
+                                <hr class="ui-widget-content" style="border-top:0">
+                                <i class="fa fa-search" (click)="selectCatalogImage(catalogImage)" style="cursor:pointer"></i>
+                                <i class="fa fa-remove" (click)="deleteCatalogImage(catalogImage)" style="cursor:pointer"></i>
+                            </p-panel>
+                        </div>
+                    </ng-template>
+                </p-dataGrid>
+            </p-panel>
+        </div>
+        <div *ngIf="editMode">
+            <p-panel [header]="shared.uploadImageLabel" [style]="{'width':'95%'}">
+                <p-fileUpload name="demo" [url]="uploadURL" (onUpload)="onUpload($event)" accept="image/*" [invalidFileSizeMessageSummary]="shared.invalidFileSize"
+                    [invalidFileSizeMessageDetail]="shared.invalidFileSizeMessageDetail" [chooseLabel]="shared.chooseFileLabel" [uploadLabel]="shared.uploadLabel"
+                    [cancelLabel]="shared.cancelLabel" [maxFileSize]="shared.maximumFileSize" [disabled]="!editMode">
+                    <ng-template pTemplate="content">
+                        <ul *ngIf="uploadedFiles?.length" style="font-family:Arial">
+                            <li *ngFor="let file of uploadedFiles">{{file.name}} - {{file.size}} {{shared.byteLabel}}</li>
+                        </ul>
+                    </ng-template>
+                </p-fileUpload>
+            </p-panel>
+        </div>
+        <p-footer>
+            <div *ngIf="editMode" align="center" style="padding:4px">
+                <button type="submit" pButton icon="fa-save" label="{{shared.saveLabel}}" class="ui-button turquoise-btn"></button>
+            </div>
+            <div *ngIf="!editMode" align="center" style="padding:4px">
+                <button type="submit" pButton icon="fa-close" label="{{shared.closeLabel}}" class="ui-button"></button>
+            </div>
+        </p-footer>
+    </form>
+</div>

@@ -1,0 +1,64 @@
+<p-growl [value]="hmsgs" life="6000"></p-growl>
+<div *ngIf="loading;else content">
+    <p-dialog [(visible)]="loading" responsive="true" [resizable]="false" width="300" [rtl]="true" [showHeader]="false"
+        styleClass="ui-dialog">
+        <loadingCmp [loading]="loading" spinnerStyleClass="spinnerClassBlack"></loadingCmp>
+    </p-dialog>
+</div>
+<ng-template #content>
+    <div class="ui-g ui-g-pad dashboard">
+        <div class="ui-g-12">
+            <p-toolbar styleClass="toolbarstyle">
+                <div class="ui-toolbar-group-right headerLabel">
+                    <img src="../assets/images/review.png" style="vertical-align: middle;" /> {{activeLabel}}
+
+                </div>
+                <div class="ui-toolbar-group-left">
+                    <button type="button" pButton icon="fa-refresh" (click)="refreshDashboard()" [pTooltip]="shared.refreshLabel"></button>
+
+
+                </div>
+            </p-toolbar>
+
+        </div>
+        <div class="ui-g-12">
+            <div class="ui-g">
+                <div *ngIf="displayMainCartable" class="ui-g-12 ui-md-6 ui-lg-3">
+                    <div class="ui-g card ui-shadow-2 overview-box overview-box-8">
+                        <div class="ui-g-4">
+                            <i class="fa fa-building"></i>
+
+                        </div>
+                        <div class="ui-g-8" style="text-align: justify" (click)="showWorkStationCartableDashboard()">
+                            <span class="overview-box-count">{{numOfTotalWsCbEntries}}</span>
+                            <span class="overview-box-name">{{shared.wsCartableLabel}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="displayMainCartable" class="ui-g-12 ui-md-6 ui-lg-3">
+                    <div class="ui-g card ui-shadow-2 overview-box overview-box-9" (click)="showWorkerCartableDashboard()">
+                        <div class="ui-g-4">
+                            <i class="fa fa-user-plus"></i>
+                        </div>
+                        <div class="ui-g-8" style="text-align: justify">
+                            <span class="overview-box-count">{{numOfTotalWrCbEntries}}</span>
+                            <span class="overview-box-name">{{shared.wrCartableLabel}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="displayMainCartable" class="ui-g-12 ui-md-6 ui-lg-3">
+                    <div class="ui-g card ui-shadow-2 overview-box overview-box-6" (click)="showExpiredRequestCartableDashboard()">
+                        <div class="ui-g-4">
+                            <i class="fa fa-flash"></i>
+                        </div>
+                        <div class="ui-g-8" style="text-align: justify">
+                            <span class="overview-box-count">{{numOfTotalExpiredRequest}}</span>
+                            <span class="overview-box-name">{{shared.expiredRequestCartableLabel}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</ng-template>

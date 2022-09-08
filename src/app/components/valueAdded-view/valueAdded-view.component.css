@@ -1,0 +1,13 @@
+:host ::ng-deep .ui-widget-content{
+    font-size: 12px !important;
+}
+:host ::ng-deep .ui-panel-titlebar {
+    background: #f6f7f9 !important;
+    color: black !important;
+    font-size: 14px !important;
+    font-weight: bold !important;
+}
+
+:host ::ng-deep  .ui-g-1, .ui-g-2, .ui-g-3, .ui-g-4, .ui-g-5, .ui-g-6, .ui-g-7, .ui-g-8, .ui-g-9, .ui-g-10, .ui-g-11, .ui-g-12 {
+     padding: 0 em !important;
+}

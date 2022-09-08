@@ -1,0 +1,80 @@
+
+<p-growl [value]="hmsgs" life="6000"></p-growl>
+
+<div class="ui-g ui-g-pad dashboard">
+    <div class="ui-g-12">
+        <p-toolbar styleClass="toolbarstyle">
+            <div class="ui-toolbar-group-right headerLabel">
+                <img src="../assets/images/workType.png" style="vertical-align: middle;" /> {{activeLabel}}
+            </div>
+            <div class="ui-toolbar-group-left">
+                <button type="button" pButton icon="fa-refresh" (click)="rtvWorkTypeList()" [pTooltip]="shared.refreshLabel"></button>
+                <button type="button" pButton icon="fa-plus" (click)="showDialogToAdd()" label="{{shared.createNewWorkType}}"></button>
+            </div>
+        </p-toolbar>
+
+        <div align="center">
+            <p-dataTable [value]="workTypes" [hidden]="!showWorkTypeList" selectionMode="single" [(selection)]="selectedWorkType" (onRowSelect)="onRowSelect($event)"
+                [emptyMessage]="shared.emptyListMsg" [paginator]="true" rows="5" [style]="{'width':'80%'}" [alwaysShowPaginator]="false">
+                <p-column [style]="{'width':'60%'}" field="name" header="{{shared.workTypeLabelFa}}"></p-column>
+
+                <p-column header="{{shared.changeLabel}}" [style]="{'width':'10%'}">
+
+                    <ng-template let-col let-workt="rowData" pTemplate="body">
+                        <button type="button" pButton icon="fa-close" class="pink-btn" (click)="delete(workt)" [pTooltip]="shared.delLabelFa"></button>
+                        <button type="button" pButton icon="fa-edit" (click)="edit(workt)" [pTooltip]="shared.editLabelFa"></button>
+
+                    </ng-template>
+                </p-column>
+
+
+            </p-dataTable>
+        </div>
+
+    </div>
+</div>
+<p-confirmDialog header="{{shared.confirmHeader}}" width="425" rtl="true" #cd>
+    <p-footer>
+        <button type="button" pButton icon="fa-close" [label]="shared.noLabel" (click)="cd.reject()" style="margin-right: 30%;"></button>
+        <button type="button" pButton icon="fa-check" [label]="shared.yesLabel" (click)="cd.accept()"></button>
+    </p-footer>
+</p-confirmDialog>
+
+
+<p-dialog header="{{shared.editPanelLabel}}" [(visible)]="displayDialog" [responsive]="true" [resizable]="false" showEffect="fade"
+    [modal]="true" [rtl]="true" [width]="400">
+    <form [formGroup]="form" (submit)="save(form.value);">
+        <div class="ui-grid ui-grid-responsive  ui-grid-pad" *ngIf="workType">
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-6"><label for="workName">{{shared.workTypeLabelFa}}</label></div>
+                <div class="ui-grid-col-6">
+                    <input pInputText id="workName" [(ngModel)]="workType.name" type="text" formControlName="name" style="width:100%" />
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-12">
+                    <div class="ui-message ui-messages-error ui-corner-all" *ngIf="form.controls['name'].touched && form.controls['name'].hasError('required')">
+                        {{shared.requiredMsg}}
+                    </div>
+                    <div class="ui-message ui-messages-error ui-corner-all" *ngIf="form.controls['name'].touched && form.controls['name'].hasError('minlength')">
+                        {{shared.minLengthValidatorNameMsg}} : {{form.controls['name'].errors.minlength.requiredLength}} {{shared.charLabel}}
+                    </div>
+                    <div class="ui-message ui-messages-error ui-corner-all" *ngIf="form.controls['name'].touched && form.controls['name'].hasError('maxlength')">
+                        {{shared.maxLengthValidatorNameMsg}} : {{form.controls['name'].errors.maxlength.requiredLength}} {{shared.charLabel}}
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </form>
+    <footer>
+        <div align="center">
+            <button type="submit" pButton icon="fa-check" (click)="save(workType)" label="{{shared.saveLabel}}" [disabled]="!form.valid && loading"></button>
+        </div>
+        <p-messages [value]="innerPannelGMessage" [closable]="true"></p-messages>
+    </footer>
+</p-dialog>
+<p-dialog [(visible)]="loading" responsive="true" [resizable]="false" width="300" [rtl]="true" [showHeader]="false" styleClass="ui-dialog">
+    <loadingCmp [loading]="loading" spinnerStyleClass="spinnerClassBlack"></loadingCmp>
+</p-dialog>

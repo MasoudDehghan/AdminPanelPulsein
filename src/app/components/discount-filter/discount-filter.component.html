@@ -1,0 +1,278 @@
+<p-growl [value]="hmsgs" life="6000"></p-growl>
+<form [formGroup]="filterForm" (ngSubmit)="onSubmitFilterform()">
+    <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+        <div class="ui-grid-row">
+            <div class="ui-grid-col-4">
+                <label for="dctID">
+                    <i class="fa fa-dot-circle-o font-icon-style"></i>
+                    {{shared.discountType}}
+                </label>
+            </div>
+            <div class="ui-grid-col-8">
+                <p-dropdown id="dctID" [(ngModel)]="selectedType" [options]="discountTypeList"
+                    [style]="{'width':'100%'}" appendTo="body" formControlName="type" filter="filter"></p-dropdown>
+            </div>
+        </div>
+        <div class="ui-grid-row">
+            <div class="ui-grid-col-4">
+                <label for="codeID">
+                    <i class="fa fa-info-circle font-icon-style"></i>
+                    {{shared.codeLabel}}
+                </label>
+            </div>
+            <div class="ui-grid-col-8">
+                <input pInputText id="codeID" [(ngModel)]="selectedCode" type="text" formControlName="code"
+                    class="width100p" />
+            </div>
+        </div>
+        <div class="ui-grid-row">
+            <div class="ui-grid-col-4">
+                <label>
+                    <i class="fa fa-info-circle font-icon-style"></i>
+                    {{shared.state}}
+                </label>
+            </div>
+            <div class="ui-grid-col-8">
+                <p-triStateCheckbox [(ngModel)]="selectedActive" formControlName="active"></p-triStateCheckbox>
+            </div>
+        </div>
+        <div class="ui-grid-row">
+            <div class="ui-grid-col-4">
+                <label>
+                    <i class="fa fa-dot-circle-o font-icon-style"></i>
+                    {{shared.registerPeriodTimeLabel}}
+                </label>
+            </div>
+            <div class="ui-grid-col-4">
+                <dp-date-picker [(ngModel)]="_registerStartDate" mode="daytime" [config]="datePickerConfig"
+                    theme="dp-material" [ngModelOptions]="{standalone: true}">
+                </dp-date-picker>
+            </div>
+            <div class="ui-grid-col-4">
+                <dp-date-picker [(ngModel)]="_registerStopDate" mode="daytime" [config]="datePickerConfig"
+                    theme="dp-material" [ngModelOptions]="{standalone: true}">
+                </dp-date-picker>
+            </div>
+        </div>
+
+        <div class="ui-grid-row">
+            <div class="ui-grid-col-4">
+                <label>
+                    <i class="fa fa-dot-circle-o font-icon-style"></i>
+                    {{shared.endTimePeriodLabel}}
+                </label>
+            </div>
+            <div class="ui-grid-col-4">
+                <dp-date-picker [(ngModel)]="_endStartDate" mode="daytime" [config]="datePickerConfig"
+                    theme="dp-material" [ngModelOptions]="{standalone: true}">
+                </dp-date-picker>
+            </div>
+            <div class="ui-grid-col-4">
+                <dp-date-picker [(ngModel)]="_endStopDate" mode="daytime" [config]="datePickerConfig"
+                    theme="dp-material" [ngModelOptions]="{standalone: true}">
+                </dp-date-picker>
+            </div>
+        </div>
+
+        <div class="ui-grid-row">
+            <div class="ui-grid-col-4">
+                <label>
+                    <i class="fa fa-dot-circle-o font-icon-style"></i>
+                    {{shared.discountPercentPeriodLabel}}
+                </label>
+            </div>
+
+            <div class="ui-grid-col-8">
+                <div *ngIf="selectedFilter.f_percent">{{shared.applyFilterLabel}}</div>
+                <div *ngIf="!selectedFilter.f_percent">{{shared.notApplyFilterLabel}}</div>
+                <p-inputSwitch formControlName="percentState" [(ngModel)]="selectedFilter.f_percent"></p-inputSwitch>
+                <h5>{{selectedPercentRange[0] + ' ------------------------------------------------------------ '+selectedPercentRange[1]}}
+                </h5>
+
+                <p-slider [min]="0" [max]="100" [range]="true" [step]="1" [(ngModel)]="selectedPercentRange"
+                    formControlName="percentRange" [style]="{'width':'100%'}" [animate]="true"></p-slider>
+            </div>
+        </div>
+        <div class="ui-grid-row">
+            <div class="ui-grid-col-4">
+                <label>
+                    <i class="fa fa-dot-circle-o font-icon-style"></i>
+                    {{shared.maxCreditPeriodLabel}}
+                </label>
+            </div>
+
+            <div class="ui-grid-col-8">
+                <div *ngIf="selectedFilter.f_maxCredit">{{shared.applyFilterLabel}}</div>
+                <div *ngIf="!selectedFilter.f_maxCredit">{{shared.notApplyFilterLabel}}</div>
+                <p-inputSwitch formControlName="maxCreditState" [(ngModel)]="selectedFilter.f_maxCredit">
+                </p-inputSwitch>
+                <h5>{{selectedMaxCreditRange[0] + ' -------------------------------------------------------- '+selectedMaxCreditRange[1]}}
+                </h5>
+
+                <p-slider [min]="0" [max]="1000000" [range]="true" [step]="1000" [(ngModel)]="selectedMaxCreditRange"
+                    formControlName="maxCreditRange" [style]="{'width':'100%'}" [animate]="true"></p-slider>
+            </div>
+        </div>
+        <div class="ui-grid-row">
+            <div class="ui-grid-col-4">
+                <label>
+                    <i class="fa fa-dot-circle-o font-icon-style"></i>
+                    {{shared.totalCounterPeriodLabel}}
+                </label>
+            </div>
+
+            <div class="ui-grid-col-8">
+                <div *ngIf="selectedFilter.f_totalCnt">{{shared.applyFilterLabel}}</div>
+                <div *ngIf="!selectedFilter.f_totalCnt">{{shared.notApplyFilterLabel}}</div>
+                <p-inputSwitch formControlName="totalCntState" [(ngModel)]="selectedFilter.f_totalCnt"></p-inputSwitch>
+                <h5>{{selectedTotalCntRange[0] + ' -------------------------------------------------------- '+selectedTotalCntRange[1]}}
+                </h5>
+
+                <p-slider [min]="0" [max]="100000" [range]="true" [step]="1" [(ngModel)]="selectedTotalCntRange"
+                    formControlName="totalCntRange" [style]="{'width':'100%'}" [animate]="true"></p-slider>
+            </div>
+        </div>
+
+        <div class="ui-grid-row">
+            <div class="ui-grid-col-4">
+                <label>
+                    <i class="fa fa-dot-circle-o font-icon-style"></i>
+                    {{shared.usedCounterPeriodLabel}}
+                </label>
+            </div>
+
+            <div class="ui-grid-col-8">
+                <div *ngIf="selectedFilter.f_usedCnt">{{shared.applyFilterLabel}}</div>
+                <div *ngIf="!selectedFilter.f_usedCnt">{{shared.notApplyFilterLabel}}</div>
+                <p-inputSwitch formControlName="usedCntState" [(ngModel)]="selectedFilter.f_usedCnt"></p-inputSwitch>
+                <div *ngIf="selectedUsedCntRange!=undefined">
+                    <h5>{{selectedUsedCntRange[0] + ' --------------------------------------------------------- '+selectedUsedCntRange[1]}}
+                    </h5>
+                </div>
+
+                <p-slider [min]="0" [max]="100000" [range]="true" [step]="1" [(ngModel)]="selectedUsedCntRange"
+                    formControlName="usedCntRange" [style]="{'width':'100%'}" [animate]="true"></p-slider>
+            </div>
+        </div>
+        <div class="ui-grid-row">
+            <div class="ui-grid-col-4">
+                <label>
+                    <i class="fa fa-dot-circle-o font-icon-style"></i>
+                    {{shared.job_Category1Label}}
+                </label>
+            </div>
+            <div class="ui-grid-col-8">
+                <p-dropdown [(ngModel)]="selectedJobCategory1" [options]="basicData.jobCategory1List"
+                    (onChange)="onJobCategory1Change($event)" appendTo="body" [style]="{'width':'100%'}"
+                    formControlName="cat1Id" filter="filter"></p-dropdown>
+            </div>
+        </div>
+        <div class="ui-grid-row">
+            <div class="ui-grid-col-4">
+                <label for="jc2FilterID">
+                    <i class="fa fa-dot-circle-o font-icon-style"></i>
+                    {{shared.job_Category2Label}}
+                </label>
+            </div>
+            <div class="ui-grid-col-8">
+                <p-dropdown id="jc2FilterID" [(ngModel)]="selectedJobCategory2" [options]="jobCategory2List"
+                    (onChange)="onJobCategory2Change($event)" appendTo="body" [style]="{'width':'100%'}"
+                    formControlName="cat2Id" filter="filter"></p-dropdown>
+            </div>
+        </div>
+        <div class="ui-grid-row">
+            <div class="ui-grid-col-4">
+                <label for="jc3FilterID">
+                    <i class="fa fa-dot-circle-o font-icon-style"></i>
+                    {{shared.job_Category3Label}}
+                </label>
+            </div>
+            <div class="ui-grid-col-8">
+                <p-dropdown id="jc3FilterID" [(ngModel)]="selectedJobCategory3" [options]="jobCategory3List"
+                    (onChange)="onJobCategory3Change($event)" [style]="{'width':'100%'}" formControlName="cat3Id"
+                    appendTo="body" filter="filter"></p-dropdown>
+            </div>
+        </div>
+        <div class="ui-grid-row">
+            <div class="ui-grid-col-4">
+                <label for="feprovinceID">
+                    <i class="fa fa-dot-circle-o font-icon-style"></i>
+                    {{shared.provinceLabel}}
+                </label>
+            </div>
+            <div class="ui-grid-col-8">
+                <p-dropdown id="feprovinceID" [(ngModel)]="selectedProvinceId" [options]="basicData.chooseProvinceList"
+                    (onChange)="onProvinceChange($event)" appendTo="body" [style]="{'width':'100%'}"
+                    formControlName="province" filter="filter"></p-dropdown>
+            </div>
+
+        </div>
+        <div class="ui-grid-row">
+            <div class="ui-grid-col-4">
+                <label for="fetownshipID">
+                    <i class="fa fa-dot-circle-o font-icon-style"></i>
+                    {{shared.townshipLabel}}
+                </label>
+            </div>
+            <div class="ui-grid-col-8">
+                <p-dropdown id="fetownshipID" [(ngModel)]="selectedTownshipID" [options]="townshipList"
+                    (onChange)="onTownshipChange($event)" appendTo="body" [style]="{'width':'100%'}"
+                    formControlName="township" filter="filter"></p-dropdown>
+            </div>
+
+        </div>
+        <div class="ui-grid-row">
+            <div class="ui-grid-col-4">
+                <label for="fecityID">
+                    <i class="fa fa-dot-circle-o font-icon-style"></i>
+                    {{shared.cityLabel}}
+                </label>
+            </div>
+            <div class="ui-grid-col-8">
+                <p-dropdown id="fecityID" [(ngModel)]="selectedCity" [options]="cityList"
+                    (onChange)="onCityChange($event)" [style]="{'width':'100%'}" appendTo="body" formControlName="city"
+                    filter="filter"></p-dropdown>
+            </div>
+        </div>
+
+        <div class="ui-grid-row">
+            <div class="ui-grid-col-4">
+                <label for="dscID">
+                    <i class="fa fa-dot-circle-o font-icon-style"></i>
+                    {{shared.descLabel}}
+                </label>
+            </div>
+            <div class="ui-grid-col-8">
+                <textarea pInputTextarea id="dscID" [(ngModel)]="selectedDescription" formControlName="description"
+                    class="width100p" rows="3"></textarea>
+                <div class="ui-message ui-messages-error ui-corner-all width100p"
+                    *ngIf="filterForm.controls['description'].touched && filterForm.controls['description'].hasError('required')">
+                    {{shared.requiredMsgLabel}}
+                </div>
+            </div>
+        </div>
+
+        <div class="ui-grid-row">
+            <div class="ui-grid-col-4">
+                <label>
+                    <i class="fa fa-info-circle font-icon-style"></i>
+                    {{shared.multiUseLabel}}
+                </label>
+            </div>
+            <div class="ui-grid-col-8">
+                <p-triStateCheckbox [(ngModel)]="selectedMultyUse" formControlName="multyUse"></p-triStateCheckbox>
+            </div>
+        </div>
+    </div>
+
+    <div align="center" style="padding:4px">
+        <button type="submit" pButton icon="fa-search" label="{{shared.showFilter}}"
+            class="ui-button turquoise-btn"></button>
+    </div>
+
+
+</form>
+<p-dialog [(visible)]="loading" responsive="true" [resizable]="false" width="300" [rtl]="true" [showHeader]="false"
+    styleClass="ui-dialog">
+    <loadingCmp [loading]="loading" spinnerStyleClass="spinnerClassBlack"></loadingCmp>
+</p-dialog>

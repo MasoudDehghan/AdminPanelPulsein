@@ -1,0 +1,396 @@
+
+<p-growl [value]="gMessage" life="6000"></p-growl>
+
+<div class="ui-g ui-g-pad dashboard">
+    <div class="ui-g-12">
+        <p-toolbar styleClass="toolbarstyle">
+            <div class="ui-toolbar-group-right headerLabel">
+                <img src="../assets/images/usersList.png" style="vertical-align: middle;" /> {{activeLabel}}
+                <span class="totalFilteredClass">
+                        {{shared.totalNumberLabel}} : {{workerLength}}
+                    </span>
+            </div>
+            <div class="ui-toolbar-group-left">
+
+                <button type="button" pButton class="ui-button orange-btn" icon="fa-comment" (click)="showSMSPanel()" label="{{shared.sendSMSPanel}}"
+                    [pTooltip]="shared.sendSMSPanel" [disabled]="!sensSMSCapable"></button>
+                <button type="button" pButton icon="fa-refresh" (click)="rtvUserList()" [pTooltip]="shared.refreshLabel" ></button>
+                <button type="button" pButton icon="fa-file-excel-o"  iconPos="left" pTooltip="Excel" (click)="exportExcel()"></button>
+
+            </div>
+        </p-toolbar>
+        <div class="ui-rtl" dir="rtl">
+
+            <div align="center">
+                    <p-dataTable [value]="workerUsers" [hidden]="!showUsersList" selectionMode="single" [(selection)]="selectedUser" (onRowSelect)="onRowSelect($event)"
+                    [rows]="10" [paginator]="true" [alwaysShowPaginator]="false" [pageLinks]="3" [style]="{'width':'99%'}" [emptyMessage]="shared.emptyListMsg"
+                    sortField="registerTimeS" sortOrder="-1" (onFilter)="onFilter($event)" #dt>
+                    <p-column [style]="{'width':'20%'}" field="firstName" [filter]="true" header="{{shared.firstNameLabel}}"></p-column>
+                    <p-column [style]="{'width':'20%'}" field="lastName" [filter]="true" header="{{shared.lastNameLabel}}"></p-column>
+                    <p-column [style]="{'width':'20%'}" field="mobileNumber" [filter]="true" header="{{shared.mobileLabel}}" styleClass="ltrDirection"></p-column>
+                    <p-column [style]="{'width':'20%'}" field="appVersion" [filter]="true" header="{{shared.versionLabel}}" styleClass="ltrDirection">
+                        <ng-template pTemplate="filter" let-col>
+                            <p-dropdown [options]="basicData.workerAppVersions" appendTo="body" [style]="{'width':'70%'}" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)"
+                                styleClass="ui-column-filter"></p-dropdown>
+                        </ng-template>
+                    </p-column>
+                    <p-column [style]="{'width':'20%'}" field="registerTimeS" [sortable]="true"  header="{{shared.registerTimeLabel}}" styleClass="ltrDirection"></p-column>
+
+                    <p-column header="{{shared.changeLabel}}" [style]="{'width':'15%'}">
+                        <ng-template let-col let-user="rowData" pTemplate="body">
+                            <div align="center">
+                                <button type="button" pButton icon="fa-edit" class="green-btn" (click)="edit(user)" [pTooltip]="shared.editLabelFa"></button>
+                                <button type="button" pButton icon="fa-key" class="orange-btn" (click)="changePassword(user)" [pTooltip]="shared.ChangePassPanelLabel"></button>
+                                <!-- <button type="button" pButton icon="fa-close" class="pink-btn" (click)="delete(user)" [pTooltip]="shared.delLabelFa"></button> -->
+
+                            </div>
+                        </ng-template>
+                    </p-column>
+                    <p-column [style]="{'width':'5%'}" header="{{shared.showDetialLabel}}">
+                        <ng-template let-col let-user="rowData" pTemplate="body">
+                            <div align="center">
+                                <button type="button" pButton icon="fa-tasks" (click)="showViewDialog(user)"></button>
+                            </div>
+                        </ng-template>
+                    </p-column>
+                </p-dataTable>
+            </div>
+        </div>
+    </div>
+    <p-confirmDialog header="{{shared.confirmHeader}}" width="425" rtl="true" #cd>
+        <p-footer>
+            <button type="button" pButton icon="fa-close" [label]="shared.noLabel" (click)="cd.reject()" style="margin-right: 30%;"></button>
+            <button type="button" pButton icon="fa-check" [label]="shared.yesLabel" (click)="cd.accept()"></button>
+        </p-footer>
+    </p-confirmDialog>
+
+    <div *ngIf="displayChangePassDialog">
+        <p-dialog header="{{shared.ChangePassPanelLabel}}" [(visible)]="displayChangePassDialog" [responsive]="true" [resizable]="false"
+            showEffect="fade" [modal]="true" [rtl]="true" width="450">
+            <form [formGroup]="changePassForm" (ngSubmit)="submitChangePass()">
+                <div class="ui-grid ui-grid-responsive  ui-grid-pad" formGroupName="passwords">
+                    <div class="ui-grid-row">
+
+                        <div class="ui-grid-col-4"><label for="pwd">
+                               <i class="fa fa-key font-icon-style"></i>
+                                {{shared.newPWDLabelFa}}</label></div>
+                        <div class="ui-grid-col-7">
+                            <input pInputText id="pwd" [(ngModel)]="user.password" type="password" formControlName="newPassword" class="width100p ltrDirection"
+                            />
+                        </div>
+                        <div class="ui-grid-col-1">
+                            <i class="fa fa-info-circle font-icon-style" [pTooltip]="shared.passwordPolicyHint" tooltipPosition="right"></i>
+                        </div>
+                    </div>
+                    <div class="ui-grid-row">
+                            <div class="ui-grid-col-12">
+                                <div class="ui-message ui-messages-error ui-corner-all errorMsgStyle" *ngIf="changePassForm.controls['passwords'].controls['newPassword'].touched && changePassForm.controls['passwords'].controls['newPassword'].hasError('required')">
+                                    {{shared.passValidMsg}}
+                                </div>
+                                <div class="ui-message ui-messages-error ui-corner-all errorMsgStyle" *ngIf="changePassForm.controls['passwords'].controls['newPassword'].touched && changePassForm.controls['passwords'].controls['newPassword'].hasError('pattern')">
+                                    {{shared.passwordInvalidMsg}}
+                                </div>
+                            </div>
+                        </div>
+
+                </div>
+                <div align="center">
+                    <button type="submit" pButton icon="fa-check" label="{{shared.saveLabel}}"></button>
+                </div>
+            </form>
+            <footer>
+                <loadingCmp [loading]="loading" spinnerStyleClass="spinnerClassBlack" iconSize=2></loadingCmp>
+                <p-messages [value]="innerPannelGMessage" [closable]="true"></p-messages>
+            </footer>
+        </p-dialog>
+    </div>
+    <div *ngIf="displayDialog">
+        <p-dialog header="{{dialogHeader}}" [(visible)]="displayDialog" [responsive]="true" [resizable]="false" showEffect="fade"
+            [modal]="true" [rtl]="true" width="500">
+            <form [formGroup]="form" (submit)="save(form.value);">
+                <p-accordion>
+              
+                    <p-accordionTab id="personalInfoTabID" [header]="shared.personalWorkerDataSumLabel" [selected]="true">
+
+                        <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+                            <div class="ui-grid-row">
+                                <div class="ui-grid-col-4">
+                                    <label for="efirstName">
+                                     <i class="fa fa-info-circle font-icon-style"></i>
+                                    {{shared.firstNameLabel}}                                   
+                                </label>
+                                </div>
+                                <div class="ui-grid-col-8">
+                                    <input pInputText id="efirstName" [(ngModel)]="user.firstName" type="text" size="30" formControlName="firstName" class="width100p"
+                                    />
+                                </div>
+                            </div>
+                            <div class="ui-grid-row">
+                                <div class="ui-grid-col-4">
+                                    <label for="elastName">
+                                     <i class="fa fa-info-circle font-icon-style"></i>
+                                    {{shared.lastNameLabel}}                                   
+                                </label>
+                                </div>
+                                <div class="ui-grid-col-8">
+                                    <input pInputText id="elastName" [(ngModel)]="user.lastName" type="text" size="30" formControlName="lastName" class="width100p"
+                                    />
+                                </div>
+                            </div>
+                            <div class="ui-grid-row">
+                                <div class="ui-grid-col-4">
+                                    <label for="nationalCode">
+                                    <i class="fa fa-info-circle font-icon-style"></i>
+                                    {{shared.nationalCodeLabel}}                                   
+                                </label>
+                                </div>
+                                <div class="ui-grid-col-8">
+                                    <input pInputText id="nationalCode" [(ngModel)]="user.nationalCode" type="text" size="30" formControlName="nationalCode"
+                                        class="width100p ltrDirection" />
+                                </div>
+                            </div>
+                            <div class="ui-grid-row">
+                                <div class="ui-grid-col-12 ui-message ui-messages-error ui-corner-all errorMsgStyle" *ngIf="form.controls['nationalCode'].touched && form.controls['nationalCode'].hasError('pattern')">
+                                    {{shared.invalidNationalCodeMsg}}
+                                </div>
+                            </div>
+                            <div class="ui-grid-row">
+                                <div class="ui-grid-col-4">
+                                    <label for="birthYear">
+                                    <i class="fa fa-info-circle font-icon-style"></i>
+                                    {{shared.birthYearLabel}}                                   
+                                </label>
+                                </div>
+                                <div class="ui-grid-col-8">
+                                    <p-dropdown [options]="yearList" [(ngModel)]="user.birthYear" [style]="{'width':'100%'}" [filter]="true" [placeholder]="shared.chooseBirthYearLabel"
+                                        formControlName="birthYear"></p-dropdown>
+                                </div>
+                            </div>
+                            <div class="ui-grid-row">
+                                <div class="ui-grid-col-4">
+                                    <label for="genderID">
+                                    <i class="fa fa-venus-mars font-icon-style"></i>
+                                    {{shared.genderLabel}}
+                                </label>
+                                </div>
+                                <div class="ui-grid-col-8">
+                                    <div class="ui-g" style="margin-bottom:10px">
+                                        <div class="ui-g-6">
+                                            <p-radioButton name="sexGroup" value="1" [label]="shared.manLabel" [(ngModel)]="user.sex" formControlName="sex"></p-radioButton>
+                                        </div>
+                                        <div class="ui-g-6">
+                                            <p-radioButton name="sexGroup" value="2" [label]="shared.womanLabel" [(ngModel)]="user.sex" formControlName="sex"></p-radioButton>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </p-accordionTab>
+                    <p-accordionTab id="contactTabID" [header]="shared.contactDataLabel">
+                        <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+                            <div class="ui-grid-row">
+                                <div class="ui-grid-col-5">
+                                    <label for="mobile">
+                                       <i class="fa fa-mobile font-icon-style"></i>
+                                    {{shared.mobileLabel}}                               
+                                </label>
+                                </div>
+                                <div class="ui-grid-col-7">
+                                    <input pInputText id="mobile" [(ngModel)]="user.mobileNumber" type="text" size="30" formControlName="mobileNumber" class="ltrDirection"
+                                    />
+                                </div>
+
+                            </div>
+                            <div class="ui-grid-row">
+                                <div class="ui-grid-col-5">
+                                    <label for="email">
+                                    <i class="fa fa-envelope font-icon-style"></i>
+                                    {{shared.emailLabel}}                               
+                                </label>
+                                </div>
+                                <div class="ui-grid-col-7">
+                                    <input pInputText id="email" [(ngModel)]="user.email" type="text" size="30" formControlName="email" class="ltrDirection"
+                                    />
+                                </div>
+                            </div>
+                            <div class="ui-grid-row">
+                                <div class="ui-grid-col-12">
+                                    <div class="ui-message ui-messages-error ui-corner-all errorMsgStyle" *ngIf="form.controls['email'].touched && form.controls['email'].hasError('pattern')">
+                                        {{shared.invalidEmailMsg}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </p-accordionTab>
+                    <p-accordionTab id="uploadTabID" [header]="shared.uploadImageLabel">
+                        <div *ngIf="user.photo!=''">
+                            <p-panel [style]="{'text-align':'center'}">
+                                <a class="wsCatalogImageStyle" (click)="showProfileImage()">
+                                <img src="{{selectedUserImagePath}}" style="width:50px;height:50px"/>
+                             </a>
+                                <hr class="ui-widget-content" style="border-top:0">
+                                <i class="fa fa-search" (click)="showProfileImage()" style="cursor:pointer"></i>
+
+                                <i class="fa fa-remove" (click)="deleteProfileImage()" style="cursor:pointer"></i>
+                            </p-panel>
+
+                        </div>
+                        <p-fileUpload name="demo" [url]="uploadURL" (onBeforeUpload)="onBeforeUpload($event)" (onUpload)="onUpload($event)" accept="image/*" [invalidFileSizeMessageSummary]="shared.invalidFileSize"
+                            [invalidFileSizeMessageDetail]="shared.invalidFileSizeMessageDetail" [chooseLabel]="shared.chooseFileLabel"
+                            [uploadLabel]="shared.uploadLabel" [cancelLabel]="shared.cancelLabel" [maxFileSize]="shared.maximumFileSize">
+                            <ng-template pTemplate="content">
+                                <ul *ngIf="uploadedFiles?.length" style="font-family:Arial">
+                                    <li *ngFor="let file of uploadedFiles">{{file.name}} - {{file.size}} {{shared.byteLabel}}</li>
+                                </ul>
+                            </ng-template>
+                        </p-fileUpload>
+
+                    </p-accordionTab>
+                </p-accordion>
+            </form>
+            <footer>
+                <div align="center">
+
+                    <button type="submit" pButton icon="fa-check" (click)="save(user)" label="{{shared.saveLabel}}" [disabled]="!form.valid && loading"></button>
+                </div>
+                <loadingCmp [loading]="loading" spinnerStyleClass="spinnerClassBlack" iconSize=2></loadingCmp>
+                <p-messages [value]="innerPannelGMessage" [closable]="true"></p-messages>
+
+            </footer>
+        </p-dialog>
+    </div>
+    <div *ngIf="displayDetailViewDialog">
+        <p-dialog header="{{shared.showDetialLabel}}" [(visible)]="displayDetailViewDialog" [responsive]="true" [resizable]="false"
+            showEffect="fade" [modal]="true" [rtl]="true" width="580">
+            <p-accordion>
+               
+                <p-accordionTab id="personalInfoTabID" [header]="shared.personalWorkerDataSumLabel">
+
+                    <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+                        <div class="ui-grid-row">
+                            <div class="ui-grid-col-4">
+                                <label for="efirstName">
+                                     <i class="fa fa-info-circle font-icon-style"></i>
+                                    {{shared.firstNameLabel}}                                   
+                                </label>
+                            </div>
+                            <div class="ui-grid-col-8 textPlaceHolderStyle">
+                                {{user.firstName}}
+
+                            </div>
+                        </div>
+                        <div class="ui-grid-row">
+                            <div class="ui-grid-col-4">
+                                <label for="elastName">
+                                     <i class="fa fa-info-circle font-icon-style"></i>
+                                    {{shared.lastNameLabel}}                                   
+                                </label>
+                            </div>
+                            <div class="ui-grid-col-8 textPlaceHolderStyle">
+                                {{user.lastName}}
+                            </div>
+                        </div>
+                        <div class="ui-grid-row">
+                            <div class="ui-grid-col-4">
+                                <label for="nationalCode">
+                                    <i class="fa fa-info-circle font-icon-style"></i>
+                                    {{shared.nationalCodeLabel}}                                   
+                                </label>
+                            </div>
+                            <div class="ui-grid-col-8 textPlaceHolderStyle ltrDirection">
+                                {{user.nationalCode}}
+                            </div>
+                        </div>
+
+                        <div class="ui-grid-row">
+                            <div class="ui-grid-col-4">
+                                <label for="birthYear">
+                                    <i class="fa fa-info-circle font-icon-style"></i>
+                                    {{shared.birthYearLabel}}                                   
+                                </label>
+                            </div>
+                            <div class="ui-grid-col-8 textPlaceHolderStyle">
+                                {{user.birthYear}}
+                            </div>
+                        </div>
+                        <div class="ui-grid-row">
+                            <div class="ui-grid-col-4">
+                                <label for="genderID">
+                                    <i class="fa fa-venus-mars font-icon-style"></i>
+                                    {{shared.genderLabel}}
+                                </label>
+                            </div>
+                            <div class="ui-grid-col-8 textPlaceHolderStyle">
+                                <div class="ui-g" style="margin-bottom:10px">
+                                    <div *ngIf="user.sex == 1" class="ui-g-6">
+                                        {{shared.manLabel}}
+                                    </div>
+                                    <div *ngIf="user.sex == 2" class="ui-g-6">
+                                        {{shared.womanLabel}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </p-accordionTab>
+                <p-accordionTab id="contactTabID" [header]="shared.contactDataLabel">
+                    <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+                        <div class="ui-grid-row">
+                            <div class="ui-grid-col-4">
+                                <label for="mobile">
+                                       <i class="fa fa-mobile font-icon-style"></i>
+                                    {{shared.mobileLabel}}                               
+                                </label>
+                            </div>
+                            <div class="ui-grid-col-8 textPlaceHolderStyle ltrDirection">
+                                {{user.mobileNumber}}
+                            </div>
+
+                        </div>
+                        <div class="ui-grid-row">
+                            <div class="ui-grid-col-5">
+                                <label for="email">
+                                    <i class="fa fa-envelope font-icon-style"></i>
+                                    {{shared.emailLabel}}                               
+                                </label>
+                            </div>
+                            <div class="ui-grid-col-7 textPlaceHolderStyle ltrDirection">
+                                {{user.email}}
+                            </div>
+                        </div>
+
+                    </div>
+                </p-accordionTab>
+                <p-accordionTab id="uploadTabID" [header]="shared.showPhotoLabel">
+                    <div *ngIf="user.photo!=''">
+                        <p-panel [style]="{'text-align':'center'}">
+                            <a class="wsCatalogImageStyle" (click)="showProfileImage()">
+                                <img src="{{selectedUserImagePath}}" style="width:50px;height:50px"/>
+                             </a>
+                            <hr class="ui-widget-content" style="border-top:0">
+                            <i class="fa fa-search" (click)="showProfileImage()" style="cursor:pointer"></i>
+                        </p-panel>
+
+                    </div>
+
+                </p-accordionTab>
+            </p-accordion>
+
+        </p-dialog>
+    </div>
+
+    <p-dialog [(visible)]="loading" responsive="true" [resizable]="false" showEffect="fade" width="300" [rtl]="true" modal="modal"
+        [showHeader]="false" styleClass="ui-dialog">
+        <loadingCmp [loading]="loading" spinnerStyleClass="spinnerClassBlack"></loadingCmp>
+    </p-dialog>
+    <p-dialog [(visible)]="displayProfileImageDialog" [responsive]="true" [resizable]="false" showEffect="explode" [modal]="true"
+    
+        [rtl]="true">
+        <img src="{{selectedUserImagePath}}" />
+    </p-dialog>
+    <div *ngIf="displaySMSPanel">
+        <p-dialog [(visible)]="displaySMSPanel" responsive="true" [resizable]="false" width="600" [rtl]="true" [modal]="true" [header]="shared.sendSMSPanel"
+            styleClass="ui-dialog">
+            <app-send-sms [smsList]="filteredSMSList"></app-send-sms>
+        </p-dialog>
+    </div>

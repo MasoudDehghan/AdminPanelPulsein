@@ -1,0 +1,15 @@
+<div id="sidebar-wrapperssss" class="sidebar1" [ngClass]="{'openSideBar':isSideMenuOpen}">
+    <div align="left" class="toggleButtonStyle">
+        <!--<div class="headerText" style="float:right">{{header}}</div>-->
+        <button type="button" pButton icon="fa fa-navicon" (click)="onToggleMenuBar()"></button>
+        
+    </div>
+
+ 
+    <div id="menuDIV_ID" class="sideBarMenu" *ngIf="isSideMenuOpen">
+     
+        <p-slideMenu [model]="items" viewportHeight="400"
+          backLabel="{{shared.backLabel}}" #menuElement></p-slideMenu>
+
+    </div>
+</div>

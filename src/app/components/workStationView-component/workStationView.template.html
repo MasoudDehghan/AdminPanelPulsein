@@ -1,0 +1,498 @@
+<div style="margin-right:1%;margin-left:1%">
+    <p-panel [header]="shared.jobDataLabel" [style]="{'width':'95%'}">
+
+        <p-dataTable [value]="workStationJobs" [emptyMessage]="shared.emptyWorkJobListMsg">
+            <p-column header="{{shared.job_Category1Label}}">
+                <ng-template let-col let-workJob="rowData" pTemplate="body">
+                    <div *ngIf="workJob?.jobCategory1!=null">
+                        {{workJob?.jobCategory1?.name}}
+                    </div>
+                </ng-template>
+            </p-column>
+        </p-dataTable>
+    </p-panel>
+    <br/>
+    <p-panel [header]="shared.businessDataLabel" [style]="{'width':'95%'}">
+        <div class="ui-grid ui-grid-responsive  ui-grid-pad" *ngIf="workStation">
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-4">
+                    <label>
+                       <i class="fa fa-info-circle font-icon-style"></i>
+                                    {{shared.bizCodeLabel}}                                    
+                     </label>
+                </div>
+                <div class="ui-grid-col-8 textPlaceHolderStyle latinFontStyle">
+                    {{workStation?.code}}
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-4">
+                    <label>
+                       <i class="fa fa-info-circle font-icon-style"></i>
+                                    {{shared.workStationLabelFa}}                                    
+                     </label>
+                </div>
+                <div class="ui-grid-col-8 textPlaceHolderStyle">
+                    {{workStation?.title}}
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-4">
+                    <label>
+                                     <i class="fa fa-info-circle font-icon-style"></i>
+                                    {{shared.workTypeLabelFa}}
+                                </label>
+                </div>
+                <div class="ui-grid-col-8 textPlaceHolderStyle">
+                    {{workStation?.workType?.name}}
+                </div>
+            </div>
+
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-4">
+                    <label>
+                                    <i class="fa fa-dot-circle-o font-icon-style"></i>
+                                    {{shared.aboutJobLabel}}
+                                </label>
+                </div>
+                <div class="ui-grid-col-8 textPlaceHolderStyle">
+                    {{workStation?.info}}
+                </div>
+            </div>
+        </div>
+    </p-panel>
+    <br/>
+    <p-panel [header]="shared.personalWorkerDataLabel" [style]="{'width':'95%'}">
+        <div class="ui-grid ui-grid-responsive  ui-grid-pad" *ngIf="workStation">
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-4">
+                    <label>
+                                     <i class="fa fa-info-circle font-icon-style"></i>
+                                    {{shared.firstNameLabel}}                                   
+                                </label>
+                </div>
+                <div class="ui-grid-col-8 textPlaceHolderStyle">
+                    {{workStation?.owner.firstName}}
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-4">
+                    <label>
+                                     <i class="fa fa-info-circle font-icon-style"></i>
+                                    {{shared.lastNameLabel}}
+                                </label>
+                </div>
+                <div class="ui-grid-col-8 textPlaceHolderStyle">
+                    {{workStation?.owner.lastName}}
+                </div>
+
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-4">
+                    <label>
+                                    <i class="fa fa-info-circle font-icon-style"></i>
+                                    {{shared.nationalCodeLabel}}                                   
+                                </label>
+                </div>
+                <div class="ui-grid-col-8 textPlaceHolderStyle">
+                    {{workStation?.owner.nationalCode}}
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-4">
+                    <label>
+                                    <i class="fa fa-info-circle font-icon-style"></i>
+                                    {{shared.positionLabel}}                                   
+                                </label>
+                </div>
+                <div class="ui-grid-col-8 textPlaceHolderStyle">
+                    {{workStation?.ownerPosition?.name}}
+                </div>
+            </div>
+        </div>
+    </p-panel>
+    <br/>
+    <p-panel [header]="shared.registerDataLabel" [style]="{'width':'95%'}">
+        <div class="ui-grid ui-grid-responsive  ui-grid-pad" *ngIf="workStation">
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-4">
+                    <label>
+                                     <i class="fa fa-info-circle font-icon-style"></i>
+                                    {{shared.registerUserLabel}}                                   
+                                </label>
+                </div>
+                <div class="ui-grid-col-8 textPlaceHolderStyle ltrDirection">
+                    {{workStation?.registerBy?.userName}}
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-4">
+                    <label>
+                                     <i class="fa fa-info-circle font-icon-style"></i>
+                                    {{shared.registerTimeLabel}}
+                                </label>
+                </div>
+                <div class="ui-grid-col-8 textPlaceHolderStyle ltrDirection">
+                    <span style="font-family:'Arial'">{{workStation?.registerTimeS}}</span>
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-4">
+                    <label>
+                                     <i class="fa fa-info-circle font-icon-style"></i>
+                                    {{shared.resourseLabel}}
+                                </label>
+                </div>
+                <div class="ui-grid-col-8 textPlaceHolderStyle">
+                    {{workStation?.jobResource?.name}}
+                </div>
+            </div>
+
+        </div>
+    </p-panel>
+    <br/>
+    <p-panel [header]="shared.verifyDataLabel" [style]="{'width':'95%'}">
+        <div class="ui-grid ui-grid-responsive  ui-grid-pad" *ngIf="workStation">
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-4">
+                    <label>
+                                     <i class="fa fa-info-circle font-icon-style"></i>
+                                    {{shared.registerUserLabel}}                                   
+                                </label>
+                </div>
+                <div class="ui-grid-col-8 textPlaceHolderStyle ltrDirection">
+                    {{workStation?.verifyBy?.userName}}
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-4">
+                    <label>
+                                     <i class="fa fa-info-circle font-icon-style"></i>
+                                    {{shared.registerTimeLabel}}
+                                </label>
+                </div>
+                <div class="ui-grid-col-8 textPlaceHolderStyle ltrDirection">
+                    <span style="font-family:'Arial'">{{workStation?.verificationTimeS}}</span>
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-4">
+                    <label>
+                                     <i class="fa fa-info-circle font-icon-style"></i>
+                                    {{shared.resourseLabel}}
+                                </label>
+                </div>
+                <div class="ui-grid-col-8 textPlaceHolderStyle">
+                    {{workStation?.jobResource?.name}}
+                </div>
+            </div>
+
+        </div>
+    </p-panel>
+    <br/>
+    <p-panel [header]="shared.companyDataLabel" [style]="{'width':'95%'}" *ngIf="showCompanyPanel">
+        <div class="ui-grid ui-grid-responsive  ui-grid-pad" *ngIf="workStation">
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-4">
+                    <label>
+                                    <i class="fa fa-building font-icon-style"></i>
+                                    {{shared.officeNameLabel}}
+                                </label>
+                </div>
+                <div class="ui-grid-col-8">
+                    {{workStation?.name}}
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-4">
+                    <label>
+                                    <i class="fa fa-info-circle font-icon-style"></i>
+                                    {{shared.officeRegisterCodeLabel}}
+                                </label>
+                </div>
+                <div class="ui-grid-col-8 textPlaceHolderStyle">
+                    {{workStation?.officeRegisterNumber}}
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-4">
+                    <label>
+                                    <i class="fa fa-info-circle font-icon-style"></i>
+                                    {{shared.officeNationalCodeLabel}}
+                                </label>
+                </div>
+                <div class="ui-grid-col-8 textPlaceHolderStyle">
+                    {{workStation?.officeNationalCode}}
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-4">
+                    <label>
+                                    <i class="fa fa-calendar font-icon-style"></i>
+                                    {{shared.officeRegisterDateLabel}}
+                                </label>
+                </div>
+                <div class="ui-grid-col-8 textPlaceHolderStyle ltrDirection">
+                    {{workStation?.officeRegisterDateS}}
+                </div>
+            </div>
+        </div>
+    </p-panel>
+
+    <p-panel [header]="shared.storeDataLabel" [style]="{'width':'95%'}" *ngIf="showStorePanel">
+        <div class="ui-grid ui-grid-responsive  ui-grid-pad" *ngIf="workStation">
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-4">
+                    <label>
+                                    <i class="fa fa-building font-icon-style"></i>
+                                    {{shared.storeNameLabel}}
+                                </label>
+                </div>
+                <div class="ui-grid-col-8 textPlaceHolderStyle">
+                    {{workStation?.name}}
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-4">
+                    <label>
+                                <i class="fa fa-info-circle font-icon-style"></i>
+                                    {{shared.storeLicenseLabel}}
+                                </label>
+                </div>
+                <div class="ui-grid-col-8 textPlaceHolderStyle">
+                    {{workStation?.storeLicenseNumber}}
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-4">
+                    <label>
+                                    <i class="fa fa-calendar font-icon-style"></i>
+                                    {{shared.storeRegisterDateLabel}}
+                                </label>
+                </div>
+                <div class="ui-grid-col-8 textPlaceHolderStyle ltrDirection">
+                    {{workStation?.storeLicenseDateS}}
+
+                </div>
+            </div>
+        </div>
+    </p-panel>
+    <br/>
+    <p-panel [header]="shared.contactDataLabel" [style]="{'width':'95%'}">
+
+        <p-dataTable [value]="workStationPhoneList" [emptyMessage]="shared.emptyPhoneListMsg">
+            <p-column field="phoneType.name" header="{{shared.typeLabel}}"></p-column>
+            <p-column field="number" header="{{shared.numberLabel}}"></p-column>
+        </p-dataTable>
+
+        <div class="ui-grid ui-grid-responsive  ui-grid-pad" *ngIf="workStation">
+
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-4">
+                    <label>
+                                       <i class="fa fa-globe font-icon-style"></i>
+                                    {{shared.webLabel}}                               
+                                </label>
+                </div>
+                <div class="ui-grid-col-8 textPlaceHolderStyle ltrDirection">
+                    {{workStation?.website}}
+                </div>
+
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-4">
+                    <label>
+                                    <i class="fa fa-envelope font-icon-style"></i>
+                                    {{shared.emailLabel}}                               
+                                </label>
+                </div>
+                <div class="ui-grid-col-8 textPlaceHolderStyle ltrDirection">
+                    {{workStation?.email}}
+                </div>
+
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-4">
+                    <label>
+                                    <i class="fa fa-telegram font-icon-style"></i>
+                                    {{shared.telegramLabel}}                               
+                                </label>
+                </div>
+                <div class="ui-grid-col-8 textPlaceHolderStyle ltrDirection">
+                    {{workStation?.telegram}}
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-4">
+                    <label>
+                                      <i class="fa fa-instagram font-icon-style"></i>
+                                    {{shared.instagramLabel}}                               
+                                </label>
+                </div>
+                <div class="ui-grid-col-8 textPlaceHolderStyle ltrDirection">
+                    {{workStation?.instagram}}
+                </div>
+            </div>
+        </div>
+    </p-panel>
+    <br/>
+    <p-panel [header]="shared.locationDataLabel" [style]="{'width':'95%'}">
+        <div class="ui-grid ui-grid-responsive  ui-grid-pad" *ngIf="workStation">
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-4">
+                    <label>
+                                    <i class="fa fa-dot-circle-o font-icon-style"></i>
+                                    {{shared.provinceLabel}}
+                                </label>
+                </div>
+                <div class="ui-grid-col-8 textPlaceHolderStyle">
+                    {{workStation?.area?.region?.city?.township?.province?.name}}
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-4">
+                    <label>
+                                    <i class="fa fa-dot-circle-o font-icon-style"></i>
+                                    {{shared.townshipLabel}}
+                                </label>
+                </div>
+                <div class="ui-grid-col-8 textPlaceHolderStyle">
+                    {{workStation?.area?.region?.city?.township?.name}}
+                </div>
+
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-4">
+                    <label>
+                                    <i class="fa fa-dot-circle-o font-icon-style"></i>
+                                    {{shared.cityLabel}}
+                                </label>
+                </div>
+                <div class="ui-grid-col-8 textPlaceHolderStyle">
+                    {{workStation?.area?.region?.city?.name}}
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-4">
+                    <label>
+                                    <i class="fa fa-dot-circle-o font-icon-style"></i>
+                                    {{shared.regionLabel}}
+                                </label>
+                </div>
+                <div class="ui-grid-col-8 textPlaceHolderStyle">
+                    {{workStation?.area?.region?.name}}
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-4">
+                    <label>
+                                    <i class="fa fa-dot-circle-o font-icon-style"></i>
+                                    {{shared.areaLabel}}
+                                </label>
+                </div>
+                <div class="ui-grid-col-8 textPlaceHolderStyle">
+                    {{workStation?.area?.name}}
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-4">
+                    <label>
+                                    <i class="fa fa-dot-circle-o font-icon-style"></i>
+                                    {{shared.addressLabel}}
+                                </label>
+                </div>
+                <div class="ui-grid-col-8 textPlaceHolderStyle">
+                    {{workStation?.address}}
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-4">
+                    <label>
+                                    <i class="fa fa-dot-circle-o font-icon-style"></i>
+                                    {{shared.postalCodeLabel}}
+                                </label>
+                </div>
+                <div class="ui-grid-col-8 textPlaceHolderStyle">
+                    {{workStation?.postalCode}}
+                </div>
+            </div>
+        </div>
+        <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-8">
+                    <label>
+                                    <i class="fa fa-dot-circle-o font-icon-style"></i>
+                                    {{shared.showLocationOnMap}}
+                                </label>
+                    <button type="button" class="ui-button-success" pButton icon="fa-map" (click)="showMap();"></button>
+
+                </div>
+                <div class="ui-grid-col-4">
+                </div>
+
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-12">
+                    <br/>
+                    <div *ngIf="displayMap">
+                        <agm-map [latitude]="workStation?.lat" [longitude]="workStation?.longg" [scrollwheel]="false" [zoom]="zoom" [disableDefaultUI]="false"
+                            [streetViewControl]="false">
+                            <agm-marker [latitude]="workStation?.lat" [longitude]="workStation?.longg" [markerDraggable]="false"></agm-marker>
+                        </agm-map>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </p-panel>
+    <br/>
+    <div *ngIf="selectedWorkStationCatalogImgs">
+        <div *ngIf="selectedWorkStationCatalogImgs.length>0">
+            <p-panel [header]="shared.imageCatalogLabel" [style]="{'width':'95%'}">
+                <p-dataGrid [value]="selectedWorkStationCatalogImgs">
+                    <ng-template let-catalogImage pTemplate="item">
+                        <div style="padding:3px" class="ui-g-12 ui-md-3">
+                                
+                            <p-panel  [style]="{'text-align':'center'}">
+                                    <p-header>
+                                        <div class="header-text-style">
+                                            {{catalogImage.title}}
+                                        </div>
+                                    </p-header>
+                                <a class="wsCatalogImageStyle" (click)="selectCatalogImage(catalogImage)">
+                                    <img src="{{catalogImage.source}}" style="width:50px;height:50px"></a>
+                                <hr class="ui-widget-content" style="border-top:0">
+                                <i class="fa fa-search" (click)="selectCatalogImage(catalogImage)" style="cursor:pointer"></i>
+                            </p-panel>
+                        </div>
+                    </ng-template>
+                </p-dataGrid>
+            </p-panel>
+        </div>
+    </div>
+    <br/>
+    <div *ngIf="workStationDocuments.length>0">
+            <p-panel [header]="shared.documentLabel" [style]="{'width':'99%'}">
+        
+                <p-dataGrid [value]="workStationDocuments" [paginator]="true" [rows]="4" [alwaysShowPaginator]="false" [emptyMessage]="shared.emptyListMsg">
+                    <ng-template let-doc pTemplate="item">
+                        <div style="padding:3px" class="ui-g-12 ui-md-3">
+                            <p-panel [header]="doc.info" [style]="{'text-align':'center'}">
+                                <a class="wsCatalogImageStyle" (click)="selectDocumentImage(doc)">
+                                    <img src="{{doc.photo}}" style="width:50px;height:50px">
+                                </a>
+                                <div> {{doc.documentType.name}}</div>
+                                <hr class="ui-widget-content" style="border-top:0">
+                                <i class="fa fa-search" (click)="selectDocumentImage(doc)" style="cursor:pointer"></i>
+                            </p-panel>
+                        </div>
+        
+                    </ng-template>
+                </p-dataGrid>
+            </p-panel>
+            </div>
+</div>
+
+<p-dialog [(visible)]="loading" responsive="true" [resizable]="false" showEffect="fade" width="300" [rtl]="true" modal="modal"
+    [showHeader]="false" styleClass="ui-dialog">
+    <loadingCmp [loading]="loading" spinnerStyleClass="spinnerClassBlack"></loadingCmp>
+</p-dialog>

@@ -1,0 +1,232 @@
+
+<p-dataTable [value]="transactionList" [rows]="pageSize" [paginator]="true" [emptyMessage]="shared.emptyListMsg"
+  [lazy]="true" (onLazyLoad)="loadRequestsLazy($event)" [loading]="dataTableLoading" [totalRecords]="totalRecords"
+  [sortField]="sortF" [alwaysShowPaginator]="false" [sortOrder]="sortO" (onSort)="changeSort($event)"
+  loadingIcon="fa-spinner" [(first)]="first">
+  <p-header *ngIf="!showDetail">
+    {{transactionListHeader}}
+  </p-header>
+  <p-headerColumnGroup>
+    <p-row>
+      <p-column rowspan="2" [style]="{'width':'2%'}"></p-column>
+      <p-column field="2" [sortable]="true" [header]="shared.amountLabel" [style]="{'width':'10%'}"></p-column>
+      <p-column [header]="shared.paymentMethodLabel" [style]="{'width':'5%'}"></p-column>
+      <p-column header="{{shared.trackingCodeLabel}} / {{shared.depositTimeLabel}}" [style]="{'width':'15%'}">
+      </p-column>
+      <p-column [header]="shared.creditLabel" [style]="{'width':'10%'}"></p-column>
+      <p-column [header]="shared.typeLabel" [style]="{'width':'10%'}"></p-column>
+      <p-column field="3" [sortable]="true" [header]="shared.registerTimeLabel" [style]="{'width':'10%'}"></p-column>
+
+    </p-row>
+
+  </p-headerColumnGroup>
+  <p-column styleClass="col-button">
+    <ng-template let-transaction="rowData" pTemplate="body">
+      <div *ngIf="transaction.inc">
+        <i class="fa fa-plus"></i>
+      </div>
+      <div *ngIf="!transaction.inc">
+        <i class="fa fa-minus"></i>
+      </div>
+    </ng-template>
+  </p-column>
+  <p-column field="amount">
+    <ng-template let-transaction="rowData" pTemplate="body">
+      <span style="float:left;direction:ltr"> {{transaction.amount | currency:'AFN':''}} </span>
+    </ng-template>
+  </p-column>
+  <p-column>
+    <ng-template let-transaction="rowData" pTemplate="body">
+      <div *ngIf="transaction.cash; else elseBlock">
+        {{shared.cacheLabel}}
+      </div>
+      <ng-template #elseBlock>
+        {{shared.withCreditLabel}}
+      </ng-template>
+    </ng-template>
+  </p-column>
+  <p-column>
+    <ng-template let-transaction="rowData" pTemplate="body">
+      {{transaction.trackingCode}}
+      <span *ngIf="transaction.depositTime" class="timePlaceHolderStyle2">
+        {{transaction.deposingtTime}}
+      </span>
+    </ng-template>
+
+  </p-column>
+
+  <p-column field="balance">
+    <ng-template let-transaction="rowData" pTemplate="body">
+      <span style="float:left;direction:ltr"> {{transaction.balance | currency:'AFN':''}} </span>
+    </ng-template>
+  </p-column>
+  <p-column field="transactionType">
+    <ng-template let-transaction="rowData" pTemplate="body">
+      {{transaction.transactionType}}
+      <div *ngIf="transaction.discountCode">
+        <a (click)="showDiscount(transaction.discountId)">{{transaction.discountCode}}</a>
+      </div>
+    </ng-template>
+  </p-column>
+  <p-column field="registerTime" styleClass="ltrDirection"></p-column>
+  <p-footer>
+    <div class="ui-grid ui-grid-responsive">
+
+      <div class="ui-grid-row">
+        <div class="ui-grid-col-5">
+          <label>
+
+            <fa class="font-icon-style" name="dollar"></fa>
+
+            {{shared.creditLabel}} ({{shared.tomanLabel}})
+          </label>
+        </div>
+        <div class="ui-grid-col-7 textPlaceHolderStyleType2 ltrDirection">
+          {{balance | currency:'AFN':''}}
+        </div>
+      </div>
+    </div>
+  </p-footer>
+
+</p-dataTable>
+
+<div *ngIf="!dataTableLoading && showDetail">
+  <p-panel header="{{shared.detailLabel}}" [toggleable]="true" [collapsed]="true">
+
+    <div class="ui-grid ui-grid-responsive ui-grid-nopad" style="width:50%; display: inline-block;">
+      <div class="ui-grid-row">
+        <div class="ui-grid-col-8">
+          <label>
+            <i class="fa fa-info-circle font-icon-style"></i>
+            {{shared.sumBonous}}
+          </label>
+        </div>
+        <div class="ui-grid-col-4 timePlaceHolderStyle">
+          <div style="float:left">
+            {{summary?.sumBonous | currency:'AFN':''}}
+          </div>
+        </div>
+      </div>
+      <div class="ui-grid-row">
+        <div class="ui-grid-col-8">
+          <label>
+            <i class="fa fa-info-circle font-icon-style"></i>
+            {{shared.sumCreditIncrementLabel}}
+          </label>
+        </div>
+        <div class="ui-grid-col-4 timePlaceHolderStyle">
+          <div style="float:left">
+            {{summary?.sumCreditIncrement | currency:'AFN':''}}
+          </div>
+        </div>
+      </div>
+      <div class="ui-grid-row" *ngIf="isWorker">
+        <div class="ui-grid-col-8">
+          <label>
+            <i class="fa fa-info-circle font-icon-style"></i>
+            {{shared.sumCreditIncomeLabel}}
+          </label>
+        </div>
+        <div class="ui-grid-col-4 timePlaceHolderStyle">
+          <div style="float:left">
+            {{summary?.sumCreditIncome | currency:'AFN':''}}
+          </div>
+        </div>
+      </div>
+      <div class="ui-grid-row" *ngIf="!isWorker">
+        <div class="ui-grid-col-8">
+          <label>
+            <i class="fa fa-info-circle font-icon-style"></i>
+            {{shared.sumCreditOutcomeLabel}}
+          </label>
+        </div>
+        <div class="ui-grid-col-4 timePlaceHolderStyle">
+          <div style="float:left">
+            {{summary?.sumCreditOutcome | currency:'AFN':''}}
+          </div>
+        </div>
+      </div>
+      <div class="ui-grid-row" *ngIf="isWorker">
+        <div class="ui-grid-col-8">
+          <label>
+            <i class="fa fa-info-circle font-icon-style"></i>
+            {{shared.sumCashIncomeLabel}}
+          </label>
+        </div>
+        <div class="ui-grid-col-4 timePlaceHolderStyle">
+          <div style="float:left">
+            {{summary?.sumCashIncome | currency:'AFN':''}}
+          </div>
+        </div>
+      </div>
+      <div class="ui-grid-row" *ngIf="!isWorker">
+        <div class="ui-grid-col-8">
+          <label>
+            <i class="fa fa-info-circle font-icon-style"></i>
+            {{shared.sumCashOutcomeLabel}}
+          </label>
+        </div>
+        <div class="ui-grid-col-4 timePlaceHolderStyle">
+          <div style="float:left">
+            {{summary?.sumCashOutcome | currency:'AFN':''}}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="ui-grid ui-grid-responsive ui-grid-nopad"
+      style="vertical-align:top;width:50%; display: inline-block;padding-right:5%;">
+      <div class="ui-grid-row" *ngIf="isWorker">
+        <div class="ui-grid-col-8">
+          <label>
+            <i class="fa fa-info-circle font-icon-style"></i>
+            {{shared.sumCommission}}
+          </label>
+        </div>
+        <div class="ui-grid-col-4 timePlaceHolderStyle">
+          <div style="float:left">
+            {{summary?.sumCommission | currency:'AFN':''}}
+          </div>
+        </div>
+      </div>
+      <div class="ui-grid-row" *ngIf="isWorker">
+        <div class="ui-grid-col-8">
+          <label>
+            <i class="fa fa-info-circle font-icon-style"></i>
+            {{shared.sumRollbackIncomeLabel}}
+          </label>
+        </div>
+        <div class="ui-grid-col-4 timePlaceHolderStyle">
+          <div style="float:left">
+            {{summary?.sumRollbackIncome | currency:'AFN':''}}
+          </div>
+        </div>
+      </div>
+      <div class="ui-grid-row" *ngIf="isWorker">
+        <div class="ui-grid-col-8">
+          <label>
+            <i class="fa fa-info-circle font-icon-style"></i>
+            {{shared.sumRollbackOutcomeLabel}}
+          </label>
+        </div>
+        <div class="ui-grid-col-4 timePlaceHolderStyle">
+          <div style="float:left">
+            {{summary?.sumRollbackOutcome | currency:'AFN':''}}
+          </div>
+        </div>
+      </div>
+      <div class="ui-grid-row" *ngIf="isWorker">
+        <div class="ui-grid-col-8">
+          <label>
+            <i class="fa fa-info-circle font-icon-style"></i>
+            {{shared.sumPaymentLabel}}
+          </label>
+        </div>
+        <div class="ui-grid-col-4 timePlaceHolderStyle">
+          <div style="float:left">
+            {{summary?.sumPayment | currency:'AFN':''}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </p-panel>
+</div>

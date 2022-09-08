@@ -1,0 +1,128 @@
+@media only screen 
+  and (min-device-width: 300px)  { 
+    .sidebar1 {
+        float: right;
+        width: 46%;
+        margin-right: -35%;
+        min-height: 80vh;
+        background-color:#2d353c;
+        opacity: 1.0;
+        padding-bottom: 10px;
+        transition: all 0.4s ease 0s;
+        box-shadow: -3px 1px 5px #000000; 
+        -webkit-box-shadow: -3px 1px 5px #000000; 
+        -moz-box-shadow: -3px 1px 5px #000000; 
+        overflow:hidden;
+    }
+    .openSideBar{
+        margin-right: 0;
+        opacity: 1.0;
+        transition: all 0.4s ease 0s;
+    }
+}
+@media screen 
+  and (min-device-width: 768px) { 
+    .sidebar1 {
+        float: right;
+        margin-right: -13%;
+        width: 16%;
+        min-height: 80vh;
+        background-color:#2d353c;
+        opacity: 1.0;
+        padding-bottom: 10px;
+        transition: all 0.4s ease 0s;
+        box-shadow: -3px 1px 5px #000000; 
+        -webkit-box-shadow: -3px 1px 5px #000000; 
+        -moz-box-shadow: -3px 1px 5px #000000; 
+        overflow:hidden;
+    }
+    .openSideBar{
+        margin-right: 0;
+        opacity: 1.0;
+        transition: all 0.4s ease 0s;
+    }
+}
+
+
+
+#sidebar-wrapperssss::-webkit-scrollbar
+{
+    background-color: #aaaaaa;
+    opacity: 0.3;
+    width:5px;
+}
+.headerText{
+    color:tomato;
+    text-shadow: 6px 6px 0px rgba(0,0,0,0.2);
+}
+
+
+.profilePicStyle{
+    position: relative;
+    top: 1%;
+    z-index:1000;
+}
+.profileNameStyle{
+    color:white;
+    font-size: 18px;
+    padding-top: 20px;
+    padding-left: 10px;
+}
+.menuContainer{
+    position: relative;
+
+    width: 90%;
+}
+.toggleButtonStyle{
+    padding:10px;
+}
+.menuItemStyle{  
+    padding:10px;
+}
+.customHr {
+   display: block;
+       position: relative;
+       padding: 0;
+       margin: 8px auto;
+       height: 0;
+       width: 90%;
+       max-height: 0;
+       font-size: 1px;
+       line-height: 0;
+       clear: both;
+       border: none;
+       border-top: 1px solid #aaaaaa;
+       border-bottom: 1px solid #ffffff;
+        
+}
+.ui-menu, .ui-menu .ui-menu-child{
+    border:0px !important;
+}
+.ui-state-active{
+    background-color: #0167E0!important;
+}
+
+.ui-menuitem-link:hover{
+    background-color: rgb(86, 158, 247)!important;
+}
+.ui-menu .ui-menu-parent .ui-submenu-icon{
+    float: left !important;
+    margin-left: -.25em !important;
+}
+.ui-submenu-icon fa fa-fw fa-caret-left{
+    content: "\f0da" !important;
+}
+
+.ui-panelmenu-header, .ui-menuitem {
+    position: relative;
+  }
+  .ui-menuitem-text .badge{
+    position: absolute;
+    right: 1.5em;
+    top: 1.4em;
+    top: calc(0.714em + 7px);
+  }
+  .badgeStyle{
+    background-color: #aaaaaa;
+    color : red;
+  }

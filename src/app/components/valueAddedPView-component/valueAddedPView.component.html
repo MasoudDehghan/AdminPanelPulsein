@@ -1,0 +1,19 @@
+<div id="valueAddedID">
+    <div align="center">
+        <div class="ui-g">
+            <div class="ui-g-3">
+            </div>
+            <div class="ui-g-6">
+                <h3>{{shared.billInfoLabel}}</h3>
+            </div>
+
+            <div class="ui-g-3 farsi-font" style="direction: ltr;">
+                {{accNumberRegisterTimeS}} : تاریخ
+                <br />
+                {{accountantNumber}} : شماره سریال
+            </div>
+        </div>
+    </div>
+
+    <app-valueAdded-view [selectedData]="selectedData" [selectedAggregatedData]="selectedAggregatedValueAddedInfo"></app-valueAdded-view>
+</div>

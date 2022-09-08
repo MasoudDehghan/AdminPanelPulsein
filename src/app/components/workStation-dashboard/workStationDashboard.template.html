@@ -1,0 +1,30 @@
+<p-growl [value]="hmsgs" life="6000"></p-growl>
+
+<div class="ui-g ui-g-pad ui-g-reponsive dashboard " *ngIf="!loading">
+    <div class="ui-g-12">
+        <p-toolbar styleClass="toolbarstyle">
+            <div class="ui-toolbar-group-right headerLabel">
+                <img src="../assets/images/biz.png" style="vertical-align: middle;" /> {{activeLabel}}
+
+            </div>
+            <div class="ui-toolbar-group-left">
+
+                <button type="button" pButton icon="fa-refresh" (click)="refreshStat()" [pTooltip]="shared.refreshLabel"></button>
+            </div>
+        </p-toolbar>
+    </div>
+    <div class="ui-g-12">
+        <div class="ui-g-12 ui-md-6 ui-lg-3" *ngFor="let jc of jobCategory1Stat">
+            <adminPanel [jobCategory1]="jc" [headerLabel]="jc.name" imagePath="{{baseImagePath}}/{{jc.icon}}"
+                [totalRegisteredCounter]="jc.workStationCnt" (onFilterJobCategory1)="onFilterJobCategory1($event)"
+                totalRequestsCounter="0"></adminPanel>
+        </div>
+    </div>
+
+</div>
+
+
+<p-dialog [(visible)]="loading" responsive="true" [resizable]="false" width="300" [rtl]="true" [showHeader]="false"
+    styleClass="ui-dialog">
+    <loadingCmp [loading]="loading" spinnerStyleClass="spinnerClassBlack"></loadingCmp>
+</p-dialog>

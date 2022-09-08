@@ -1,0 +1,161 @@
+<p-growl [value]="msgs" life="3000"></p-growl>
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+    <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+        <div class="ui-grid-row">
+
+            <div class="ui-grid-col-12">
+                <p-panel [header]="shared.personalWorkerDataSumLabel">
+                    <div formGroupName="personalData" class="ui-grid ui-grid-responsive  ui-grid-pad">
+                        <div class="ui-grid-row">
+                            <div class="ui-grid-col-6">
+                                <div  class="ui-grid ui-grid-responsive  ui-grid-pad">
+                                    <div class="ui-grid-row">
+
+                                        <div class="ui-grid-col-4">
+                                            <label for="firstName">
+                                                <i class="fa fa-info-circle font-icon-style"></i> {{shared.firstNameLabel}}
+                                            </label>
+                                        </div>
+                                        <div class="ui-grid-col-8">
+                                            <input pInputText id="firstName" [(ngModel)]="selectedWorker.user.firstName" type="text" size="30" formControlName="firstName" />
+                                        </div>
+
+                                    </div>
+
+                                    <div class="ui-grid-row">
+                                        <div class="ui-grid-col-4">
+                                            <label for="lastName">
+                                                <i class="fa fa-info-circle font-icon-style"></i> {{shared.lastNameLabel}}
+                                            </label>
+                                        </div>
+                                        <div class="ui-grid-col-8">
+                                            <input pInputText id="lastName" [(ngModel)]="selectedWorker.user.lastName" type="text" size="30" formControlName="lastName" />
+                                        </div>
+
+                                    </div>
+
+
+
+                                    <div class="ui-grid-row">
+                                        <div class="ui-grid-col-4">
+                                            <label>
+                                                <i class="fa fa-mobile font-icon-style"></i> {{shared.mobileLabel}}
+                                            </label>
+                                        </div>
+                                        <div class="ui-grid-col-8">
+                                            <input pInputText id="mobile" [(ngModel)]="selectedWorker.user.mobileNumber" type="text" size="30" formControlName="mobileNumber" class="ltrDirection" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="ui-grid-col-6">
+                                <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+                                    <div class="ui-grid-row">
+                                        <div class="ui-grid-col-4">
+                                            <label for="nationalCode">
+                                                <i class="fa fa-info-circle font-icon-style"></i> {{shared.nationalCodeLabel}}
+                                            </label>
+                                        </div>
+                                        <div class="ui-grid-col-8">
+                                            <input pInputText id="nationalCode" [(ngModel)]="selectedWorker.user.nationalCode" type="text" size="30" formControlName="nationalCode" class="ltrDirection" />
+                                        </div>
+                                    </div>
+
+                                    <div class="ui-grid-row">
+                                        <div class="ui-grid-col-4">
+                                            <label for="genderID">
+                                                <i class="fa fa-venus-mars font-icon-style"></i> {{shared.genderLabel}}
+                                            </label>
+                                        </div>
+                                        <div class="ui-grid-col-8">
+                                            <div class="ui-g" style="margin-bottom:10px">
+                                                <div class="ui-g-6">
+                                                    <p-radioButton name="sexGroup" value="1" [label]="shared.manLabel" [(ngModel)]="selectedWorker.user.sex" formControlName="sex"></p-radioButton>
+                                                </div>
+                                                <div class="ui-g-6">
+                                                    <p-radioButton name="sexGroup" value="2" [label]="shared.womanLabel" [(ngModel)]="selectedWorker.user.sex" formControlName="sex"></p-radioButton>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </p-panel>
+            </div>
+
+        </div>
+        <div class="ui-grid-row">
+
+            <div class="ui-grid-col-6">
+
+                <p-panel id="jobEditPanelID">
+                    <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+                        <div class="ui-grid-row">
+                            <div class="ui-grid-col-4">
+                                <label for="job_Category1LabelID">
+                                    <i class="fa fa-info-circle font-icon-style"></i> {{shared.job_Category1Label}}
+                                </label>
+                            </div>
+                            <div class="ui-grid-col-8">
+                                <p-dropdown id="job_Category1LabelID" [(ngModel)]="selectedJobCategory1" [options]="jobCategory1List" (onChange)="onJobCategory1EditChange($event)" [style]="{'width':'100%'}" required="true" formControlName="jobCategory1FormCntrl"></p-dropdown>
+                            </div>
+                        </div>
+                        <div class="ui-grid-row">
+                            <div class="ui-grid-col-4">
+                                <label for="job_Category2LabelID">
+                                    <i class="fa fa-info-circle font-icon-style"></i> {{shared.job_Category2Label}}
+                                </label>
+                            </div>
+                            <div class="ui-grid-col-8">
+                                <p-dropdown id="job_Category2LabelID" [(ngModel)]="selectedJobCategory2" [options]="editJobCategory2List" (onChange)="onJobCategory2EditChange($event)" [style]="{'width':'100%'}" required="true" formControlName="jobCategory2FormCntrl"></p-dropdown>
+                            </div>
+                        </div>
+                        <div class="ui-grid-row">
+                            <div class="ui-grid-col-4">
+                                <label for="job_Category3LabelID">
+                                    <i class="fa fa-info-circle font-icon-style"></i> {{shared.job_Category3Label}}
+                                </label>
+                            </div>
+                            <div class="ui-grid-col-7">
+                                <p-dropdown id="job_Category3LabelID" [(ngModel)]="selectedJobCategory3" [options]="editJobCategory3List" [style]="{'width':'100%'}" required="true" formControlName="jobCategory3FormCntrl"></p-dropdown>
+                            </div>
+                            <div class="ui-grid-col-1">
+                                <button type="button" pButton icon="fa fa-plus-circle" (click)="addWorkerJobMap()" class="ui-button green-btn"></button>
+                            </div>
+                        </div>
+                    </div>
+                </p-panel>
+            </div>
+            <div class="ui-grid-col-6">
+                <p-panel [header]="shared.registeredWorkJobList">
+                    <p-dataTable [value]="workerToJobMapList" [emptyMessage]="shared.emptyWorkJobListMsg">
+                        <p-column field="jobCategory3.jobCategory2.jobCategory1.name" header="{{shared.job_Category1Label}}"></p-column>
+                        <p-column field="jobCategory3.jobCategory2.name" header="{{shared.job_Category2Label}}"></p-column>
+                        <p-column field="jobCategory3.name" header="{{shared.job_Category3Label}}"></p-column>
+
+                        <p-column header="{{shared.delLabelFa}}">
+                            <ng-template let-col let-workJobMap="rowData" pTemplate="body">
+                                <div align="center">
+                                    <button type="button" pButton icon="fa-close" (click)="removeWorkerJobMap(workJobMap)" class="ui-button pink-btn" [pTooltip]="shared.delLabelFa"></button>
+                                </div>
+                            </ng-template>
+                        </p-column>
+                    </p-dataTable>
+                </p-panel>
+            </div>
+        </div>
+    </div>
+    <div align="center">
+        <div>
+            <button type="submit" pButton icon="fa-save" label="{{shared.saveLabel}}" class="ui-button turquoise-btn saveBtnStyle"></button>
+        </div>
+    </div>
+</form>
+
+<p-dialog [(visible)]="loading" responsive="true" [resizable]="false" showEffect="fade" width="300" [rtl]="true" modal="modal" [showHeader]="false" styleClass="ui-dialog">
+    <loadingCmp [loading]="loading" spinnerStyleClass="spinnerClassBlack"></loadingCmp>
+</p-dialog>

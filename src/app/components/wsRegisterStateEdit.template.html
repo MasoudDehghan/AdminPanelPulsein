@@ -1,0 +1,51 @@
+<p-growl [value]="msgs" life="3000"></p-growl>
+<loadingCmp [loading]="loading" spinnerStyleClass="spinnerClassBlack"></loadingCmp>
+<div *ngIf="!loading">
+    <form [formGroup]="registerStateForm" (ngSubmit)="onSubmit()">
+        <p-panel id="registerStateFormPanelID" [style]="{'width':'95%'}">
+            <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+                <div class="ui-grid-row">
+                    <div class="{{editMode ? 'ui-grid-col-4':'ui-grid-col-5'}}">
+                        <label for="workStationName">
+                                <i class="fa fa-info-circle font-icon-style"></i>
+                                {{shared.state}}
+                            </label>
+                    </div>
+                    <div *ngIf="!editMode" class="ui-grid-col-7 textPlaceHolderStyle">
+                        {{selectedWorkStation?.registerState.name}}
+                    </div>
+                    <div *ngIf="editMode" class="ui-grid-col-8">
+                        <p-dropdown id="registerStateTypeID" [(ngModel)]="selectedWorkStation.registerState" [options]="registerStateList" formControlName="state"
+                            [style]="{'width':'100%'}"></p-dropdown>
+                    </div>
+                </div>
+                <div class="ui-grid-row">
+                    <div class="{{editMode ? 'ui-grid-col-4':'ui-grid-col-5'}}">
+                        <label for="workStationName">
+                                <i class="fa fa-info-circle font-icon-style"></i>
+                                {{shared.descLabel}}
+                            </label>
+                    </div>
+                    <div *ngIf="!editMode" class="ui-grid-col-7 textPlaceHolderStyle">
+                        {{selectedWorkStation?.regStateInfo}}
+                    </div>
+                    <div *ngIf="editMode" class="ui-grid-col-8">
+                        <textarea pInputTextarea id="infoId" [(ngModel)]="selectedWorkStation.regStateInfo" formControlName="desc" class="width100p"
+                            rows="3"></textarea>
+                    </div>
+
+                </div>
+            </div>
+
+            <p-footer>
+                <div *ngIf="editMode" align="center" style="padding:4px">
+                    <button type="submit" pButton icon="fa-save" label="{{shared.saveLabel}}" class="ui-button turquoise-btn"></button>
+                </div>
+                <div *ngIf="!editMode" align="center" style="padding:4px">
+                    <button type="submit" pButton icon="fa-close" label="{{shared.closeLabel}}" class="ui-button"></button>
+                </div>
+            </p-footer>
+        </p-panel>
+
+</form>
+</div>

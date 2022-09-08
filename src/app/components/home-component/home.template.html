@@ -1,0 +1,276 @@
+<p-growl [value]="hmsgs"></p-growl>
+    <div class="ui-g dashboard">
+
+        <div class="ui-g-12">
+            <p-toolbar styleClass="toolbarstyle">
+                <div class="ui-toolbar-group-right headerLabel">
+                    <img src="../assets/images/wrench.png" style="vertical-align: middle;" /> {{activeLabel}}
+
+                </div>
+                <div class="ui-toolbar-group-left">
+
+                    <div class="dateTimeStyle">{{lastRefreshTime | date:'yyyy-MM-dd HH:mm:ss'}}</div>
+                    <button type="button" pButton icon="fa fa-refresh" (click)="refreshDataWithLoading()" [pTooltip]="shared.refreshLabel"></button>
+                </div>
+            </p-toolbar>
+
+        </div>
+
+
+        <!-- <div class="ui-g-12 ui-md-4 ui-lg-6 status-bars">
+            <div class="cardNew">
+                <ul>
+                    <li>
+                        <div class="status-bar status-bar-1 ">
+
+                            <div class="status-bar-value">{{stat.workerCnt}}</div>
+
+                        </div>
+                        <span class="status-title" (click)="onClickBizCard()">{{shared.workersLabel}}</span>
+                        <i class="fa fa fa-user "></i>
+
+                    </li>
+                    <li>
+                        <div class="status-bar status-bar-2 ">
+
+                            <div class="status-bar-value" [style.width.%]="wActiveCntCss">{{stat.wActiveCnt}}</div>
+
+                        </div>
+                        <span class="status-title" (click)="goToWorkerMgmActive()">{{shared.activeLabel}}</span>
+                        <i class="fa fa fa-user "></i>
+
+                    </li>
+                    <li>
+                        <div class="status-bar status-bar-3 ">
+
+                            <div class="status-bar-value" [style.width.%]="inActiveWorkerCntrCss">{{inActiveWorkerCntr}}
+                            </div>
+
+                        </div>
+                        <span class="status-title" (click)="goToWorkerMgmInActive()">{{shared.relaxLabel}}</span>
+                        <i class="fa fa fa-user "></i>
+
+                    </li>
+                    <li>
+                        <div class="status-bar status-bar-4">
+
+                            <div class="status-bar-value" [style.width.%]="waitTConfirmCntrCss">{{waitTConfirmCntr}}
+                            </div>
+
+                        </div>
+                        <span class="status-title" (click)="gotWorkerCartable()">{{shared.waitTConfirm}}</span>
+                        <i class="fa fa fa-user "></i>
+
+                    </li>
+                    <li>
+                        <div class="status-bar status-bar-5">
+                            <div class="status-bar-value"> {{stat.workerCntToday}} </div>
+                        </div>
+                        <span class="status-title" (click)="gotWorkerCartable()">{{shared.registerTodayLabel}}</span>
+                        <i class="fa fa fa-user "></i>
+
+                    </li>
+                </ul>
+            </div>
+        </div> -->
+
+
+        <div class="ui-g-12 ui-md-6 ui-lg-6">
+            
+            <div id="statChart" class="chart-style"></div>
+            <!-- <highcharts-chart [Highcharts]="HighchartsStock" [options]="chartOptions" [(update)]="chartUpdateFlag"
+                class="chart-style" #statChart></highcharts-chart> -->
+        </div>
+
+        <div class="ui-g-12 ui-md-6 ui-lg-6">
+            <div class="ui-g-12">
+                <div class="ui-g card ui-shadow-2 overview-box overview-box-2 " (click)="onClickUserCard() ">
+                    <div class="ui-g-2">
+                        <a class="faa-parent animated-hover ">
+                            <i class="fa fa fa-user-plus "></i>
+                        </a>
+                    </div>
+                    <div class="ui-g-3">
+                        <span class="overview-box-count "> {{stat.activeClientCntToday}} </span>
+                        <span class="overview-box-name ">{{shared.registerTodayLabel}}</span>
+
+                    </div>
+
+                    <div class="ui-g-2">
+                        <a class="faa-parent animated-hover ">
+                            <i class="fa fa fa-users"></i>
+                        </a>
+                    </div>
+                    <div class="ui-g-3">
+                        <span class="overview-box-count ">{{stat.activeClientCnt}}</span>
+                        <span class="overview-box-name">{{shared.clientsLabel}}</span>
+                    </div>
+
+                </div>
+
+
+            </div>
+            <div class="ui-g-12">
+                <div class="ui-g card ui-shadow-2 overview-box overview-box-3" (click)="onClickBizCard() ">
+                    <div class="ui-g-1">
+                        <a class="faa-parent animated-hover ">
+                            <i class="fa fa fa-flag-o"></i>
+                        </a>
+                    </div>
+                    <div class="ui-g-2">
+                        <span class="overview-box-count ">{{inActiveWorkerCntr}}</span>
+                        <span class="overview-box-name">{{shared.relaxLabel}}</span>
+                    </div>
+                    <div class="ui-g-1">
+                        <a class="faa-parent animated-hover ">
+                            <i class="fa fa fa-flag"></i>
+                        </a>
+                    </div>
+                    <div class="ui-g-2">
+                        <span class="overview-box-count ">{{stat.wActiveCnt}}</span>
+                        <span class="overview-box-name">{{shared.activeLabel}}</span>
+                    </div>
+                    <div class="ui-g-1">
+                        <a class="faa-parent animated-hover ">
+                            <i class="fa fa fa-plus-circle"></i>
+                        </a>
+                    </div>
+                    <div class="ui-g-2">
+                        <span class="overview-box-count ">{{stat.workerCntToday}} </span>
+                        <span class="overview-box-name ">{{shared.registerTodayLabel}}</span>
+
+                    </div>
+
+                    <div class="ui-g-1">
+                        <a class="faa-parent animated-hover ">
+                            <i class="fa fa fa-user-secret"></i>
+                        </a>
+                    </div>
+                    <div class="ui-g-2">
+                        <span class="overview-box-count ">{{stat.workerCnt}}</span>
+                        <span class="overview-box-name">{{shared.workersLabel}}</span>
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+            <div class="ui-g-3" style="padding:.2em !important">
+                <div class="card ui-shadow-2 overview-box overview-box-4 " (click)="gotoWorkstationCartable() ">
+                    <span class="overview-box-count ">{{workerstationNeedToCheck}}</span>
+                    <span class="overview-box-name" style="font-size:14px !important">کسب و کارهای نیاز به بررسی</span>
+                </div>
+
+            </div>
+            <div class="ui-g-3" style="padding:.2em !important">
+                <div class="card ui-shadow-2 overview-box overview-box-10" (click)="gotoWorkerCartable()">
+                    <span class="overview-box-count ">{{workerNeedToCheck}}</span>
+                    <span class="overview-box-name " style="font-size:14px !important">
+                        متخصصین نیاز به بررسی</span>
+                </div>
+            </div> 
+            <div class="ui-g-3" style="padding:.2em !important">
+                <div class="card ui-shadow-2 overview-box overview-box-6" (click)="gotoDocCartable() ">
+                    <span class="overview-box-count ">{{docNeedToCheck}}</span>
+                    <span class="overview-box-name" style="font-size:14px !important">مدارک نیاز به بررسی</span>
+                </div>
+
+            </div>
+            <div class="ui-g-3" style="padding:.2em !important">
+                <div class="card ui-shadow-2 overview-box overview-box-9" (click)="gotoExpiredReqCartable()">
+                    <span class="overview-box-count ">{{expiredReqCnt}}</span>
+                    <span class="overview-box-name " style="font-size:14px !important">
+                        درخواستهای منقضی</span>
+                </div>
+            </div> 
+        </div>
+        <div class="ui-g-12 cardX">
+            <div class="ui-g-12 ui-md-4 ui-lg-2">
+                <div class="ui-g card ui-shadow-2 overview-box overview-box-5" (click)="onClickAll()">
+                    <div class="ui-g-12">
+                        <span class="overview-box-count ">{{totalRequestCntr}}</span>
+                        <hr />
+                        <span class="overview-box-name ">{{shared.currentRequestsLabel}}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="ui-g-12 ui-md-4 ui-lg-2">
+                <div class="ui-g card ui-shadow-2 overview-box request-box-1 " (click)="onClickWait4SuggestRequest()">
+
+                    <div class="ui-g-12">
+                        <span class="overview-box-count ">{{stat.reqWait4Suggest}}</span>
+                        <hr />
+                        <span class="overview-box-name ">{{shared.reqWait4Suggest}}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="ui-g-12 ui-md-4 ui-lg-2">
+                <div class="ui-g card ui-shadow-2 overview-box request-box-2" (click)="onClickSuggestFinishedRequest()">
+                    <div class="ui-g-12">
+                        <span class="overview-box-count ">{{stat.reqSuggestFinished}}</span>
+                        <hr />
+                        <span class="overview-box-name ">{{shared.reqSuggestFinished}}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ui-g-12 ui-md-4 ui-lg-2">
+                <div class="ui-g card ui-shadow-2 overview-box request-box-3" (click)="onClickWait4DoAckRequest()">
+                    <div class="ui-g-12">
+                        <span class="overview-box-count ">{{stat.reqWait4DoAck}}</span>
+                        <hr />
+                        <span class="overview-box-name ">{{shared.reqWait4DoAck}}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="ui-g-12 ui-md-4 ui-lg-2">
+                <div class="ui-g card ui-shadow-2 overview-box request-box-6" (click)="onClickInProgressRequest()">
+                    <div class="ui-g-12">
+                        <span class="overview-box-count ">{{stat.reqInProgress}}</span>
+                        <hr />
+                        <span class="overview-box-name ">{{shared.reqInProgress}}</span>
+
+
+                        <!-- <hr />
+                    <span class="overview-box-name">{{shared.expiredLabel}}</span>
+                    <span class="overview-box-count ">{{stat.reqInProgressExpired}}</span> -->
+
+
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="ui-g-12 ui-md-4 ui-lg-2">
+                <div class="ui-g card ui-shadow-2 overview-box request-box-7" (click)="onClickWait4PaymentRequest()">
+
+                    <div class="ui-g-12">
+                        <span class="overview-box-count ">{{stat.reqWait4Payment}}</span>
+                        <hr />
+                        <span class="overview-box-name">{{shared.reqWait4Payment}}</span>
+                        <!-- <hr />
+                    <span class="overview-box-name">{{shared.expiredLabel}}</span>
+                    <span class="overview-box-count">{{stat.reqWait4PaymentExpired}}</span> -->
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="ui-g-12 ui-md-4 ui-lg-2">
+            <div class="ui-g card ui-shadow-2 overview-box request-box-8" (click)="onClickWait4PollRequest()">
+                <div class="ui-g-12">
+                    <span class="overview-box-count ">{{stat.reqWait4Nazarsanji}}</span>
+                    <span class="overview-box-name ">{{shared.reqWait4Nazarsanji}}</span>
+                </div>
+            </div>
+        </div> -->
+
+
+
+        </div>
+
+    </div>
+<p-dialog [(visible)]="loading " responsive="true " [resizable]="false " width="300 " [rtl]="true " [showHeader]="false"
+    styleClass="ui-dialog ">
+    <loadingCmp [loading]="loading " spinnerStyleClass="spinnerClassBlack "></loadingCmp>
+</p-dialog>

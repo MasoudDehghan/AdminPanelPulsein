@@ -1,0 +1,227 @@
+<p-growl [value]="hmsgs" life="6000"></p-growl>
+
+<div class="ui-g ui-g-pad dashboard">
+    <div class="ui-g-12">
+        <p-toolbar styleClass="toolbarstyle">
+            <div class="ui-toolbar-group-right headerLabel">
+                <img src="../assets/images/smartphone.png" style="vertical-align: middle;" /> {{activeLabel}}
+            </div>
+            <div class="ui-toolbar-group-left">
+                <button type="button" class="purple-btn" pButton icon="fa-plus" (click)="showCDialogToAdd()"
+                    label="{{shared.registerNewClientAppVersion}}"></button>
+                <button type="button" class="orange-btn" pButton icon="fa-plus" (click)="showWDialogToAdd()"
+                    label="{{shared.registerNewWorkerAppVersion}}"></button>
+                <button type="button" pButton icon="fa-refresh" (click)="refresh()"
+                    [pTooltip]="shared.refreshLabel"></button>
+
+            </div>
+        </p-toolbar>
+
+        <div class="ui-rtl" dir="rtl" align="center">
+            <p-tabView (onChange)="handleChange($event)">
+                <p-tabPanel [header]="shared.clientApp">
+                    <p-dataTable [value]="clientAppVersions" selectionMode="single" [(selection)]="selectedApp"
+                        (onRowSelect)="onClientAppRowSelect($event)" loadingIcon="fa-spinner"
+                        [loading]="cDataTableLoading" [rows]="7" [paginator]="true" [alwaysShowPaginator]="false"
+                        [pageLinks]="3" [style]="{'width':'99%'}" [emptyMessage]="shared.emptyListMsg" #cdt>
+                        <p-column [style]="{'width':'15%'}" styleClass="ltrDirection" field="name" [filter]="true"
+                            header="{{shared.nameLabel}}"></p-column>
+                        <p-column [style]="{'width':'15%'}" field="info" header="{{shared.descLabel}}"></p-column>
+                        <p-column [style]="{'width':'5%'}" header="{{shared.deviceTypeLabel}}">
+                            <ng-template let-col let-app="rowData" pTemplate="body">
+                                <div align="center" *ngIf="app.ios">
+                                    <i class="fa fa-apple" aria-hidden="true" pTooltip="IOS"></i>
+                                </div>
+                                <div align="center" *ngIf="!app.ios">
+                                    <i class="fa fa-android" aria-hidden="true" pTooltip="Android"></i>
+                                </div>
+                            </ng-template>
+                        </p-column>
+                        <p-column [style]="{'width':'5%'}" header="{{shared.activeLabel}}">
+                            <ng-template let-col let-app="rowData" pTemplate="body">
+                                <div align="center" *ngIf="app.active">
+                                    <img src="../assets/images/checked.png" />
+                                </div>
+                            </ng-template>
+                        </p-column>
+                        <p-column [style]="{'width':'10%'}" styleClass="ltrDirection" field="releaseTimeS"
+                            header="{{shared.releaseTimeLabel}}"></p-column>
+                        <p-column header="{{shared.changeLabel}}" [style]="{'width':'15%'}">
+                            <ng-template let-col let-app="rowData" pTemplate="body">
+                                <div align="center">
+                                    <button type="button" pButton icon="fa-edit" class="green-btn" (click)="editC(app)"
+                                        [pTooltip]="shared.editLabelFa"></button>
+                                    <button type="button" pButton icon="fa-close" class="pink-btn"
+                                        (click)="deleteClientApp(app)" [pTooltip]="shared.delLabelFa"></button>
+
+                                </div>
+                            </ng-template>
+                        </p-column>
+
+                    </p-dataTable>
+
+                </p-tabPanel>
+                <p-tabPanel [header]="shared.workerApp">
+                    <p-dataTable [value]="workerAppVersions" selectionMode="single" [(selection)]="selectedApp"
+                        (onRowSelect)="onWorkerAppRowSelect($event)" loadingIcon="fa-spinner"
+                        [loading]="wDataTableLoading" [rows]="7" [paginator]="true" [alwaysShowPaginator]="false"
+                        [pageLinks]="3" [style]="{'width':'99%'}" [emptyMessage]="shared.emptyListMsg" #wdt>
+                        <p-column [style]="{'width':'15%'}" styleClass="ltrDirection" field="name" [filter]="true"
+                            header="{{shared.nameLabel}}"></p-column>
+                        <p-column [style]="{'width':'15%'}" field="info" header="{{shared.descLabel}}"></p-column>
+                        <p-column [style]="{'width':'5%'}" header="{{shared.activeLabel}}">
+                            <ng-template let-col let-app="rowData" pTemplate="body">
+                                <div align="center" *ngIf="app.active">
+                                    <img src="../assets/images/checked.png" />
+                                </div>
+                            </ng-template>
+                        </p-column>
+                        <p-column [style]="{'width':'10%'}" styleClass="ltrDirection" field="releaseTimeS"
+                            header="{{shared.releaseTimeLabel}}"></p-column>
+                        <p-column header="{{shared.changeLabel}}" [style]="{'width':'15%'}">
+                            <ng-template let-col let-app="rowData" pTemplate="body">
+                                <div align="center">
+                                    <button type="button" pButton icon="fa-edit" class="green-btn" (click)="editW(app)"
+                                        [pTooltip]="shared.editLabelFa"></button>
+                                    <button type="button" pButton icon="fa-close" class="pink-btn"
+                                        (click)="deleteWorkerApp(app)" [pTooltip]="shared.delLabelFa"></button>
+
+                                </div>
+                            </ng-template>
+                        </p-column>
+
+                    </p-dataTable>
+                </p-tabPanel>
+            </p-tabView>
+        </div>
+
+    </div>
+</div>
+<p-dialog [header]="editPanelHeader" [(visible)]="displayDialog" [responsive]="true" [resizable]="false"
+    showEffect="fade" [modal]="true" [width]="500">
+    <form [formGroup]="form" (ngSubmit)="save()">
+        <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+            <div class="ui-grid-row" *ngIf="!editClientAppVersion && !editWorkerAppVersion &&
+            !onCRowSelected && !onWRowSelected">
+                <div class="ui-grid-col-4">
+                    <label for="nameID">
+                        <i class="fa fa-dot-circle-o font-icon-style"></i>
+                        {{shared.nameLabel}}</label>
+                </div>
+                <div class="ui-grid-col-8">
+                    <input id="nameID" pInputText [(ngModel)]="selectedApp.name" type="text" formControlName="name" />
+                </div>
+
+            </div>
+            <div class="ui-grid-row" *ngIf="!editClientAppVersion && !editWorkerAppVersion &&
+            !onCRowSelected && !onWRowSelected">
+                <div class="ui-grid-col-12">
+                    <div class="ui-message ui-messages-error ui-corner-all"
+                        *ngIf="form.controls['name'].touched && form.controls['name'].hasError('required')">
+                        {{shared.requiredMsg}}
+                    </div>
+                    <div class="ui-message ui-messages-error ui-corner-all"
+                        *ngIf="form.controls['name'].touched && form.controls['name'].hasError('minlength')">
+                        {{shared.minLengthValidatorNameMsg}} : {{form.controls['name'].errors.minlength.requiredLength}}
+                        {{shared.charLabel}}
+                    </div>
+                    <div class="ui-message ui-messages-error ui-corner-all"
+                        *ngIf="form.controls['name'].touched && form.controls['name'].hasError('maxlength')">
+                        {{shared.maxLengthValidatorNameMsg}} : {{form.controls['name'].errors.maxlength.requiredLength}}
+                        {{shared.charLabel}}
+                    </div>
+                </div>
+            </div>
+            <div class="ui-grid-row">
+
+                <div class="ui-grid-col-4">
+                    <label for="infoID">
+                        <i class="fa fa-dot-circle-o font-icon-style"></i>
+                        {{shared.descLabel}}</label>
+                </div>
+                <div class="ui-grid-col-8">
+                    <input id="infoID" pInputText [(ngModel)]="selectedApp.info" type="text" formControlName="info" />
+                </div>
+            </div>
+            <div class="ui-grid-row" *ngIf="newClientAppVersion || editClientAppVersion">
+
+                <div class="ui-grid-col-4">
+                    <label>
+                        <i class="fa fa-dot-circle-o font-icon-style"></i>
+                        {{shared.deviceTypeLabel}}
+                    </label>
+                </div>
+                <div class="ui-grid-col-4">
+                    <p-radioButton name="groupDeviceType" value="android" label="Android" formControlName="deviceType"
+                        inputId="andoid"></p-radioButton>
+                </div>
+                <div class="ui-grid-col-4">
+                    <p-radioButton name="groupDeviceType" value="ios" label="IOS" formControlName="deviceType"
+                        inputId="ios"></p-radioButton>
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-4">
+                    <label for="activeID">
+                        <i class="fa fa-dot-circle-o font-icon-style"></i>
+                        {{shared.activeLabel}}</label>
+                </div>
+                <div class="ui-grid-col-8">
+                    <p-checkbox id="activeID" [(ngModel)]="selectedApp.active" binary="true" formControlName="active">
+                    </p-checkbox>
+                </div>
+            </div>
+            <!--<div class="ui-grid-row" *ngIf="!newClientAppVersion && !newWorkerAppVersion">
+                <div class="ui-grid-col-4"><label for="workerAppID">
+                     <i class="fa fa-dot-circle-o font-icon-style"></i>
+                    {{shared.workerApp}}</label></div>
+                <div class="ui-grid-col-8">
+                    <p-checkbox id="workerAppID" [(ngModel)]="selectedApp.workerApp" binary="true" formControlName="workerApp"></p-checkbox>
+                </div>
+            </div>-->
+
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-4">
+                    <label>
+                        <i class="fa fa-dot-circle-o font-icon-style"></i>
+                        {{shared.releaseTimeLabel}}
+                    </label>
+                </div>
+                <!-- <div class="ui-grid-col-7">
+                    <input pInputText id="releaseTime_input" type="text" [(ngModel)]="selectedApp.releaseTimeS" formControlName="releaseTimeS"
+                        class="width100p  ltrDirection" />
+                </div>
+                <div class="ui-grid-col-1">
+                    <img id="releaseTime_btn" src="../../assets/images/cal.png" style="padding:5px;vertical-align: top;" />
+                </div> -->
+                <div class="ui-grid-col-8">
+
+
+                    <dp-date-picker [(ngModel)]="dateObject" mode="daytime" [config]="datePickerConfig"
+                        theme="dp-material" [ngModelOptions]="{standalone: true}">
+                    </dp-date-picker>
+
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <div align="center">
+
+                <button type="submit" pButton icon="fa-check" label="{{shared.saveLabel}}"></button>
+            </div>
+            <p-messages [value]="innerPannelGMessage" [closable]="true"></p-messages>
+        </footer>
+    </form>
+</p-dialog>
+<p-confirmDialog header="{{shared.confirmHeader}}" width="425" rtl="true" #cd>
+    <p-footer>
+        <button type="button" pButton icon="fa-close" [label]="shared.noLabel" (click)="cd.reject()"
+            style="margin-right: 30%;"></button>
+        <button type="button" pButton icon="fa-check" [label]="shared.yesLabel" (click)="cd.accept()"></button>
+    </p-footer>
+</p-confirmDialog>
+<p-dialog [(visible)]="loading" responsive="true" [resizable]="false" showEffect="fade" width="300" [rtl]="true"
+    modal="modal" [showHeader]="false" styleClass="ui-dialog">
+    <loadingCmp [loading]="loading" spinnerStyleClass="spinnerClassBlack"></loadingCmp>
+</p-dialog>

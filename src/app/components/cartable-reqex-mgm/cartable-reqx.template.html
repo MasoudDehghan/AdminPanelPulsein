@@ -1,0 +1,98 @@
+<p-growl [value]="hmsgs" life="6000"></p-growl>
+
+<div *ngIf="!loading">
+    <div class="ui-g ui-g-pad dashboard">
+        <div class="ui-g-12">
+            <p-toolbar styleClass="toolbarstyle">
+                <div class="ui-toolbar-group-right headerLabel">
+                    <img src="../assets/images/review.png" style="vertical-align: middle;" /> {{activeLabel}}
+
+                </div>
+                <div class="ui-toolbar-group-left">
+
+                    <button type="button" pButton icon="fa-chevron-circle-left" (click)="showExpiredRequestCartableDashboard()"
+                        [label]="shared.expiredRequestCartableLabel" [pTooltip]="shared.expiredRequestCartableLabel"
+                        *ngIf="!displayExpiredRequestCartable"></button>
+                    <button type="button" pButton icon="fa-refresh" (click)="showExpiredRequestCartableDashboard()"
+                        [pTooltip]="shared.expiredRequestCartableLabel" *ngIf="displayExpiredRequestCartable"></button>
+                </div>
+            </p-toolbar>
+
+
+        </div>
+
+
+        <div class="ui-g-12 ui-md-12 ui-lg-12" *ngIf="displayExpiredRequestCartable">
+            <div align="center">
+                <p-dataTable [value]="expiredRequests" [hidden]="!displayExpiredRequestCartable" [alwaysShowPaginator]="false"
+                    [rows]="7" [paginator]="true" [pageLinks]="5" [emptyMessage]="shared.emptyListMsg" [style]="{'width':'90%'}">
+
+                    <p-column field="code" [header]="shared.requestCodeLabel" [filter]="true" styleClass="latinFontStyle"
+                        [style]="{'width':'20%'}">
+                        <ng-template let-col let-request="rowData" pTemplate="body">
+
+                            <a (click)="showRequestViewDialog(request)">
+                                {{request.code}}
+                            </a>
+
+                        </ng-template>
+                    </p-column>
+                    <p-column field="title" [header]="shared.titleLabel" [filter]="true" [style]="{'width':'20%'}"></p-column>
+                    <p-column field="state" [header]="shared.state"></p-column>
+                    <p-column [header]="shared.updateTimeLabel">
+                        <ng-template let-col let-request="rowData" pTemplate="body">
+                            <div class="ltrDirection">{{request.updateTime}}</div>
+                        </ng-template>
+                    </p-column>
+
+                    <p-column [style]="{'text-align':'center'}" [header]="shared.cancelFinishLabel">
+                        <ng-template let-col let-request="rowData" pTemplate="body">
+                            <button type="button" pButton icon="fa-remove" class="pink-btn" (click)="handleCancelExpireRequest(request)"></button>
+                        </ng-template>
+                    </p-column>
+                    <p-column [style]="{'text-align':'center'}" [header]="shared.snoozeLabel">
+                        <ng-template let-col let-request="rowData" pTemplate="body">
+                            <button type="button" pButton icon="fa-clock-o" class="green-btn" (click)="showRequestSnoozeDialog(request)"></button>
+                        </ng-template>
+                    </p-column>
+
+
+                </p-dataTable>
+            </div>
+        </div>
+    </div>
+
+</div>
+<div *ngIf="loading">
+    <p-dialog [(visible)]="loading" responsive="true" [resizable]="false" width="300" [rtl]="true" [showHeader]="false"
+        styleClass="ui-dialog">
+        <loadingCmp [loading]="loading" spinnerStyleClass="spinnerClassBlack"></loadingCmp>
+    </p-dialog>
+</div>
+
+<div *ngIf="displayRequestView">
+    <p-dialog [(visible)]="displayRequestView" [resizable]="false" [closable]="true" [responsive]="true" [modal]="true"
+        [rtl]="true" width="900" [header]="shared.requestViewLabel">
+        <app-request-view [requestp]="selectedRequestP" [loading]="loadingDialog" (onShowImage)="onShowImage($event)"></app-request-view>
+    </p-dialog>
+</div>
+<div *ngIf="displayRequestSnoozeDialog">
+    <p-dialog [(visible)]="displayRequestSnoozeDialog" [resizable]="false" [closable]="true" [responsive]="true"
+        [modal]="true" [rtl]="true">
+        <p-header>
+            {{shared.snoozeLabel}} {{shared.requestCodeLabel}} {{selectedRequestP.code}}
+        </p-header>
+        <form #f="ngForm" (ngSubmit)="onSubmitSnoozeDialog()">
+            <p-listbox [options]="snoozeCountList" [(ngModel)]="selectedSnoozeCount" name="selectedSnoozeCount"></p-listbox>
+            <div align="center">
+                <button type="submit" pButton icon="fa fa-save" label="{{shared.saveLabel}}" class="ui-button green-btn saveBtnStyle"></button>
+            </div>
+        </form>
+    </p-dialog>
+</div>
+<p-confirmDialog header="{{shared.confirmHeader}}" width="425" rtl="true" #cd>
+    <p-footer>
+        <button type="button" pButton icon="fa-close" [label]="shared.noLabel" (click)="cd.reject()" style="margin-right: 30%;"></button>
+        <button type="button" pButton icon="fa-check" [label]="shared.yesLabel" (click)="cd.accept()"></button>
+    </p-footer>
+</p-confirmDialog>

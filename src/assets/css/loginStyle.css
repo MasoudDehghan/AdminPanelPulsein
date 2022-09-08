@@ -1,0 +1,91 @@
+
+
+.loginContainer{
+		/*background: url('../../assets/images/ttt.jpg');*/
+		background: url('../../assets/images/flash.jpg');
+		position:fixed;
+		width:100%;
+		height:100%;
+		top:0px;
+		left:0px;
+		z-index:1;
+		/* Center and scale the image nicely */
+		background-position: center;
+		background-repeat: no-repeat;
+    background-size: cover;
+
+		
+		
+}
+
+.headerClass{
+	padding-top: 20px;
+  font-size: xx-large;
+  font-weight: bolder;
+  color: deepskyblue;
+ text-shadow: 4px 4px 2px rgba(255, 255,255, 1);
+}
+.subHeaderClass{
+  font-size: medium;
+  font-weight: bolder;
+  color: darkgray;
+ text-shadow: 4px 4px 2px rgba(255, 255,255, 1);
+}
+
+@media only screen 
+  and (min-device-width: 300px)  { 
+	.login { 
+		position: absolute;
+		top: 1%;
+		left: 10%;
+		margin: -2% 0 0 -2%;
+		width:80%;
+		height:auto;
+		 z-index:1;
+		
+		padding: 10px;
+		overflow-y: scoll;
+		
+	}  
+  }
+	@media screen 
+  and (min-device-width: 768px){ 
+.login { 
+	position: absolute;
+	top: 25%;
+	left: 50%;
+	margin: -13% 0 0 -13%;
+	width:26%;
+	height:auto;
+	 z-index:1;
+	
+	padding: 10px;
+	overflow-y: scoll;
+	
+}
+  }
+.login h1 { color: #fff; text-shadow: 0 0 10px rgba(0,0,0,0.3); letter-spacing:1px; text-align:center; }
+
+.loginInput { 
+	width: 100%; 
+	direction: ltr;
+	text-align: left;
+	margin-bottom: 10px; 
+	background: rgba(0,0,0,0.3);
+	border: none;
+	outline: none;
+	padding: 10px;
+	font-size: 13px;
+	color: #fff;
+	text-shadow: 1px 1px 1px rgba(0,0,0,0.3);
+	border: 1px solid rgba(0,0,0,0.3);
+	border-radius: 4px;
+	box-shadow: inset 0 -5px 45px rgba(100,100,100,0.2), 0 1px 1px rgba(255,255,255,0.2);
+	-webkit-transition: box-shadow .5s ease;
+	-moz-transition: box-shadow .5s ease;
+	-o-transition: box-shadow .5s ease;
+	-ms-transition: box-shadow .5s ease;
+	transition: box-shadow .5s ease;
+	 z-index:100;
+}
+.loginInput:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgba(255,255,255,0.2); 	text-align: left;}

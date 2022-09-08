@@ -1,0 +1,304 @@
+<p-growl [value]="hmsgs" life="6000"></p-growl>
+<div *ngIf="loading">
+  <p-dialog [(visible)]="loading" responsive="true" [resizable]="false" width="300" [rtl]="true" [showHeader]="false" styleClass="ui-dialog">
+    <loadingCmp [loading]="loading" spinnerStyleClass="spinnerClassBlack"></loadingCmp>
+  </p-dialog>
+</div>
+<div class="ui-g ui-g-pad ui-g-reponsive dashboard">
+
+  <div class="ui-g-12">
+    <div class="toolbarstyle ui-toolbar ui-widget ui-widget-header ui-corner-all ui-helper-clearfix">
+      <form [formGroup]="reportForm" (ngSubmit)="onSubmitFilterform()">
+
+        <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+          <div class="ui-grid-row">
+            <div class="ui-grid-col-3 headerLabel">
+              <img src="../assets/images/worker.png" style="vertical-align: middle;" /> {{activeLabel}}
+
+            </div>
+            <div class="ui-grid-col-2"></div>
+            <div class="ui-grid-col-1">
+              <label for="reportFilterDate_input">
+                {{shared.reportTimeLabel}}
+              </label>
+            </div>
+            <div class="ui-grid-col-4"> 
+
+                <dp-date-picker [(ngModel)]="_reportFilterDate" mode="day" [config]="datePickerConfig" theme="dp-material"  [ngModelOptions]="{standalone: true}">
+                </dp-date-picker>
+                <button type="submit" pButton icon="fa-refresh" [label]="shared.getReportLabel" [pTooltip]="shared.getReportLabel"></button>
+
+            </div>
+
+            <div class="ui-grid-col-3" >
+            </div>
+          </div>
+        </div>
+
+
+      </form>
+
+    </div>
+    <p-table [value]="wrPaymentReportItems" [rows]="10" [paginator]="true" [loading]="loading" [pageLinks]="5" [alwaysShowPaginator]="false">
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width:20%">{{shared.workerCodeLabel}}</th>
+          <th style="width:20%">{{shared.nameLabel}}</th>
+          <th style="width:20%">{{shared.lastNameLabel}}</th>
+          <th style="width:20%">{{shared.lastPaymentTimeLabel}}</th>
+          <th style="width:20%">{{shared.payableAmountLabel}}</th>
+          <th style="width:20%">{{shared.creditLabel}}</th>
+          <th style="width:20%">{{shared.transactionLabel}}</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-payment>
+        <tr>
+          <td>
+            <a (click)="showWorkerViewDialog(payment)">
+              {{payment.code}}
+            </a>
+          </td>
+          <td>
+            {{payment.firstName}}
+          </td>
+          <td>
+            {{payment.lastName}}
+          </td>
+          <td style="direction: ltr">
+            {{payment.lastPaymentTime}}
+          </td>
+          <td>
+            <div style="float:left">
+              {{payment.payableAmount | currency:'AFN':''}}
+            </div>
+          </td>
+          <td>
+            <div style="float:left">
+              {{payment.currentCredit | currency:'AFN':''}}
+            </div>
+          </td>
+
+          <td>
+            <div align="center">
+              <button type="button" class="orange-btn" pButton icon="fa-info-circle" (click)="showTransactionDetail(payment)">
+              </button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td [attr.colspan]="7">
+            {{shared.emptyListMsg}}
+          </td>
+        </tr>
+      </ng-template>
+
+    </p-table>
+  </div>
+  <div *ngIf="displayTransactionView">
+    <p-dialog [(visible)]="displayTransactionView" [resizable]="false" [closable]="false" [responsive]="true" [modal]="true" [positionTop]="0"
+      [width]="950" [header]="transactionListHeader">
+      <p-header>
+          <div style="float:left">
+
+              <button type="button" pButton icon="fa fa-print" style="background:none;border:none" (click)="onPrintInvoice()"></button>
+              <button type="button" pButton icon="fa fa-close" style="background:none;border:none" (click)="closeTransactionDetail()"></button>
+          </div>
+            
+        </p-header>
+      <p-table [value]="selectedTransactionList" [rows]="4" [paginator]="true" [loading]="loading" [pageLinks]="5" [alwaysShowPaginator]="false">
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="width:5%;padding: 0px!important"></th>
+            <th style="width:10%;padding: 0px!important">{{shared.amountLabel}}</th>
+            <th style="width:15%;padding: 0px!important">{{shared.paymentMethodLabel}}</th>
+            <th style="width:15%;padding: 0px!important">{{shared.trackingCodeLabel}}</th>
+            <th style="width:15%;padding: 0px!important">{{shared.creditAfterPayment}}</th>
+            <th style="width:15%;padding: 0px!important">{{shared.typeLabel}}</th>
+            <th style="width:25%;padding: 0px!important">{{shared.registerTimeLabel}}</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-transaction>
+          <tr>
+            <td>
+              <div *ngIf="transaction.inc">
+                <i class="fa fa-plus"></i>
+              </div>
+              <div *ngIf="!transaction.inc">
+                <i class="fa fa-minus"></i>
+              </div>
+            </td>
+            <td>
+              <div style="float:left">
+                {{transaction.amount | currency:'AFN':''}}
+              </div>
+            </td>
+
+            <td>
+              <div *ngIf="transaction.cash; else elseBlock">
+                {{shared.cacheLabel}}
+              </div>
+              <ng-template #elseBlock>
+                {{shared.withCreditLabel}}
+              </ng-template>
+            </td>
+            <td>
+              {{transaction.trackingCode}}
+            </td>
+            <td>
+              <div style="float:left">
+                {{transaction.balance | currency:'AFN':''}}
+              </div>
+            </td>
+            <td>
+              {{transaction.transactionType}}
+            </td>
+            <td>
+              <div style="direction: ltr">
+                {{transaction.registerTime}}
+              </div>
+            </td>
+
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td [attr.colspan]="6">
+              {{shared.emptyListMsg}}
+            </td>
+          </tr>
+        </ng-template>
+
+      </p-table>
+      <p-panel header="{{shared.detailLabel}}">
+
+        <div class="ui-grid ui-grid-responsive ui-grid-nopad" style="width:50%; display: inline-block;">
+          <div class="ui-grid-row">
+            <div class="ui-grid-col-8">
+              <label>
+                <i class="fa fa-info-circle font-icon-style"></i>
+                {{shared.sumReqPriceCash}}
+              </label>
+            </div>
+            <div class="ui-grid-col-4 timePlaceHolderStyle">
+              <div style="float:left">
+                {{selectedPaymentReport?.sumReqPriceCash | currency:'AFN':''}}
+              </div>
+            </div>
+          </div>
+          <div class="ui-grid-row">
+            <div class="ui-grid-col-8">
+              <label>
+                <i class="fa fa-info-circle font-icon-style"></i>
+                {{shared.sumReqPriceCredit}}
+              </label>
+            </div>
+            <div class="ui-grid-col-4 timePlaceHolderStyle">
+              <div style="float:left">
+                {{selectedPaymentReport?.sumReqPriceCredit | currency:'AFN':''}}
+              </div>
+            </div>
+          </div>
+          <div class="ui-grid-row">
+            <div class="ui-grid-col-8">
+              <label>
+                <i class="fa fa-info-circle font-icon-style"></i>
+                {{shared.sumBonous}}
+              </label>
+            </div>
+            <div class="ui-grid-col-4 timePlaceHolderStyle">
+              <div style="float:left">
+                {{selectedPaymentReport?.sumBonous | currency:'AFN':''}}
+              </div>
+            </div>
+          </div>
+          <div class="ui-grid-row">
+            <div class="ui-grid-col-8">
+              <label>
+                <i class="fa fa-info-circle font-icon-style"></i>
+                {{shared.sumCommission}}
+              </label>
+            </div>
+            <div class="ui-grid-col-4 timePlaceHolderStyle">
+              <div style="float:left">
+                {{selectedPaymentReport?.sumCommission | currency:'AFN':''}}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="ui-grid ui-grid-responsive ui-grid-nopad" style="vertical-align:top;width:50%; display: inline-block;padding-right:5%;">
+
+          <div class="ui-grid-row">
+            <div class="ui-grid-col-4">
+              <label>
+                <i class="fa fa-info-circle font-icon-style"></i>
+                {{shared.creditLabel}}
+              </label>
+            </div>
+            <div class="ui-grid-col-8 timePlaceHolderStyle">
+              <div style="float:left">
+                {{selectedPaymentReport.currentCredit | currency:'AFN':''}}
+              </div>
+            </div>
+          </div>
+
+          <div class="ui-grid-row">
+            <div class="ui-grid-col-4">
+              <label>
+                <i class="fa fa-info-circle font-icon-style"></i>
+                {{shared.payableAmountLabel}}
+              </label>
+            </div>
+            <div class="ui-grid-col-8 timePlaceHolderStyle">
+              <div style="float:left">
+                {{selectedPaymentReport?.payableAmount | currency:'AFN':''}}
+              </div>
+            </div>
+          </div>
+          <div class="ui-grid-row">
+            <div class="ui-grid-col-4">
+              <label>
+                <i class="fa fa-info-circle font-icon-style"></i>
+                {{shared.afterPaymentCredit}}
+              </label>
+            </div>
+            <div class="ui-grid-col-8 timePlaceHolderStyle">
+              <div style="float:left">
+                {{selectedPaymentReport?.afterPaymentCredit | currency:'AFN':''}}
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </p-panel>
+    </p-dialog>
+  </div>
+
+</div>
+<div *ngIf="displayWorkerView">
+  <p-dialog [(visible)]="displayWorkerView" [resizable]="false" [closable]="false" [responsive]="true" [modal]="true" [rtl]="true"
+    width="700">
+    <p-header>
+      {{shared.workerViewLabel}} {{selectedWorkerFullName}}
+      <div style="float:left">
+        <button type="button" pButton icon="fa-close" class="ui-button pink-btn smallBtn" (click)="closeViewDialog();"></button>
+      </div>
+    </p-header>
+    <workerViewComponent [workerID]="selectedWorkerID" (onShowImage)="onShowImage($event)"></workerViewComponent>
+  </p-dialog>
+</div>
+<div *ngIf="displayImageDialog">
+  <p-dialog [(visible)]="displayImageDialog" [responsive]="true" [modal]="true" [resizable]="false" [showHeader]="false" [closable]="true"
+    [dismissableMask]="true">
+    <div class="ui-grid ui-grid-responsive ui-grid-pad">
+      <div class="ui-grid-row">
+        <div class="ui-grid-col-12" style="text-align:center">
+          <img src="{{selectedImagePath}}" style="max-width:256px;height:auto">
+        </div>
+      </div>
+    </div>
+  </p-dialog>
+</div>

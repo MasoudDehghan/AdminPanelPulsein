@@ -1,0 +1,194 @@
+
+<p-growl [value]="hmsgs" life="6000"></p-growl>
+
+<div class="ui-g ui-g-pad dashboard">
+    <div class="ui-g-12">
+        <p-toolbar styleClass="toolbarstyle">
+            <div class="ui-toolbar-group-right headerLabel">
+                <img src="../assets/images/doc.png" style="vertical-align: middle;" /> {{activeLabel}}
+            </div>
+            <div class="ui-toolbar-group-left">
+                    <button type="button" pButton icon="fa-plus" (click)="showDialogToAdd()" [pTooltip]="shared.createNewDocType"></button>
+                <button type="button" pButton icon="fa-refresh" (click)="rtvDocTypeList()"  [pTooltip]="shared.refreshLabel"></button>
+                
+            </div>
+        </p-toolbar>
+
+        <div align="center">
+            <p-dataTable [value]="docTypes" [hidden]="!showDocTypeList" selectionMode="single"
+                [(selection)]="selectedDocumentType" (onRowSelect)="onRowSelect($event)"
+                [paginator]="true" rows="10" [style]="{'width':'100%'}"
+                 [alwaysShowPaginator]="false" [emptyMessage]="shared.emptyListMsg">
+                <p-column [style]="{'width':'20%'}" field="name" header="{{shared.docTypeLabelFa}}"></p-column>
+                <p-column [style]="{'width':'20%'}" header="{{shared.requiredForStoreLabel}}">
+                    <ng-template let-col let-doct="rowData" pTemplate="body">
+                        <div align="center" *ngIf="doct.related2StoreWs">
+                            <img src="../assets/images/checked.png" />
+                        </div>
+                    </ng-template>
+                </p-column>
+                <p-column [style]="{'width':'20%'}" header="{{shared.requiredForLegalLabel}}">
+                    <ng-template let-col let-doct="rowData" pTemplate="body">
+                        <div align="center" *ngIf="doct.related2LegalWs">
+                            <img src="../assets/images/checked.png" />
+                        </div>
+                    </ng-template>
+                </p-column>
+                <p-column [style]="{'width':'20%'}" header="{{shared.requiredForRealLabel}}">
+                    <ng-template let-col let-doct="rowData" pTemplate="body">
+                        <div align="center" *ngIf="doct.related2RealWs">
+                            <img src="../assets/images/checked.png" />
+                        </div>
+                    </ng-template>
+                </p-column>
+                <p-column [style]="{'width':'20%'}" header="{{shared.requiredForWorkerLabel}}">
+                    <ng-template let-col let-doct="rowData" pTemplate="body">
+                        <div align="center" *ngIf="doct.related2Wr">
+                            <img src="../assets/images/checked.png" />
+                        </div>
+                    </ng-template>
+                </p-column>
+                <p-column [style]="{'width':'20%'}" header="{{shared.required}}">
+                    <ng-template let-col let-doct="rowData" pTemplate="body">
+                        <div align="center" *ngIf="doct.required">
+                            <img src="../assets/images/checked.png" />
+                        </div>
+                    </ng-template>
+                </p-column>
+                <p-column [style]="{'width':'10%'}" header="{{shared.duplicatedAllowed}}">
+                    <ng-template let-col let-doct="rowData" pTemplate="body">
+                        <div align="center" *ngIf="doct.duplicateAllowed">
+                            <img src="../assets/images/checked.png" />
+                        </div>
+                    </ng-template>
+                </p-column>
+                <p-column [style]="{'width':'10%'}" header="{{shared.show2Client}}">
+                    <ng-template let-col let-doct="rowData" pTemplate="body">
+                        <div align="center" *ngIf="doct.show2Client">
+                            <img src="../assets/images/checked.png" />
+                        </div>
+                    </ng-template>
+                </p-column>
+                <p-column header="{{shared.changeLabel}}" [style]="{'width':'20%'}">
+
+                    <ng-template let-col let-doct="rowData" pTemplate="body">
+                        <div align="center">
+                        <button type="button" pButton icon="fa-close" class="pink-btn" (click)="delete(doct)" [pTooltip]="shared.delLabelFa"></button>
+                        <button type="button" pButton icon="fa-edit" (click)="edit(doct)" [pTooltip]="shared.editLabelFa"></button>
+                    </div>
+                    </ng-template>
+                </p-column>
+
+
+            </p-dataTable>
+        </div>
+
+    </div>
+</div>
+<p-confirmDialog header="{{shared.confirmHeader}}" width="425" rtl="true" #cd>
+    <p-footer>
+        <button type="button" pButton icon="fa-close" [label]="shared.noLabel" (click)="cd.reject()" style="margin-right: 30%;"></button>
+        <button type="button" pButton icon="fa-check" [label]="shared.yesLabel" (click)="cd.accept()"></button>
+    </p-footer>
+</p-confirmDialog>
+
+
+<p-dialog header="{{shared.editPanelLabel}}" [(visible)]="displayDialog" [responsive]="true"
+    [resizable]="false" showEffect="fade"
+    [modal]="true" [rtl]="true" [width]="400">
+    <form [formGroup]="form" (submit)="save()">
+        <div class="ui-grid ui-grid-responsive  ui-grid-pad" *ngIf="documentType">
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-4"><label for="docName">
+                    <i class="fa fa-dot-circle-o font-icon-style"></i>
+                    {{shared.docTypeLabelFa}}</label></div>
+                <div class="ui-grid-col-8">
+                    <input pInputText id="docName" [(ngModel)]="documentType.name" type="text" formControlName="name" />
+                </div>
+
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-12">
+                    <div class="ui-message ui-messages-error ui-corner-all" *ngIf="form.controls['name'].touched && form.controls['name'].hasError('required')">
+                        {{shared.requiredMsg}}
+                    </div>
+                    <div class="ui-message ui-messages-error ui-corner-all" *ngIf="form.controls['name'].touched && form.controls['name'].hasError('minlength')">
+                        {{shared.minLengthValidatorNameMsg}} : {{form.controls['name'].errors.minlength.requiredLength}} {{shared.charLabel}}
+                    </div>
+                    <div class="ui-message ui-messages-error ui-corner-all" *ngIf="form.controls['name'].touched && form.controls['name'].hasError('maxlength')">
+                        {{shared.maxLengthValidatorNameMsg}} : {{form.controls['name'].errors.maxlength.requiredLength}} {{shared.charLabel}}
+                    </div>
+                </div>
+            </div>
+            <div class="ui-grid-row">
+
+                <div class="ui-grid-col-8"><label for="drequiredForStore">
+                     <i class="fa fa-dot-circle-o font-icon-style"></i>
+                    {{shared.requiredForStoreLabel}}</label></div>
+                <div class="ui-grid-col-4">
+                    <p-checkbox id="drequiredForStore" [(ngModel)]="documentType.related2StoreWs" binary="true" formControlName="requiredForStore"></p-checkbox>
+                </div>
+            </div>
+
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-8"><label for="drequiredForReal">
+                     <i class="fa fa-dot-circle-o font-icon-style"></i>
+                    {{shared.requiredForRealLabel}}</label></div>
+                <div class="ui-grid-col-4">
+                    <p-checkbox id="drequiredForReal" [(ngModel)]="documentType.related2RealWs" binary="true" formControlName="requiredForReal"></p-checkbox>
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-8"><label for="drequiredForLegal">
+                     <i class="fa fa-dot-circle-o font-icon-style"></i>
+                    {{shared.requiredForLegalLabel}}</label></div>
+                <div class="ui-grid-col-4">
+                    <p-checkbox id="drequiredForLegal" [(ngModel)]="documentType.related2LegalWs" binary="true" formControlName="requiredForLegal"></p-checkbox>
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-8"><label for="drequiredForLegal">
+                     <i class="fa fa-dot-circle-o font-icon-style"></i>
+                    {{shared.requiredForWorkerLabel}}</label></div>
+                <div class="ui-grid-col-4">
+                    <p-checkbox id="drequiredForWorker" [(ngModel)]="documentType.related2Wr" binary="true" formControlName="requiredForWorker"></p-checkbox>
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-8"><label for="drequired">
+                     <i class="fa fa-dot-circle-o font-icon-style"></i>
+                    {{shared.required}}</label></div>
+                <div class="ui-grid-col-4">
+                    <p-checkbox id="drequired" [(ngModel)]="documentType.required" binary="true" formControlName="required"></p-checkbox>
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-8"><label for="dclient">
+                     <i class="fa fa-dot-circle-o font-icon-style"></i>
+                    {{shared.show2Client}}</label></div>
+                <div class="ui-grid-col-4">
+                    <p-checkbox id="dclient" [(ngModel)]="documentType.show2Client" binary="true" formControlName="show2Client"></p-checkbox>
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-8"><label for="dduplicated">
+                     <i class="fa fa-dot-circle-o font-icon-style"></i>
+                    {{shared.duplicatedAllowed}}</label></div>
+                <div class="ui-grid-col-4">
+                    <p-checkbox id="dduplicated" [(ngModel)]="documentType.duplicateAllowed" binary="true" formControlName="duplicateAllowed"></p-checkbox>
+                </div>
+            </div>
+        </div>
+        <footer>
+            <div align="center">
+                <button type="submit" pButton icon="fa-check" label="{{shared.saveLabel}}" [disabled]="!form.valid"></button>
+            </div>
+            <p-messages [value]="innerPannelGMessage" [closable]="true"></p-messages>
+        </footer>
+    </form>
+</p-dialog>
+
+<p-dialog [(visible)]="loading" responsive="true" [resizable]="false" showEffect="fade" width="300" [rtl]="true" modal="modal"
+    [showHeader]="false" styleClass="ui-dialog">
+    <loadingCmp [loading]="loading" spinnerStyleClass="spinnerClassBlack"></loadingCmp>
+</p-dialog>

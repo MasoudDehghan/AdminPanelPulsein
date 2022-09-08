@@ -1,0 +1,41 @@
+export class WorkStationSearch {
+    code:string;
+    title: string;
+    name: string;
+    workTypeId:number;
+    officeNationalCode:string;
+    officeRegisterNumber:string;
+    storeLicenseNumber:string;
+    provinceId:number;
+    townshipId:number;
+    cityId: number;
+    regionId: number;
+    areaId: number;
+    jobCategory1Id: number;
+    jobCategory2Id: number;
+    jobCategory3Id: number;
+    registerById:number;
+    verified:number;
+    verifyById:number;
+    phoneNumber:string;
+
+    f_code: boolean;
+    f_title: boolean;
+    f_name: boolean;
+    f_workTypeId:boolean;
+    f_officeNationalCode:boolean;
+    f_officeRegisterNumber:boolean;
+    f_storeLicenseNumber:boolean;  
+    f_provinceId: boolean;
+    f_townshipId:number;  
+    f_cityId: boolean;
+    f_regionId: boolean;
+    f_areaId: boolean;
+    f_jobCategory1Id: boolean;
+    f_jobCategory2Id: boolean;
+    f_jobCategory3Id: boolean;
+    f_registerById:boolean;
+    f_verified:boolean;
+    f_verifyById:boolean;
+    f_phoneNumber:boolean;
+}

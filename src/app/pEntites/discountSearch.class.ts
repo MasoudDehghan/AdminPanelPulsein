@@ -1,0 +1,43 @@
+export class DiscountSearch{
+	type: number;
+	sourceType: number;
+    code:string;
+	active:boolean = true;
+	multyUse:boolean = undefined;
+	endTimeStart:string;
+	endTimeEnd:string;
+	percentMin:number;
+	percentMax:number;
+	maxCreditMin:number;
+	maxCreditMax:number;
+	totalCntMin:number;
+	totalCntMax:number;
+	usedCntMin:number;
+	usedCntMax:number;
+	cat2Id:number;
+	cat3Id:number;
+	provinceId:number;
+	cityId:number;
+	description:string;
+	registerTimeStart:string;
+	registerTimeEnd:string;
+	registerBy:number;
+	
+	f_type:boolean = false;
+	f_sourceType:boolean = false;
+	f_code:boolean = false;
+	f_active:boolean = false;
+	f_multyUse:boolean = false;
+	f_endTime:boolean = false;
+	f_percent:boolean = false;
+	f_maxCredit:boolean = false;
+	f_totalCnt:boolean = false;
+	f_usedCnt:boolean = false;
+	f_cat2Id:boolean = false;
+	f_cat3Id:boolean = false;
+	f_provinceId:boolean = false;
+	f_cityId:boolean = false;
+	f_description:boolean = false;
+	f_registerTime:boolean = false;
+	f_registerBy:boolean = false;
+}

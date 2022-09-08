@@ -1,0 +1,297 @@
+<loadingCmp [loading]="loading" spinnerStyleClass="spinnerClassBlack"></loadingCmp>
+
+<div *ngIf="!loading" style="margin-right:1%;margin-left:1%">
+  <p-panel [header]="shared.requestViewLabel" id="requestViewPanelID" [style]="{'width':'99%'}">
+    <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+      <div class="ui-grid-row">
+        <div class="ui-grid-col-5">
+          <label>
+            <i class="fa fa-info-circle font-icon-style"></i>
+            {{shared.requestCodeLabel}}
+          </label>
+        </div>
+        <div class="ui-grid-col-7 textPlaceHolderStyle ltrDirection">
+          {{requestp?.code}}
+        </div>
+      </div>
+      <div class="ui-grid-row">
+        <div class="ui-grid-col-5">
+          <label>
+            <i class="fa fa-info-circle font-icon-style"></i>
+            {{shared.titleLabel}}
+          </label>
+        </div>
+        <div class="ui-grid-col-7 textPlaceHolderStyle">
+          {{requestp?.title}}
+        </div>
+      </div>
+      <div class="ui-grid-row">
+          <div class="ui-grid-col-5">
+            <label>
+              <i class="fa fa-info-circle font-icon-style"></i>
+              {{shared.descLabel}}
+            </label>
+          </div>
+          <div class="ui-grid-col-7 textPlaceHolderStyle">
+            {{requestp?.extra.info}}
+          </div>
+        </div>
+      <div class="ui-grid-row">
+        <div class="ui-grid-col-5">
+          <label>
+            <i class="fa fa-info-circle font-icon-style"></i>
+            {{shared.job_Category3Label}}
+          </label>
+        </div>
+        <div class="ui-grid-col-7 textPlaceHolderStyle">
+          {{requestp?.cat3}}
+        </div>
+      </div>
+      <div class="ui-grid-row">
+        <div class="ui-grid-col-5">
+          <label>
+            <i class="fa fa-info-circle font-icon-style"></i>
+            {{shared.state}}
+          </label>
+        </div>
+        <div class="ui-grid-col-7 textPlaceHolderStyle">
+          {{requestp?.state}}
+        </div>
+      </div>
+      
+      <div class="ui-grid-row" *ngIf="requestp?.extra.emergency">
+          <div class="ui-grid-col-5">
+            <label>
+              <i class="fa fa-info-circle font-icon-style"></i>
+              {{shared.emergancyLabel}}
+            </label>
+          </div>
+          <div class="ui-grid-col-7 textPlaceHolderStyle" >
+             <i class="fas fa-ambulance font-icon-style"></i>
+          </div>
+
+        </div>
+      <div class="ui-grid-row" *ngIf="!requestp?.extra.emergency">
+          <div class="ui-grid-col-5">
+            <label>
+              <i class="fa fa-info-circle font-icon-style"></i>
+              {{shared.periodTimeLabel}}
+            </label>
+          </div>
+          <div class="ui-grid-col-7">
+            {{shared.fromLabel}}
+            <div class="timePlaceHolderStyle2">
+                {{requestpStartTime}}
+          </div>
+          <div class="timePlaceHolderStyle">
+              {{requestpStartDate}}
+          </div>
+
+          {{shared.taLabel}}
+          <div class="timePlaceHolderStyle2">
+              {{requestpStopTime}}
+      </div>
+          <div class="timePlaceHolderStyle">
+                {{requestpStopDate}}
+          </div>
+
+        </div>
+
+        </div>
+
+      <div class="ui-grid-row">
+        <div class="ui-grid-col-5">
+          <label>
+            <i class="fa fa-info-circle font-icon-style"></i>
+            {{shared.registerTimeLabel}}
+          </label>
+        </div>
+
+        <div class="ui-grid-col-7 textPlaceHolderStyle ltrDirection">
+          {{requestp?.registerTime}}
+        </div>
+      </div>
+      <div class="ui-grid-row">
+        <div class="ui-grid-col-5">
+          <label for="nationalCode">
+            <i class="fa fa-info-circle font-icon-style"></i>
+            {{shared.updateTimeLabel}}
+          </label>
+        </div>
+        <div class="ui-grid-col-7 textPlaceHolderStyle ltrDirection">
+          {{requestp?.updateTime}}
+        </div>
+      </div>
+    </div>
+
+  </p-panel>
+  <div *ngIf="requestp?.extra?.photos?.length>0">
+      <p-panel [header]="shared.imagesLabel" [style]="{'width':'99%'}">
+  
+          <p-dataGrid [value]="requestp?.extra?.photos" [paginator]="true" [rows]="4" [alwaysShowPaginator]="false"
+               [emptyMessage]="shared.emptyListMsg">
+              <ng-template let-reqPhoto pTemplate="item">
+                  <div style="padding:3px" class="ui-g-12 ui-md-3">
+                      <p-panel [header]="reqPhoto.info" [style]="{'text-align':'center'}">
+                          <img src="{{baseImagePath}}/{{reqPhoto.photo}}" width="64">
+                          <hr class="ui-widget-content" style="border-top:0">
+                          <i class="fa fa-search" (click)="selectImage(reqPhoto)" style="cursor:pointer"></i>
+                      </p-panel>
+                  </div>
+  
+              </ng-template>
+          </p-dataGrid>
+      </p-panel>
+      </div>
+  <p-panel [header]="shared.clientViewLabel" id="requestUserViewPanelID" [style]="{'width':'99%'}">
+    <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+
+      <div class="ui-grid-row">
+        <div class="ui-grid-col-5">
+          <label>
+            <i class="fa fa-info-circle font-icon-style"></i>
+            {{shared.firstNameLabel}}
+          </label>
+        </div>
+        <div class="ui-grid-col-7 textPlaceHolderStyle">
+          {{requestp?.client.firstName}}
+        </div>
+      </div>
+      <div class="ui-grid-row">
+        <div class="ui-grid-col-5">
+          <label>
+            <i class="fa fa-info-circle font-icon-style"></i>
+            {{shared.lastNameLabel}}
+          </label>
+        </div>
+        <div class="ui-grid-col-7 textPlaceHolderStyle">
+          {{requestp?.client.lastName}}
+        </div>
+      </div>
+      <div class="ui-grid-row">
+        <div class="ui-grid-col-5">
+          <label>
+            <i class="fa fa-venus-mars font-icon-style"></i>
+            {{shared.contactNumberLabel}}
+          </label>
+        </div>
+        <div class="ui-grid-col-7 textPlaceHolderStyle">
+          {{requestp?.client.mobileNumber}}
+        </div>
+      </div>
+    </div>
+  </p-panel>
+  <p-panel [header]="shared.rlocationDataLabel" id="requestLocationViewPanelID" [style]="{'width':'99%'}">
+      <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+          <div class="ui-grid-row">
+              <div class="ui-grid-col-5">
+                <label>
+                  <i class="fa fa-info-circle font-icon-style"></i>
+                  {{shared.regionLabel}}
+                </label>
+              </div>
+              <div class="ui-grid-col-7 textPlaceHolderStyle">
+                {{requestp?.region}}
+              </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-5">
+                  <label>
+                    <i class="fa fa-info-circle font-icon-style"></i>
+                    {{shared.areaLabel}}
+                  </label>
+                </div>
+                <div class="ui-grid-col-7 textPlaceHolderStyle">
+                  {{requestp?.area}}
+                </div>
+              </div>
+              <div class="ui-grid-row">
+                  <div class="ui-grid-col-5">
+                    <label>
+                      <i class="fa fa-info-circle font-icon-style"></i>
+                      {{shared.addressLabel}}
+                    </label>
+                  </div>
+                  <div class="ui-grid-col-7 textPlaceHolderStyle">
+                    {{requestp?.extra?.address}}
+                  </div>
+                </div>
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-5">
+                      <label>
+                        <i class="fa fa-info-circle font-icon-style"></i>
+                        {{shared.postalCodeLabel}}
+                      </label>
+                    </div>
+                    <div class="ui-grid-col-7 textPlaceHolderStyle">
+                      {{requestp?.extra?.postalCode}}
+                    </div>
+                  </div>
+        </div>
+  </p-panel>    
+  <div *ngIf="requestp?.transactions?.length > 0">
+  <p-panel [header]="shared.transactionLabel" id="transactionViewPanelID" [style]="{'width':'99%'}">
+      <p-dataTable [value]="requestp.transactions" [rows]="6" [paginator]="true" [pageLinks]="5" [alwaysShowPaginator]="false"
+      [emptyMessage]="shared.emptyListMsg" loadingIcon="fa-spinner">
+    <p-column styleClass="col-button" [style]="{'width':'5%'}">
+          <ng-template let-transaction="rowData" pTemplate="body">
+              <div *ngIf="transaction.inc">
+                  <i class="fa fa-plus"></i>
+              </div>
+              <div *ngIf="!transaction.inc">
+                  <i class="fa fa-minus"></i>
+              </div>
+          </ng-template>
+      </p-column>
+      <p-column [header]="shared.fullNameLabel">
+          <ng-template let-transaction="rowData" pTemplate="body">
+              {{transaction.user.workerFlag}} {{transaction.user.firstName}} {{transaction.user.lastName}}
+          </ng-template>
+      </p-column>
+      <p-column [header]="shared.amountLabel" field="amount"></p-column>
+      <p-column>
+          <ng-template pTemplate="header">
+              {{shared.creditLabel}} ({{shared.tomanLabel}})
+            </ng-template>
+          <ng-template let-col let-tr="rowData" pTemplate="body">
+              <span style="float:left">{{tr.balance | currency:'AFN':''}}</span>
+            </ng-template>  
+      </p-column>
+      <p-column [header]="shared.paymentTypeLabel" field="transactionType"></p-column>
+      <p-column [header]="shared.paymentMethodLabel" [style]="{'text-align':'center'}">
+          <ng-template let-col let-transaction="rowData" pTemplate="body">
+            <div *ngIf="transaction.cash;else elseBlock">
+              {{shared.cacheLabel}}
+            </div>
+            <ng-template #elseBlock>
+                {{shared.withCreditLabel}}
+            </ng-template>
+          </ng-template>
+      </p-column>
+      
+       <p-column [header]="shared.registerTimeLabel" field="registerTime" [style]="{'width':'15%'}" styleClass="ltrDirection"></p-column>
+
+    </p-dataTable>
+    <div class="ui-grid ui-grid-responsive">
+
+    <div class="ui-grid-row">
+        <div class="ui-grid-col-3">
+          <label>
+              <fa class="font-icon-style" name="dollar"></fa>
+              {{shared.totalFactorLabel}}
+          </label>
+        </div>
+        <div class="ui-grid-col-3 textPlaceHolderStyleType2 ltrDirection">
+            {{requestp?.finalInvoice?.totalPrice | currency:'AFN':''}}
+        </div>              
+  </div>
+  </div>
+  </p-panel>  
+  </div>
+  <div *ngIf="requestp.cancelCause">
+      <p-panel [header]="shared.cancelCauseLabel" id="cancelcauseID" [style]="{'width':'99%'}">
+    {{requestp.cancelCause}}
+    </p-panel>
+
+  </div>
+</div>

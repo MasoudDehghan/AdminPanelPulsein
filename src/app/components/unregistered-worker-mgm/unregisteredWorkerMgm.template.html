@@ -1,0 +1,146 @@
+<p-growl [value]="gMessage" life="6000">
+</p-growl>
+
+<div class="ui-g ui-g-pad dashboard">
+    <div class="ui-g-12">
+        <p-toolbar styleClass="toolbarstyle">
+            <div class="ui-toolbar-group-right headerLabel">
+                <img src="../assets/images/usersList.png" style="vertical-align: middle;" /> {{activeLabel}}
+                <span class="totalFilteredClass">
+                        {{shared.totalNumberLabel}} : {{totalCntr}}
+                    </span>
+            </div>
+            <div class="ui-toolbar-group-left">
+                <button type="button" pButton icon="fa-refresh" (click)="rtvUserList()" [pTooltip]="shared.refreshLabel" label="{{shared.refreshLabel}}"></button>
+            </div>
+        </p-toolbar>
+        <div class="ui-rtl" dir="rtl">
+
+            <div align="center">
+
+                <p-dataTable [value]="pendingUsers" [hidden]="!showUsersList" selectionMode="single" [(selection)]="selectedUser"
+                    [rows]="7" [paginator]="true" [alwaysShowPaginator]="false" [pageLinks]="3" [style]="{'width':'99%'}" [emptyMessage]="shared.emptyListMsg"
+                    sortField="registerTimeS" sortOrder="-1"
+                    #dtc>
+                    <p-column [style]="{'width':'10%'}" field="firstName" header="{{shared.firstNameLabel}}"></p-column>
+                    <p-column [style]="{'width':'10%'}" field="lastName" header="{{shared.lastNameLabel}}"></p-column>
+                    <p-column [style]="{'width':'10%'}" field="mobileNumber" [filter]="true" header="{{shared.mobileLabel}}"></p-column>
+                    <p-column [style]="{'width':'10%'}" field="registerTimeS" [sortable]="true" styleClass="ltrDirection"  header="{{shared.registerTimeLabel}}"></p-column>
+
+
+                    <p-column header="{{shared.changeLabel}}" [style]="{'width':'15%'}">
+                        <ng-template let-col let-user="rowData" pTemplate="body">
+                            <div align="center">
+                                <button type="button" pButton icon="fa-edit" class="green-btn" (click)="edit(user)" [pTooltip]="shared.editLabelFa"></button>
+                                <button type="button" pButton icon="fa-close" class="pink-btn" (click)="delete(user)" [pTooltip]="shared.delLabelFa"></button>
+
+                            </div>
+                        </ng-template>
+                    </p-column>
+
+                </p-dataTable>
+
+
+            </div>
+        </div>
+    </div>
+    <p-confirmDialog header="{{shared.confirmHeader}}" width="425" rtl="true" #cd>
+        <p-footer>
+            <button type="button" pButton icon="fa-close" [label]="shared.noLabel" (click)="cd.reject()" style="margin-right: 30%;"></button>
+            <button type="button" pButton icon="fa-check" [label]="shared.yesLabel" (click)="cd.accept()"></button>
+        </p-footer>
+    </p-confirmDialog>
+
+
+    <div *ngIf="displayDialog">
+        <p-dialog header="{{dialogHeader}}" [(visible)]="displayDialog" [responsive]="true" [resizable]="false" showEffect="fade"
+            [modal]="true" [rtl]="true" width="700">
+            <form [formGroup]="form" (submit)="save(form.value);">
+                <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+
+                    <div class="ui-grid-row">
+                        <div class="ui-grid-col-4">
+                            <label for="workStationName">
+                                <i class="fa fa-info-circle font-icon-style"></i>
+                                {{shared.workStationLabelFa}}
+                            </label>
+                        </div>
+                        <div class="ui-grid-col-8">
+                            <input pInputText id="workStationName" [(ngModel)]="selectedWorkStationTitle" type="text" size="30" formControlName="title"
+                            />
+                        </div>
+                    </div>
+                    <div class="ui-grid-row">
+                            <div class="ui-grid-col-12 ui-message ui-messages-error ui-corner-all" *ngIf="form.controls['title'].touched && (form.controls['title'].hasError('required') || form.controls['title'].hasError('minlength') || form.controls['title'].hasError('maxlength'))">
+                                {{shared.InnerCode_InvalidTitleMsg}}
+                            </div>
+                            <div class="ui-grid-col-12 ui-message ui-messages-error ui-corner-all" *ngIf="form.controls['title'].touched && form.controls['title'].hasError('duplicated')">
+                                {{shared.workstationTitleDuplicatedMsg}}
+                            </div>
+                       
+                        </div>
+                    <div class="ui-grid-row">
+                        <div class="ui-grid-col-4">
+                            <label for="workStationTypeID">
+                                <i class="fa fa-info-circle font-icon-style"></i>
+                                {{shared.workTypeLabelFa}}
+                            </label>
+                        </div>
+                        <div class="ui-grid-col-8">
+                            <p-dropdown id="workStationTypeID" [(ngModel)]="selectedWorkType"
+                                [options]="workTypeList" formControlName="workStationType"
+                                [style]="{'width':'100%'}"></p-dropdown>
+                        </div>
+                    </div>
+                    <div class="ui-grid-row">
+                        <div class="ui-grid-col-4">
+                            <label for="job_Category3LabelID">
+                                <i class="fa fa-info-circle font-icon-style"></i>
+                                {{shared.job_Category3Label}}</label>
+                        </div>
+                        <div class="ui-grid-col-7">
+                            <p-dropdown id="job_Category3LabelID" [(ngModel)]="selectedJobCategory3" [options]="jobCategory3List" [style]="{'width':'100%'}"
+                                [filter]="true" required="true" formControlName="jobCategory3FormCntrl"></p-dropdown>
+                        </div>
+                        <div class="ui-grid-col-1">
+                            <button type="button" pButton icon="fa fa-plus-circle" (click)="addWorkerJobMap()" class="ui-button green-btn"></button>
+                        </div>
+                    </div>
+                    <div class="ui-grid-row">
+                        <div class="ui-grid-col-12">
+                            <p-panel [header]="shared.listJC3Label">
+                                <p-dataTable [value]="workerToJobMapList" [emptyMessage]="shared.emptyWorkJobListMsg">
+                                    <p-column field="jobCategory3.jobCategory2.jobCategory1.name" header="{{shared.job_Category1Label}}"></p-column>
+                                    <p-column field="jobCategory3.jobCategory2.name" header="{{shared.job_Category2Label}}"></p-column>
+                                    <p-column field="jobCategory3.name" header="{{shared.job_Category3Label}}"></p-column>
+
+                                    <p-column header="{{shared.delLabelFa}}">
+                                        <ng-template let-col let-workJobMap="rowData" pTemplate="body">
+                                            <div align="center">
+                                                <button type="button" pButton icon="fa-close" (click)="removeWorkerJobMap(workJobMap)" class="ui-button pink-btn" [pTooltip]="shared.delLabelFa"></button>
+                                            </div>
+                                        </ng-template>
+                                    </p-column>
+                                </p-dataTable>
+                            </p-panel>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <footer>
+                <div align="center">
+
+                    <button type="submit" pButton icon="fa-check" (click)="save(selectedWorkStation)" label="{{shared.saveLabel}}" [disabled]="!form.valid && loading"></button>
+                </div>
+                <loadingCmp [loading]="loading" spinnerStyleClass="spinnerClassBlack" iconSize=2></loadingCmp>
+                <p-messages [value]="innerPannelGMessage" [closable]="true"></p-messages>
+
+            </footer>
+        </p-dialog>
+    </div>
+
+
+    <p-dialog [(visible)]="loading" responsive="true" [resizable]="false" showEffect="fade" width="300" [rtl]="true" modal="modal"
+        [showHeader]="false" styleClass="ui-dialog">
+        <loadingCmp [loading]="loading" spinnerStyleClass="spinnerClassBlack"></loadingCmp>
+    </p-dialog>

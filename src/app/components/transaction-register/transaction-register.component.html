@@ -1,0 +1,103 @@
+<p-growl [value]="msgs" life="3000"></p-growl>
+
+<form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+
+            <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-4">
+                        <label class="control-labelx required">
+                            <i class="fa fa-dot-circle-o font-icon-style"></i>
+                            {{shared.amountLabel}}
+                        </label>
+                    </div>
+
+                    <div class="ui-grid-col-8">
+                            <input pInputText id="amountID"
+                             [(ngModel)]="selectedTransactionAmount" type="number" 
+                                formControlName="transactionAmountFormCntrl"
+                                class="width100p ltrDirection" />
+                                <div class="ui-message ui-messages-error ui-corner-all width100p"
+                                *ngIf="registerForm.controls['transactionAmountFormCntrl'].touched &&
+                                        registerForm.controls['transactionAmountFormCntrl'].dirty &&
+                                        registerForm.controls['transactionAmountFormCntrl'].hasError('required') ">
+                                {{shared.amountRequired}}
+                            </div>
+                        <div class="ui-message ui-messages-error ui-corner-all width100p"
+                                *ngIf="registerForm.controls['transactionAmountFormCntrl'].touched &&
+                                        registerForm.controls['transactionAmountFormCntrl'].dirty &&
+                                        registerForm.controls['transactionAmountFormCntrl'].errors?.min ">
+                                {{shared.minAmount}}
+                            </div>
+                            <div class="ui-message ui-messages-error ui-corner-all width100p"
+                            *ngIf="registerForm.controls['transactionAmountFormCntrl'].touched &&
+                                    registerForm.controls['transactionAmountFormCntrl'].dirty &&
+                                    registerForm.controls['transactionAmountFormCntrl'].errors?.max ">
+                            {{shared.maxAmount}}
+                        </div>
+
+                    </div>
+                </div>
+               
+                <div class="ui-grid-row">
+                        <div class="ui-grid-col-4">
+                            <label class="control-labely required">
+                                <i class="fa fa-dot-circle-o font-icon-style"></i>
+                                {{shared.trackingCodeLabel}}
+                            </label>
+                        </div>
+    
+                        <div class="ui-grid-col-8">
+                                <input pInputText id="trackingID"
+                                    [(ngModel)]="selectedTrackingCode" type="text" 
+                                    formControlName="trackingCodeFormCntrl"
+                                    class="width100p  ltrDirection" />
+                                    <div class="ui-message ui-messages-error ui-corner-all width100p"
+                                    *ngIf="registerForm.controls['trackingCodeFormCntrl'].touched &&
+                                            registerForm.controls['trackingCodeFormCntrl'].dirty &&
+                                                    registerForm.controls['trackingCodeFormCntrl'].hasError('required') ">
+                                    {{shared.trackingCodeRequiredMsg}}
+                                </div>
+                                
+                        </div>
+                    </div>
+
+                <div class="ui-grid-row" *ngIf="showTransactionTypeFilter">
+                        <div class="ui-grid-col-4">
+                            <label for="trTypeID">
+                                        <i class="fa fa-dot-circle-o font-icon-style"></i>
+                                        {{shared.typeLabel}}
+                                    </label>
+                        </div>
+                        <div class="ui-grid-col-8">
+                            <p-dropdown id="trTypeIDp" [(ngModel)]="selectedPaymentType"
+                                [options]="transactionTypeList" 
+                                appendTo="body" [style]="{'width':'100%'}"
+                                formControlName="PaymentTypeFormCntrl" filter="filter"></p-dropdown>
+                        </div>
+                    </div>
+                    <div class="ui-grid-row">
+                        <div class="ui-grid-col-4">
+                            <label>
+                                <i class="fa fa-dot-circle-o font-icon-style"></i>
+                                {{shared.depositTimeLabel}}
+                            </label>
+                        </div>
+                        <div class="ui-grid-col-8">
+                                <dp-date-picker [(ngModel)]="_registerDate" mode="daytime" [config]="datePickerConfig"
+                                     theme="dp-material" [ngModelOptions]="{standalone: true}">
+                                    </dp-date-picker>
+                        </div>
+                    </div>
+                </div>
+
+
+    <div align="center" style="padding:4px">
+        <button type="submit" pButton icon="fa-save" label="{{shared.registerLabel}}" class="ui-button turquoise-btn btn-style"></button>
+    </div>
+
+
+</form>
+<p-dialog [(visible)]="loading" responsive="true" [resizable]="false" width="300" [rtl]="true" [showHeader]="false" styleClass="ui-dialog">
+    <loadingCmp [loading]="loading" spinnerStyleClass="spinnerClassBlack"></loadingCmp>
+</p-dialog>

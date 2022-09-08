@@ -1,0 +1,101 @@
+<p-growl [value]="msgs" life="3000"></p-growl>
+
+<form [formGroup]="personalEditForm" (ngSubmit)="onSubmitPersonalform()">
+    <p-panel id="personalDataPanelID" [style]="{'width':'95%'}">
+        <loadingCmp [loading]="loading" spinnerStyleClass="spinnerClassBlack"></loadingCmp>
+
+        <div class="ui-grid ui-grid-responsive  ui-grid-pad" *ngIf="!loading">
+            <div class="ui-grid-row">
+                <div class="{{editMode ? 'ui-grid-col-4':'ui-grid-col-5'}}">
+                    <label for="efirstName">
+                                     <i class="fa fa-info-circle font-icon-style"></i>
+                                    {{firstNameLabel}}                                   
+                                </label>
+                </div>
+                <div *ngIf="editMode" class="ui-grid-col-7">
+                    <input pInputText id="efirstName" [(ngModel)]="selectedWorkStation.owner.firstName" type="text" size="30" formControlName="firstName"
+                        class="width100p" />
+                </div>
+                <div *ngIf="!editMode" class="ui-grid-col-8 textPlaceHolderStyle">
+                    {{selectedWorkStation?.owner.firstName}}
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="{{editMode ? 'ui-grid-col-4':'ui-grid-col-5'}}">
+                    <label for="elastName">
+                      <i class="fa fa-info-circle font-icon-style"></i>
+                                    {{lastNameLabel}}
+                       <div style="float:left" *ngIf="!showStorePanel && !showCompanyPanel && editMode">
+                    <span style="color:red;">*</span>
+                            </div>
+                                </label>
+                </div>
+
+                <div *ngIf="editMode" class="ui-grid-col-7">
+                    <input pInputText id="elastName" [(ngModel)]="selectedWorkStation.owner.lastName" type="text" size="30" formControlName="lastName"
+                        class="width100p" />
+                </div>
+                <div *ngIf="!editMode" class="ui-grid-col-8 textPlaceHolderStyle">
+                    {{selectedWorkStation?.owner.lastName}}
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-12">
+                    <div class="ui-message ui-messages-error ui-corner-all" *ngIf="personalEditForm.controls['lastName'].touched && personalEditForm.controls['lastName'].hasError('required')">
+                        {{InnerCode_InvalidLastNameMsg}}
+                    </div>
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="{{editMode ? 'ui-grid-col-4':'ui-grid-col-5'}}">
+                    <label for="enationalCode">
+                                    <i class="fa fa-info-circle font-icon-style"></i>
+                                    {{nationalCodeLabel}}                                   
+                                </label>
+                </div>
+                <div *ngIf="editMode" class="ui-grid-col-4">
+                    <input pInputText id="enationalCode" [(ngModel)]="selectedWorkStation.owner.nationalCode" type="text" size="30" formControlName="nationalCode"
+                        class="width100p ltrDirection" />
+                </div>
+                <div *ngIf="!editMode" class="ui-grid-col-7 textPlaceHolderStyle">
+                    {{selectedWorkStation?.owner.nationalCode}}
+                </div>
+
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-12">
+                    <div class="ui-message ui-messages-error ui-corner-all errorMsgStyle" *ngIf="personalEditForm.controls['nationalCode'].touched && personalEditForm.controls['nationalCode'].hasError('pattern')">
+                        {{invalidNationalCodeMsg}}
+                    </div>
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="{{editMode ? 'ui-grid-col-4':'ui-grid-col-5'}}">
+                    <label for="enationalCode">
+                                    <i class="fa fa-info-circle font-icon-style"></i>
+                                    {{positionLabel}}                                   
+                                </label>
+                </div>
+                <div *ngIf="editMode" class="ui-grid-col-4">
+                    <p-dropdown id="eposID" [(ngModel)]="selectedWorkStation.ownerPosition"
+                         [options]="positionTypeList" [style]="{'width':'100%'}"
+                        formControlName="positionType" filter="filter"></p-dropdown>
+                </div>
+                <div *ngIf="!editMode" class="ui-grid-col-7 textPlaceHolderStyle">
+                    {{selectedWorkStation?.ownerPosition?.name}}
+                </div>
+
+            </div>
+
+
+        </div>
+    </p-panel>
+    <p-footer>
+        <div *ngIf="editMode" align="center" style="padding:4px">
+            <button type="submit" pButton icon="fa-save" label="{{saveLabel}}" class="ui-button turquoise-btn"></button>
+        </div>
+        <div *ngIf="!editMode" align="center" style="padding:4px">
+            <button type="submit" pButton icon="fa-close" label="{{closeLabel}}" class="ui-button"></button>
+        </div>
+    </p-footer>
+</form>

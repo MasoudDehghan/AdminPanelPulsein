@@ -1,0 +1,113 @@
+<loadingCmp [loading]="loading" spinnerStyleClass="spinnerClassBlack"></loadingCmp>
+
+<div *ngIf="!loading" style="margin-right:1%;margin-left:1%">
+  <p-panel [header]="shared.transactionViewLabel" id="transactionViewPanelID" [style]="{'width':'99%'}">
+    <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+      <div class="ui-grid-row">
+        <div class="ui-grid-col-5">
+          <label>
+            <i class="fa fa-info-circle font-icon-style"></i>
+            {{shared.transactionAmountLabel}}
+          </label>
+        </div>
+        <div class="ui-grid-col-7 textPlaceHolderStyle">
+          {{transactionp?.amount}}
+        </div>
+      </div>
+      <div class="ui-grid-row">
+        <div class="ui-grid-col-5">
+          <label>
+            <i class="fa fa-info-circle font-icon-style"></i>
+            {{shared.registerPeriodTimeLabel}}
+          </label>
+        </div>
+        <div class="ui-grid-col-7 textPlaceHolderStyle ltrDirection">
+          {{transactionp?.registerTime}}
+        </div>
+      </div>
+      
+     
+      <div class="ui-grid-row">
+        <div class="ui-grid-col-5">
+          <label>
+            <i class="fa fa-info-circle font-icon-style"></i>
+            {{shared.paymentMethodLabel}}
+          </label>
+        </div>
+        <div class="ui-grid-col-7 textPlaceHolderStyle" *ngIf="transactionp?.cash">
+          {{shared.cacheLabel}}
+        </div>
+        <div class="ui-grid-col-7 textPlaceHolderStyle" *ngIf="!transactionp?.cash">
+          {{shared.withCreditLabel}}
+         </div>
+      </div>
+      <div class="ui-grid-row">
+        <div class="ui-grid-col-5">
+          <label>
+            <i class="fa fa-info-circle font-icon-style"></i>
+            {{shared.typeLabel}}
+          </label>
+        </div>
+        <div class="ui-grid-col-7 textPlaceHolderStyle">
+          {{transactionp?.transactionType}}
+        </div>
+      </div>
+      
+
+      <div class="ui-grid-row">
+          <div class="ui-grid-col-5">
+            <label>
+              <i class="fa fa-info-circle font-icon-style"></i>
+              {{shared.registerWsUserName}}
+            </label>
+          </div>
+          <div class="ui-grid-col-7 textPlaceHolderStyle">
+            {{transactionp?.referenceUser?.firstName}} {{transactionp?.referenceUser?.lastName}} 
+          </div>
+        </div>
+        <div class="ui-grid-row">
+            <div class="ui-grid-col-5">
+              <label>
+                <i class="fa fa-info-circle font-icon-style"></i>
+                {{shared.trackingCodeLabel}}
+              </label>
+            </div>
+            <div class="ui-grid-col-7 textPlaceHolderStyle ltrDirection">
+              {{transactionp?.trackingCode}}
+            </div>
+          </div>
+     
+    </div>
+
+  </p-panel>
+ 
+  <p-panel [header]="shared.clientViewLabel" id="transactionUserViewPanelID" [style]="{'width':'99%'}">
+    <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+
+      <div class="ui-grid-row">
+        <div class="ui-grid-col-5">
+          <label>
+            <i class="fa fa-info-circle font-icon-style"></i>
+            {{shared.firstNameLabel}}
+          </label>
+        </div>
+        <div class="ui-grid-col-7 textPlaceHolderStyle">
+          {{transactionp?.user?.firstName}}
+        </div>
+      </div>
+      <div class="ui-grid-row">
+        <div class="ui-grid-col-5">
+          <label>
+            <i class="fa fa-info-circle font-icon-style"></i>
+            {{shared.lastNameLabel}}
+          </label>
+        </div>
+        <div class="ui-grid-col-7 textPlaceHolderStyle">
+          {{transactionp?.user?.lastName}}
+        </div>
+      </div>
+   
+    </div>
+  </p-panel>
+ 
+</div>

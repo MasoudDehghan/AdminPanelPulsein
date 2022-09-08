@@ -1,0 +1,122 @@
+<p-growl [value]="msgs" life="3000"></p-growl>
+<loadingCmp [loading]="loading" spinnerStyleClass="spinnerClassBlack"></loadingCmp>
+<div *ngIf="!loading" class="ui-rtl" dir="rtl">
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <p-panel id="personalDataPanelID">
+
+            <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-4">
+                        <label for="efirstName">
+                                     <i class="fa fa-info-circle font-icon-style"></i>
+                                    {{shared.firstNameLabel}}                                   
+                                </label>
+                    </div>
+                    <div *ngIf="editMode" class="ui-grid-col-8">
+                        <input pInputText id="efirstName" [(ngModel)]="selectedWorker.user.firstName" type="text" size="30" formControlName="firstName"
+                            appendTo="body" class="width100p" />
+                    </div>
+                    <div *ngIf="!editMode" class="ui-grid-col-8 textPlaceHolderStyle">
+                        {{selectedWorker?.user.firstName}}
+                    </div>
+                </div>
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-4">
+                        <label for="elastName">
+                                     <i class="fa fa-info-circle font-icon-style"></i>
+                                    {{shared.lastNameLabel}}                                   
+                                </label>
+                    </div>
+                    <div *ngIf="editMode" class="ui-grid-col-8">
+                        <input pInputText id="elastName" [(ngModel)]="selectedWorker.user.lastName" type="text" size="30" formControlName="lastName"
+                            class="width100p" />
+                    </div>
+                    <div *ngIf="!editMode" class="ui-grid-col-8 textPlaceHolderStyle">
+                        {{selectedWorker?.user.lastName}}
+                    </div>
+                </div>
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-4">
+                        <label for="nationalCode">
+                                    <i class="fa fa-info-circle font-icon-style"></i>
+                                    {{shared.nationalCodeLabel}}                                   
+                                </label>
+                    </div>
+                    <div *ngIf="editMode" class="ui-grid-col-8">
+                        <input pInputText id="nationalCode" [(ngModel)]="selectedWorker.user.nationalCode" type="text" size="30" formControlName="nationalCode"
+                            class="width100p ltrDirection" />
+                    </div>
+                    <div *ngIf="!editMode" class="ui-grid-col-8 textPlaceHolderStyle">
+                        {{selectedWorker?.user.nationalCode}}
+                    </div>
+                </div>
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-12 ui-message ui-messages-error ui-corner-all errorMsgStyle" *ngIf="form.controls['nationalCode'].touched && form.controls['nationalCode'].hasError('pattern')">
+                        {{shared.invalidNationalCodeMsg}}
+                    </div>
+                </div>
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-4">
+                        <label for="birthYear">
+                                    <i class="fa fa-info-circle font-icon-style"></i>
+                                    {{shared.birthYearLabel}}                                   
+                                </label>
+                    </div>
+                    <div *ngIf="editMode" class="ui-grid-col-8">
+                        <p-dropdown [options]="yearList" [(ngModel)]="selectedWorker.user.birthYear" [style]="{'width':'100%'}" [filter]="true" [placeholder]="shared.chooseBirthYearLabel"
+                            appendTo="body" formControlName="birthYear"></p-dropdown>
+                    </div>
+                    <div *ngIf="!editMode" class="ui-grid-col-8 textPlaceHolderStyle">
+                        {{selectedWorker?.user.birthYear}}
+                    </div>
+                </div>
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-4">
+                        <label for="genderID">
+                                    <i class="fa fa-venus-mars font-icon-style"></i>
+                                    {{shared.genderLabel}}
+                                </label>
+                    </div>
+                    <div *ngIf="editMode" class="ui-grid-col-8">
+                        <div class="ui-g" style="margin-bottom:10px">
+                            <div class="ui-g-6">
+                                <p-radioButton name="sexGroup" value="1" [label]="shared.manLabel" [(ngModel)]="selectedWorker.user.sex" formControlName="sex"></p-radioButton>
+                            </div>
+                            <div class="ui-g-6">
+                                <p-radioButton name="sexGroup" value="2" [label]="shared.womanLabel" [(ngModel)]="selectedWorker.user.sex" formControlName="sex"></p-radioButton>
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf="!editMode" class="ui-grid-col-8 textPlaceHolderStyle">
+                        <div *ngIf="selectedWorker?.user.sex==1">{{shared.manLabel}}</div>
+                        <div *ngIf="selectedWorker?.user.sex==2">{{shared.womanLabel}}</div>
+                    </div>
+                </div>
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-4">
+                        <label for="birthYear">
+                                    <i class="fa fa-info-circle font-icon-style"></i>
+                                    {{shared.experienceStartLabel}}                                   
+                                </label>
+                    </div>
+                    <div *ngIf="editMode" class="ui-grid-col-8">
+                        <p-dropdown [options]="yearList" [(ngModel)]="selectedWorker.experienceStart" [style]="{'width':'100%'}" [filter]="true"
+                            appendTo="body" [placeholder]="shared.chooseExperienceStartYearLabel" formControlName="experienceStart"></p-dropdown>
+                    </div>
+                    <div *ngIf="!editMode" class="ui-grid-col-8 textPlaceHolderStyle">
+                        {{selectedWorker?.experienceStart}}
+                    </div>
+                </div>
+            </div>
+            <div align="center">
+                <div *ngIf="editMode" align="center" style="padding:4px">
+                    <button type="submit" pButton icon="fa-save" label="{{shared.saveLabel}}" class="ui-button turquoise-btn"></button>
+                </div>
+                <div *ngIf="!editMode" align="center" style="padding:4px">
+                    <button type="submit" pButton icon="fa-close" label="{{shared.closeLabel}}" class="ui-button"></button>
+                </div>
+            </div>
+        </p-panel>
+    </form>
+</div>

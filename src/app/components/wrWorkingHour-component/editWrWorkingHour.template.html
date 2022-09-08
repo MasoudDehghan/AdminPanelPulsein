@@ -1,0 +1,312 @@
+<p-growl [value]="msgs" life="3000"></p-growl>
+<loadingCmp [loading]="loading" spinnerStyleClass="spinnerClassBlack"></loadingCmp>
+
+<div *ngIf="!loading" class="ui-rtl" dir="rtl">
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <p-panel id="workingHourPanelID">
+            <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-2">
+                    </div>
+                    <div class="ui-grid-col-2">
+                        <label>
+                        {{shared.workingDayLabel}}
+                        </label>
+                    </div>
+                    <div class="ui-grid-col-4" align="center">
+                        <label>
+                        {{shared.startWorkingHourLabel}}
+                         </label>
+                    </div>
+                    <div class="ui-grid-col-4" align="center">
+                        <label>
+                        {{shared.stopWorkingHourLabel}}
+                         </label>
+                    </div>
+                </div>
+
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-2">
+                        <label for="saturdayID">
+                        <i class="fa fa-dot-circle-o font-icon-style"></i>{{shared.saturdayLabel}}</label>
+                    </div>
+                    <div class="ui-grid-col-2">
+                        <p-checkbox [(ngModel)]="saturdayActive" binary="true" formControlName="saturdayActiveCntrl"></p-checkbox>
+                    </div>
+                    <div class="ui-grid-col-8">
+                        <div class="ui-grid ui-grid-responsive  ui-grid-pad" *ngIf="saturdayActive">
+                            <div class="ui-grid-row">
+                                <div class="ui-grid-col-4" align="center">
+                                    <p-slider [min]="0" [max]="59" [(ngModel)]="saturdayStartMinute" formControlName="saturdayStartMinuteCntrl" [style]="{'width':'60px'}"
+                                        [animate]="true"></p-slider>
+                                    {{saturdayStartMinute}}
+
+                                </div>
+                                <div class="ui-grid-col-4" align="center">
+                                    <p-slider [min]="0" [max]="23" [(ngModel)]="saturdayStartHour" formControlName="saturdayStartHourCntrl" [style]="{'width':'60px'}"
+                                        [animate]="true"></p-slider>
+                                    {{saturdayStartHour}}
+
+                                </div>
+                                <div class="ui-grid-col-4" align="center">
+                                    <p-slider [min]="0" [max]="59" [(ngModel)]="saturdayStopMinute" formControlName="saturdayStopMinuteCntrl" [style]="{'width':'60px'}"
+                                        [animate]="true"></p-slider>
+                                    {{saturdayStopMinute}}
+
+                                </div>
+                                <div class="ui-grid-col-4" align="center">
+                                    <p-slider [min]="0" [max]="23" [(ngModel)]="saturdayStopHour" formControlName="saturdayStopHourCntrl" [style]="{'width':'60px'}"
+                                        [animate]="true"></p-slider>
+                                    {{saturdayStopHour}}
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-2">
+                        <label for="sundayID">
+                        <i class="fa fa-dot-circle-o font-icon-style"></i>{{shared.sundayLabel}}</label>
+                    </div>
+                    <div class="ui-grid-col-2">
+                        <p-checkbox [(ngModel)]="sundayActive" binary="true" formControlName="sundayActiveCntrl"></p-checkbox>
+                    </div>
+                    <div class="ui-grid-col-8">
+                        <div class="ui-grid ui-grid-responsive  ui-grid-pad" *ngIf="sundayActive">
+                            <div class="ui-grid-row">
+                                <div class="ui-grid-col-4" align="center">
+                                    <p-slider [min]="0" [max]="59" [(ngModel)]="sundayStartMinute" formControlName="sundayStartMinuteCntrl" [style]="{'width':'60px'}"
+                                        [animate]="true"></p-slider>
+                                    {{sundayStartMinute}}
+
+                                </div>
+                                <div class="ui-grid-col-4" align="center">
+                                    <p-slider [min]="0" [max]="23" [(ngModel)]="sundayStartHour" formControlName="sundayStartHourCntrl" [style]="{'width':'60px'}"
+                                        [animate]="true"></p-slider>
+                                    {{sundayStartHour}}
+
+                                </div>
+                                <div class="ui-grid-col-4" align="center">
+                                    <p-slider [min]="0" [max]="59" [(ngModel)]="sundayStopMinute" formControlName="sundayStopMinuteCntrl" [style]="{'width':'60px'}"
+                                        [animate]="true"></p-slider>
+                                    {{sundayStopMinute}}
+
+                                </div>
+                                <div class="ui-grid-col-4" align="center">
+                                    <p-slider [min]="0" [max]="23" [(ngModel)]="sundayStopHour" formControlName="sundayStopHourCntrl" [style]="{'width':'60px'}"
+                                        [animate]="true"></p-slider>
+                                    {{sundayStopHour}}
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-2">
+                        <label for="mondayID">
+                        <i class="fa fa-dot-circle-o font-icon-style"></i>{{shared.mondayLabel}}</label>
+                    </div>
+                    <div class="ui-grid-col-2">
+                        <p-checkbox [(ngModel)]="mondayActive" binary="true" formControlName="mondayActiveCntrl"></p-checkbox>
+                    </div>
+                    <div class="ui-grid-col-8">
+                        <div class="ui-grid ui-grid-responsive  ui-grid-pad" *ngIf="mondayActive">
+                            <div class="ui-grid-row">
+                                <div class="ui-grid-col-4" align="center">
+                                    <p-slider [min]="0" [max]="59" [(ngModel)]="mondayStartMinute" formControlName="mondayStartMinuteCntrl" [style]="{'width':'60px'}"
+                                        [animate]="true"></p-slider>
+                                    {{mondayStartMinute}}
+
+                                </div>
+                                <div class="ui-grid-col-4" align="center">
+                                    <p-slider [min]="0" [max]="23" [(ngModel)]="mondayStartHour" formControlName="mondayStartHourCntrl" [style]="{'width':'60px'}"
+                                        [animate]="true"></p-slider>
+                                    {{mondayStartHour}}
+
+                                </div>
+                                <div class="ui-grid-col-4" align="center">
+                                    <p-slider [min]="0" [max]="59" [(ngModel)]="mondayStopMinute" formControlName="mondayStopMinuteCntrl" [style]="{'width':'60px'}"
+                                        [animate]="true"></p-slider>
+                                    {{mondayStopMinute}}
+
+                                </div>
+                                <div class="ui-grid-col-4" align="center">
+                                    <p-slider [min]="0" [max]="23" [(ngModel)]="mondayStopHour" formControlName="mondayStopHourCntrl" [style]="{'width':'60px'}"
+                                        [animate]="true"></p-slider>
+                                    {{mondayStopHour}}
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-2">
+                        <label for="tuesdayID">
+                        <i class="fa fa-dot-circle-o font-icon-style"></i>{{shared.tuesdayLabel}}</label>
+                    </div>
+                    <div class="ui-grid-col-2">
+                        <p-checkbox [(ngModel)]="tuesdayActive" binary="true" formControlName="tuesdayActiveCntrl"></p-checkbox>
+                    </div>
+                    <div class="ui-grid-col-8">
+                        <div class="ui-grid ui-grid-responsive  ui-grid-pad" *ngIf="tuesdayActive">
+                            <div class="ui-grid-row">
+                                <div class="ui-grid-col-4" align="center">
+                                    <p-slider [min]="0" [max]="59" [(ngModel)]="tuesdayStartMinute" formControlName="tuesdayStartMinuteCntrl" [style]="{'width':'60px'}"
+                                        [animate]="true"></p-slider>
+                                    {{tuesdayStartMinute}}
+
+                                </div>
+                                <div class="ui-grid-col-4" align="center">
+                                    <p-slider [min]="0" [max]="23" [(ngModel)]="tuesdayStartHour" formControlName="tuesdayStartHourCntrl" [style]="{'width':'60px'}"
+                                        [animate]="true"></p-slider>
+                                    {{tuesdayStartHour}}
+
+                                </div>
+                                <div class="ui-grid-col-4" align="center">
+                                    <p-slider [min]="0" [max]="59" [(ngModel)]="tuesdayStopMinute" formControlName="tuesdayStopMinuteCntrl" [style]="{'width':'60px'}"
+                                        [animate]="true"></p-slider>
+                                    {{tuesdayStopMinute}}
+
+                                </div>
+                                <div class="ui-grid-col-4" align="center">
+                                    <p-slider [min]="0" [max]="23" [(ngModel)]="tuesdayStopHour" formControlName="tuesdayStopHourCntrl" [style]="{'width':'60px'}"
+                                        [animate]="true"></p-slider>
+                                    {{tuesdayStopHour}}
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-2">
+                        <label for="wednesdayID">
+                        <i class="fa fa-dot-circle-o font-icon-style"></i>{{shared.wednesdayLabel}}</label>
+                    </div>
+                    <div class="ui-grid-col-2">
+                        <p-checkbox [(ngModel)]="wednesdayActive" binary="true" formControlName="wednesdayActiveCntrl"></p-checkbox>
+                    </div>
+                    <div class="ui-grid-col-8">
+                        <div class="ui-grid ui-grid-responsive  ui-grid-pad" *ngIf="wednesdayActive">
+                            <div class="ui-grid-row">
+                                <div class="ui-grid-col-4" align="center">
+                                    <p-slider [min]="0" [max]="59" [(ngModel)]="wednesdayStartMinute" formControlName="wednesdayStartMinuteCntrl" [style]="{'width':'60px'}"
+                                        [animate]="true"></p-slider>
+                                    {{wednesdayStartMinute}}
+
+                                </div>
+                                <div class="ui-grid-col-4" align="center">
+                                    <p-slider [min]="0" [max]="23" [(ngModel)]="wednesdayStartHour" formControlName="wednesdayStartHourCntrl" [style]="{'width':'60px'}"
+                                        [animate]="true"></p-slider>
+                                    {{wednesdayStartHour}}
+
+                                </div>
+                                <div class="ui-grid-col-4" align="center">
+                                    <p-slider [min]="0" [max]="59" [(ngModel)]="wednesdayStopMinute" formControlName="wednesdayStopMinuteCntrl" [style]="{'width':'60px'}"
+                                        [animate]="true"></p-slider>
+                                    {{wednesdayStopMinute}}
+
+                                </div>
+                                <div class="ui-grid-col-4" align="center">
+                                    <p-slider [min]="0" [max]="23" [(ngModel)]="wednesdayStopHour" formControlName="wednesdayStopHourCntrl" [style]="{'width':'60px'}"
+                                        [animate]="true"></p-slider>
+                                    {{wednesdayStopHour}}
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+               <div class="ui-grid-row">
+                    <div class="ui-grid-col-2">
+                        <label for="thursdayID">
+                        <i class="fa fa-dot-circle-o font-icon-style"></i>{{shared.thursdayLabel}}</label>
+                    </div>
+                    <div class="ui-grid-col-2">
+                        <p-checkbox [(ngModel)]="thursdayActive" binary="true" formControlName="thursdayActiveCntrl"></p-checkbox>
+                    </div>
+                    <div class="ui-grid-col-8">
+                        <div class="ui-grid ui-grid-responsive  ui-grid-pad" *ngIf="thursdayActive">
+                            <div class="ui-grid-row">
+                                <div class="ui-grid-col-4" align="center">
+                                    <p-slider [min]="0" [max]="59" [(ngModel)]="thursdayStartMinute" formControlName="thursdayStartMinuteCntrl" [style]="{'width':'60px'}"
+                                        [animate]="true"></p-slider>
+                                    {{thursdayStartMinute}}
+
+                                </div>
+                                <div class="ui-grid-col-4" align="center">
+                                    <p-slider [min]="0" [max]="23" [(ngModel)]="thursdayStartHour" formControlName="thursdayStartHourCntrl" [style]="{'width':'60px'}"
+                                        [animate]="true"></p-slider>
+                                    {{thursdayStartHour}}
+
+                                </div>
+                                <div class="ui-grid-col-4" align="center">
+                                    <p-slider [min]="0" [max]="59" [(ngModel)]="thursdayStopMinute" formControlName="thursdayStopMinuteCntrl" [style]="{'width':'60px'}"
+                                        [animate]="true"></p-slider>
+                                    {{thursdayStopMinute}}
+
+                                </div>
+                                <div class="ui-grid-col-4" align="center">
+                                    <p-slider [min]="0" [max]="23" [(ngModel)]="thursdayStopHour" formControlName="thursdayStopHourCntrl" [style]="{'width':'60px'}"
+                                        [animate]="true"></p-slider>
+                                    {{thursdayStopHour}}
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>  
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-2">
+                        <label for="fridayID">
+                        <i class="fa fa-dot-circle-o font-icon-style"></i>{{shared.fridayLabel}}</label>
+                    </div>
+                    <div class="ui-grid-col-2">
+                        <p-checkbox [(ngModel)]="fridayActive" binary="true" formControlName="fridayActiveCntrl"></p-checkbox>
+                    </div>
+                    <div class="ui-grid-col-8">
+                        <div class="ui-grid ui-grid-responsive  ui-grid-pad" *ngIf="fridayActive">
+                            <div class="ui-grid-row">
+                                <div class="ui-grid-col-4" align="center">
+                                    <p-slider [min]="0" [max]="59" [(ngModel)]="fridayStartMinute" formControlName="fridayStartMinuteCntrl" [style]="{'width':'60px'}"
+                                        [animate]="true"></p-slider>
+                                    {{fridayStartMinute}}
+
+                                </div>
+                                <div class="ui-grid-col-4" align="center">
+                                    <p-slider [min]="0" [max]="23" [(ngModel)]="fridayStartHour" formControlName="fridayStartHourCntrl" [style]="{'width':'60px'}"
+                                        [animate]="true"></p-slider>
+                                    {{fridayStartHour}}
+
+                                </div>
+                                <div class="ui-grid-col-4" align="center">
+                                    <p-slider [min]="0" [max]="59" [(ngModel)]="fridayStopMinute" formControlName="fridayStopMinuteCntrl" [style]="{'width':'60px'}"
+                                        [animate]="true"></p-slider>
+                                    {{fridayStopMinute}}
+
+                                </div>
+                                <div class="ui-grid-col-4" align="center">
+                                    <p-slider [min]="0" [max]="23" [(ngModel)]="fridayStopHour" formControlName="fridayStopHourCntrl" [style]="{'width':'60px'}"
+                                        [animate]="true"></p-slider>
+                                    {{fridayStopHour}}
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>               
+            </div>
+        </p-panel>
+
+        <div align="center">
+            <div>
+                <button type="submit" pButton icon="fa fa-plus-circle" label="{{shared.saveLabel}}" class="ui-button green-btn saveBtnStyle"
+                    [disabled]="!form.valid"></button>
+            </div>
+        </div>
+    </form>
+</div>

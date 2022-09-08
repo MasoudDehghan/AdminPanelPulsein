@@ -1,0 +1,187 @@
+<p-growl [value]="gMessage" life="6000">
+</p-growl>
+
+<div class="ui-g ui-g-pad ui-g-reponsive dashboard">
+  <div class="ui-g-12">
+    <p-toolbar styleClass="toolbarstyle">
+      <div class="ui-toolbar-group-right headerLabel">
+        <img src="../assets/images/notificationReport.png" style="vertical-align: middle;" /> {{activeLabel}}
+      </div>
+      <div class="ui-toolbar-group-left">
+        <button type="button" pButton icon="fa-file-excel-o" iconPos="left" pTooltip="Excel"
+          (click)="exportExcel()"></button>
+        <button type="button" pButton icon="fa-refresh" (click)="refresh()"></button>
+
+      </div>
+    </p-toolbar>
+  </div>
+  <div class="ui-g-12">
+    <p-dataTable [value]="notificationList" [rows]="10" [paginator]="true" [alwaysShowPaginator]="false" [pageLinks]="3"
+      [style]="{'width':'99%'}" [emptyMessage]="shared.emptyListMsg" sortField="sendTime" sortOrder="-1" #dt>
+      <p-column [style]="{'width':'15%'}" field="title" [filter]="true" header="{{shared.titleLabel}}">
+        <ng-template let-col let-notification="rowData" pTemplate="body">
+          <a (click)="showViewDialog(notification)">
+            {{notification.title}}
+          </a>
+        </ng-template>
+      </p-column>
+      <p-column [style]="{'width':'25%'}" field="content" [filter]="true" header="{{shared.contentLabel}}"></p-column>
+      <p-column [style]="{'width':'5%'}" field="vibrate" header="{{shared.vibrateLabel}}">
+        <ng-template let-col let-notification="rowData" pTemplate="body">
+          <div align="center" *ngIf="notification.vibrate">
+            <img src="../assets/images/checked.png" />
+          </div>
+        </ng-template>
+      </p-column>
+      <p-column [style]="{'width':'5%'}" field="sound" header="{{shared.soundLabel}}">
+        <ng-template let-col let-notification="rowData" pTemplate="body">
+          <div align="center" *ngIf="notification.sound">
+            <img src="../assets/images/checked.png" />
+          </div>
+        </ng-template>
+      </p-column>
+      <p-column [style]="{'width':'5%'}" field="led" header="{{shared.ledLabel}}">
+        <ng-template let-col let-notification="rowData" pTemplate="body">
+          <div align="center" *ngIf="notification.led">
+            <img src="../assets/images/checked.png" />
+          </div>
+        </ng-template>
+      </p-column>
+      <p-column [style]="{'width':'10%'}" field="big" header="{{shared.isBigLabel}}">
+        <ng-template let-col let-notification="rowData" pTemplate="body">
+          <div align="center" *ngIf="notification.big">
+            <img src="../assets/images/checked.png" />
+          </div>
+        </ng-template>
+      </p-column>
+      <p-column header="{{shared.imageLabel}}" [style]="{'width':'10%'}">
+        <ng-template let-col let-notification="rowData" pTemplate="body">
+          <div align="center" *ngIf="notification.big">
+            <button type="button" class="green-btn" pButton icon="fa-file-image-o"
+              (click)="selectImage(notification)"></button>
+
+          </div>
+        </ng-template>
+      </p-column>
+      <p-column [style]="{'width':'15%'}" field="jobCat3Name" [filter]="true" header="{{shared.relatedCat}}"></p-column>
+      <p-column [style]="{'width':'15%'}" field="sendTime" [sortable]="true" header="{{shared.sendTimeLabel}}"
+        styleClass="ltrDirection"></p-column>
+
+    </p-dataTable>
+  </div>
+</div>
+<div *ngIf="displayNotificationDetail">
+  <p-dialog [(visible)]="displayNotificationDetail" [responsive]="true" [resizable]="false" showEffect="fade"
+    [modal]="true" [rtl]="true" width="800">
+    <p-header>
+      {{shared.notificationsLabel}}
+      <span class="totalFilteredClass">
+        {{shared.totalNumberLabel}} : {{notificationLength}}
+      </span>
+    </p-header>
+    <p-table [value]="selectedNotification?.items" [rows]="10" [paginator]="true" [loading]="loading" [pageLinks]="5"
+      [alwaysShowPaginator]="false" (onFilter)="onFilter($event)" sortMode="single" sortField="firstNameLabel"
+      sortOrder="-1" #dt>
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width:20%">Android</th>
+          <th style="width:20%">IOS</th>
+          <th style="width:20%">WEB</th>
+          <th style="width:20%">{{shared.firstNameLabel}}</th>
+          <th style="width:20%">{{shared.lastNameLabel}}</th>
+          <th style="width:20%">{{shared.mobileLabel}}</th>
+          <th style="width:20%">Seen</th>
+        </tr>
+        <tr>
+          <th style="width:20%">
+            <p-multiSelect [options]="resultListAndroid" defaultLabel="All" [style]="{'width':'100%'}" appendTo="body"
+              (onChange)="dt.filter($event.value, 'androidState', 'in')"></p-multiSelect>
+          </th>
+          <th style="width:20%">
+            <p-multiSelect [options]="resultListIOS" defaultLabel="All" [style]="{'width':'100%'}" appendTo="body"
+              (onChange)="dt.filter($event.value, 'iosState', 'in')"></p-multiSelect>
+          </th>
+          <th style="width:20%">
+            <p-multiSelect [options]="resultListWeb" defaultLabel="All" [style]="{'width':'100%'}" appendTo="body"
+              (onChange)="dt.filter($event.value, 'webState', 'in')"></p-multiSelect>
+          </th>
+          <th style="width:20%">
+            <input pInputText type="number" size="2" style="width:80%"
+              (input)="dt.filter($event.target.value, 'userFirstName', 'contains')">
+          </th>
+          <th style="width:20%">
+            <input pInputText type="text" style="width:80%"
+              (input)="dt.filter($event.target.value, 'userLastName', 'contains')">
+          </th>
+          <th style="width:20%">
+            <input pInputText type="number" style="width:80%"
+              (input)="dt.filter($event.target.value, 'userMobileNumber', 'contains')">
+          </th>
+          <th style="width:20%">
+            <p-triStateCheckbox (onChange)="dt.filter($event.value,'seen','equals')"></p-triStateCheckbox>
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-notification>
+        <tr>
+          <td>
+              <!-- <i class="fa fa-android" aria-hidden="true" pTooltip="Android"></i> -->
+              <img *ngIf="notification.androidState == 0" src="../assets/images/na.png" pTooltip="Not Applicable" />
+              <img *ngIf="notification.androidState == 1" src="../assets/images/checked.png" pTooltip="Success" />
+              <img *ngIf="notification.androidState == 2" src="../assets/images/cancel.png" pTooltip="Failed" />
+          </td>
+          <td>
+              <!-- <i class="fa fa-apple" aria-hidden="true" pTooltip="IOS"></i> -->
+              <img *ngIf="notification.iosState == 0" src="../assets/images/na.png" pTooltip="Not Applicable" />
+              <img *ngIf="notification.iosState == 1" src="../assets/images/checked.png" pTooltip="Success" />
+              <img *ngIf="notification.iosState == 2" src="../assets/images/cancel.png" pTooltip="Failed" />
+          </td>
+          <td>
+              <!-- <img src="../../assets/images/grid-world.png" style="vertical-align: middle;" pTooltip="Web" /> -->
+              <img *ngIf="notification.webState == 0" src="../assets/images/na.png" pTooltip="Not Applicable" />
+              <img *ngIf="notification.webState == 1" src="../assets/images/checked.png" pTooltip="Success" />
+              <img *ngIf="notification.webState == 2" src="../assets/images/cancel.png" pTooltip="Failed" />
+          </td>
+          <td>
+            {{notification.userFirstName}}
+          </td>
+          <td>
+            {{notification.userLastName}}
+          </td>
+          <td>
+            {{notification.userMobileNumber}}
+          </td>
+          <td>
+            <img *ngIf="notification.seen" src="../assets/images/checked.png" pTooltip="Seen" />
+            <img *ngIf="!notification.seen" src="../assets/images/cancel.png" pTooltip="Not Seen" />
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td [attr.colspan]="7">
+            {{shared.emptyListMsg}}
+          </td>
+        </tr>
+      </ng-template>
+
+    </p-table>
+  </p-dialog>
+</div>
+<div *ngIf="displayImageDialog">
+  <p-dialog [(visible)]="displayImageDialog" [responsive]="true" [modal]="true" [resizable]="false" [showHeader]="false"
+    [closable]="true" [dismissableMask]="true">
+    <div class="ui-grid ui-grid-responsive ui-grid-pad">
+      <div class="ui-grid-row">
+        <div class="ui-grid-col-12" style="text-align:center">
+          <img src="{{selectedImagePath}}" style="max-width:256px;height:auto">
+        </div>
+      </div>
+    </div>
+  </p-dialog>
+</div>
+<p-dialog [(visible)]="loading" responsive="true" [resizable]="false" showEffect="fade" width="300" [rtl]="true"
+  modal="modal" [showHeader]="false" styleClass="ui-dialog">
+  <loadingCmp [loading]="loading" spinnerStyleClass="spinnerClassBlack"></loadingCmp>
+</p-dialog>

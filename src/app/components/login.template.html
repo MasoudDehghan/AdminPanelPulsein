@@ -1,0 +1,67 @@
+<div class="loginContainer">
+
+	<div class="login">
+		<div class="ui-g ui-g-pad dashboard "
+			style="background-color: white; border-radius: 7px; padding-top: 10px; position: relative; box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);margin:10px">
+			<div align="center" class="ui-g-12">
+				<img src="../../assets/images/logo.png" style="margin-top:50px;width:128px;" />
+
+			</div>
+			<div align="center" class="ui-g-12  ui-sm-12">
+				<div class="headerClass">{{projectTitle}}</div>
+			</div>
+			<div class="ui-g-12 ui-sm-12">
+				<hr />
+			</div>
+
+			<div align="center" class="ui-g-12 ui-sm-12">
+				<div class="subHeaderClass">{{shared.versionLabel}} {{version}}</div>
+			</div>
+
+			<div class="ui-g-12">
+
+				<form [formGroup]="form" (submit)="onSubmit(form.value);">
+					<div class="ui-g ui-fluid">
+						<div class="ui-g-12 ui-sm-12">
+							<div class="ui-inputgroup">
+								<span class="ui-inputgroup-addon">
+									<i class="fa fa-user"></i>
+								</span>
+
+								<input pInputText type="text" placeholder="{{userNameLabel}}" formControlName="userName"
+									class="ltrDirection" />
+							</div>
+						</div>
+
+						<div class="ui-g-12 ui-sm-12">
+							<div class="ui-inputgroup">
+								<span class="ui-inputgroup-addon">
+									<i class="fa fa-key"></i>
+								</span>
+
+								<input pInputText type="password" formControlName="password"
+									placeholder="{{passwordLabel}}" class="ltrDirection" />
+							</div>
+						</div>
+						<div class="ui-g-12 ui-sm-12">
+							<div align="center">
+								<div *ngIf="!isLoading;else loadingx">
+									<button pButton type="submit" label="{{loginBtnLabel}}"
+										class="ui-button orange-btn loginBtnStyle"></button>
+									<p></p>
+									<div *ngIf="showErrorMsg">
+										<p-message severity="error" text="{{errorMsg}}"></p-message>
+									</div>
+								</div>
+								<ng-template #loadingx>
+									<!-- <loadingCmp [loading]="isLoading"></loadingCmp> -->
+									<i class="fa fa-spinner fa-spin fa-2x"></i>
+								</ng-template>
+							</div>
+						</div>
+
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>

@@ -1,0 +1,30 @@
+a{
+    color:blue;font-weight:bold;
+}
+a:link {
+    color:chocolate;
+    text-align: center; 
+    text-decoration: none;
+    display: inline-block;
+
+}
+
+a:hover, a:active {
+    cursor: pointer;
+    text-decoration: underline;
+
+}
+
+:host ::ng-deep dp-date-picker.dp-material .dp-picker-input{
+    width : 150% !important;
+}
+
+.customTextPlace{
+    background-color: #F2F3F4;
+    border: 1px;
+    border-style: solid;
+    border-color: #CCD1D1;
+    border-radius: 7px;
+    min-height: 35px;
+    padding: 4px;
+}

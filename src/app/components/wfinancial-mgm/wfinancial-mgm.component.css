@@ -1,0 +1,16 @@
+a{
+    color:blue;font-weight:bold;
+}
+a:link {
+    color:chocolate;
+    text-align: center; 
+    text-decoration: none;
+    display: inline-block;
+
+}
+
+a:hover, a:active {
+    cursor: pointer;
+    text-decoration: underline;
+
+}

@@ -1,0 +1,41 @@
+<p-growl [value]="msgs" life="3000"></p-growl>
+<loadingCmp [loading]="loading" spinnerStyleClass="spinnerClassBlack"></loadingCmp>
+
+<div *ngIf="!loading" class="ui-rtl" dir="rtl">
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <p-panel [header]="shared.registerNewAreas" id="areaPanelID">
+            <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-12">
+                        <p-multiSelect [options]="cityList" [(ngModel)]="selectedCities" [defaultLabel]="shared.chooseServiceAreaMap" maxSelectedLabels=30
+                            [selectedItemsLabel]="shared.numberOfSelectedRegions" [style]="{'width':'100%'}" required="true"
+                            formControlName="city" styleClass="farsi-font"></p-multiSelect>
+                    </div>
+                </div>
+            </div>
+        </p-panel>
+        <br/>
+        <div align="center">
+
+            <button type="submit" pButton icon="fa fa-plus-circle" label="{{shared.saveLabel}}" class="ui-button green-btn saveBtnStyle"
+                [disabled]="!form.valid"></button>
+        </div>
+    </form>
+
+    <br/>
+    <br/>
+    <p-panel [header]="shared.serviceAreaList">
+        <p-dataTable [value]="workerToServiceCityMaps" [emptyMessage]="shared.emptyListMsg">
+            <p-column field="city.name" header="{{shared.cityLabel}}"></p-column>
+            <p-column header="{{shared.delLabelFa}}">
+                <ng-template let-col let-serviceCityMap="rowData" pTemplate="body">
+                    <div align="center">
+                        <button type="button" pButton icon="fa-close" (click)="removeServiceArea(serviceCityMap)" class="ui-button pink-btn" [pTooltip]="shared.delLabelFa"></button>
+                    </div>
+                </ng-template>
+            </p-column>
+        </p-dataTable>
+    </p-panel>
+</div>

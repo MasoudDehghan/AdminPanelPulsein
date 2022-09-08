@@ -1,0 +1,186 @@
+<p-growl [value]="msgs" life="3000"></p-growl>
+
+<loadingCmp [loading]="loading" spinnerStyleClass="spinnerClassBlack"></loadingCmp>
+
+<div *ngIf="!loading" style="margin-right:1%;margin-left:1%">
+    <p-panel [header]="shared.personalWorkerDataLabel" id="personalDataPanelID" [style]="{'width':'99%'}">
+        <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-5">
+                    <label>
+                                <i class="fa fa-info-circle font-icon-style"></i>
+                                {{shared.workerCodeLabel}}
+                            </label>
+                </div>
+                <div class="ui-grid-col-7 textPlaceHolderStyle ltrDirection">
+                    {{worker?.code}}
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-5">
+                    <label>
+                                <i class="fa fa-info-circle font-icon-style"></i>
+                                {{shared.state}}
+                            </label>
+                </div>
+                <div class="ui-grid-col-7 textPlaceHolderStyle">
+                    {{worker?.registerState.name}}
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-5">
+                    <label>
+                                <i class="fa fa-info-circle font-icon-style"></i>
+                                {{shared.descLabel}}
+                            </label>
+                </div>
+                <div class="ui-grid-col-7 textPlaceHolderStyle">
+                    {{worker?.regStateInfo}}
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-5">
+                    <label for="efirstName">
+                                     <i class="fa fa-info-circle font-icon-style"></i>
+                                    {{shared.firstNameLabel}}                                   
+                                </label>
+                </div>
+                <div class="ui-grid-col-7 textPlaceHolderStyle">
+                    {{worker?.user.firstName}}
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-5">
+                    <label for="elastName">
+                                     <i class="fa fa-info-circle font-icon-style"></i>
+                                    {{shared.lastNameLabel}}                                   
+                                </label>
+                </div>
+
+                <div class="ui-grid-col-7 textPlaceHolderStyle">
+                    {{worker?.user.lastName}}
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-5">
+                    <label for="nationalCode">
+                                    <i class="fa fa-info-circle font-icon-style"></i>
+                                    {{shared.nationalCodeLabel}}                                   
+                                </label>
+                </div>
+                <div class="ui-grid-col-7 textPlaceHolderStyle">
+                    {{worker?.user.nationalCode}}
+                </div>
+            </div>
+
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-5">
+                    <label for="birthYear">
+                                    <i class="fa fa-info-circle font-icon-style"></i>
+                                    {{shared.birthYearLabel}}                                   
+                                </label>
+                </div>
+
+                <div class="ui-grid-col-7 textPlaceHolderStyle">
+                    {{worker?.user.birthYear}}
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-5">
+                    <label for="genderID">
+                                    <i class="fa fa-venus-mars font-icon-style"></i>
+                                    {{shared.genderLabel}}
+                                </label>
+                </div>
+                <div class="ui-grid-col-7 textPlaceHolderStyle">
+                    <div *ngIf="worker?.user.sex==1">{{shared.manLabel}}</div>
+                    <div *ngIf="worker?.user.sex==2">{{shared.womanLabel}}</div>
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-5">
+                    <label for="birthYear">
+                                    <i class="fa fa-info-circle font-icon-style"></i>
+                                    {{shared.experienceStartLabel}}                                   
+                                </label>
+                </div>
+                <div class="ui-grid-col-7 textPlaceHolderStyle">
+                    {{worker?.experienceStart}}
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-5">
+                    <label for="eweb">
+                       <i class="fa fa-globe font-icon-style"></i>
+                                    {{shared.appMobileLabel}}                            
+                       </label>
+                </div>
+                <div class="ui-grid-col-7 textPlaceHolderStyle">
+                    {{worker?.user?.mobileNumber}}
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-5">
+                    <label for="email">
+                                       <i class="fa fa-globe font-icon-style"></i>
+                                    {{shared.emailLabel}}                               
+                                </label>
+                </div>
+
+                <div class="ui-grid-col-7 textPlaceHolderStyle ltrDirection">
+                    {{worker?.user?.email}}
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </p-panel>
+
+    <br/>
+    <p-panel [header]="shared.registeredWorkJobList" [style]="{'width':'99%'}">
+        <p-dataTable [value]="workerToJobMapList" [paginator]="true" [rows]="4" [alwaysShowPaginator]="false" [emptyMessage]="shared.emptyWorkJobListMsg">
+            <p-column field="jobCategory3.jobCategory2.jobCategory1.name" header="{{shared.job_Category1Label}}"></p-column>
+            <p-column field="jobCategory3.jobCategory2.name" header="{{shared.job_Category2Label}}"></p-column>
+            <p-column field="jobCategory3.name" header="{{shared.job_Category3Label}}"></p-column>
+        </p-dataTable>
+    </p-panel>
+
+    <br/>
+    <div *ngIf="workerPhoneList.length>0">
+    <p-panel header=" {{shared.registeredPhoneNumberList}}" [style]="{'width':'99%'}">
+        <p-dataTable [value]="workerPhoneList" [paginator]="true" [rows]="4" [alwaysShowPaginator]="false" [emptyMessage]="shared.emptyPhoneListMsg">
+            <p-column field="number">
+            </p-column>
+        </p-dataTable>
+    </p-panel>
+        <br/>
+    </div>
+    <p-panel [header]="shared.serviceAreaList" [style]="{'width':'99%'}">
+        <p-dataTable [value]="workerToServiceCityMaps"  [paginator]="true" [rows]="4" [alwaysShowPaginator]="false" [emptyMessage]="shared.emptyListMsg">
+            <p-column field="city.name" header="{{shared.cityLabel}}"></p-column>
+        </p-dataTable>
+    </p-panel>
+    <br/>
+    <div *ngIf="workerDocuments.length>0">
+    <p-panel [header]="shared.documentLabel" [style]="{'width':'99%'}">
+
+        <p-dataGrid [value]="workerDocuments" [paginator]="true" [rows]="4" [alwaysShowPaginator]="false" [emptyMessage]="shared.emptyListMsg">
+            <ng-template let-doc pTemplate="item">
+                <div style="padding:3px" class="ui-g-12 ui-md-3">
+                    <p-panel [header]="doc.info" [style]="{'text-align':'center'}">
+                        <img src="{{doc.photo}}" width="64">
+                        <div> {{doc.documentType.name}}</div>
+                        <hr class="ui-widget-content" style="border-top:0">
+                        <i class="fa fa-search" (click)="selectImage(doc)" style="cursor:pointer"></i>
+                    </p-panel>
+                </div>
+
+            </ng-template>
+        </p-dataGrid>
+    </p-panel>
+    </div>
+
+</div>
+

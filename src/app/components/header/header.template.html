@@ -1,0 +1,180 @@
+<p-menu #menu popup="popup" [model]="items" [style]="{'color':'red'}"></p-menu>
+
+<p-toolbar>
+    <div class="ui-toolbar-group-left">
+        <i class="topbar-icon fa fa-fw fa-random" aria-hidden="true" [pTooltip]="shared.tempCode"
+            (click)="showTempCodePanel()" *ngIf="permFlag">
+        </i>
+        <i class="topbar-icon fa fa-fw fa-cog" aria-hidden="true" routerLink="/settingeMgm"
+            [pTooltip]="shared.settingLabel">
+        </i>
+        <!-- <i class="badge1 topbar-icon fa fa fa-fw fa-envelope-o" routerLink="/CartableDashboard"
+            [pTooltip]="shared.msgNeedToCheck">
+            <span class="data-badge">
+                {{newMsgCounter}}
+            </span>
+        </i> -->
+        <i class="badge1 topbar-icon fa fa-fw fa-bell-o" aria-hidden="true" routerLink="/RequestDashboardComponent"
+            [pTooltip]="shared.currentRequestsLabel">
+            <span class="data-badge">
+                {{currentReqCounter}}
+            </span>
+         </i>
+        <a (click)="menu.toggle($event)">
+            <img src="{{baseImagePath}}/{{currentUser.photo}}" class="clip-circle" />
+        </a>
+
+    </div>
+    <div class="ui-toolbar-group-right">
+
+        <div style="float:left"><span style="font-size:18px;font-weight: bold;vertical-align: middle"> {{title}} </span>
+        </div>
+        <img src="../../assets/images/logo.png" (click)="redirectToHome()" class="logoStyle" />
+    </div>
+</p-toolbar>
+
+<p-dialog header="{{showChangePassPanelLabel}}" [(visible)]="showChangePassword" [responsive]="true" showEffect="fade"
+    [modal]="true" [rtl]="true" width="500">
+    <form [formGroup]="form" (submit)="changePass(form.value);">
+        <div class="ui-grid ui-grid-responsive  ui-grid-pad" *ngIf="currentUser">
+
+            <fieldset style="border:0">
+
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-6"><label for="password">{{oldPWDLabelFa}}</label></div>
+                    <div class="ui-grid-col-6">
+                        <input pInputText id="password" [ngModel]="currentUser.password" type="text"
+                            formControlName="oldPassword" />
+                        <div class="ui-message ui-messages-error ui-corner-all errorMsgStyle"
+                            *ngIf="form.controls['oldPassword'].touched && form.controls['oldPassword'].hasError('required')">
+                            {{passValidMsg}}
+                        </div>
+                    </div>
+
+                </div>
+            </fieldset>
+        </div>
+        <div class="ui-grid ui-grid-responsive  ui-grid-pad" *ngIf="currentUser">
+            <fieldset formGroupName="passwords" style="border:0">
+                <div class="ui-grid-row">
+
+                    <div class="ui-grid-col-6"><label for="npwd">{{newPWDLabelFa}}</label></div>
+                    <div class="ui-grid-col-6">
+
+                        <input pInputText id="npwd" [(ngModel)]="currentUser.newPassword" type="password"
+                            formControlName="newPassword" />
+                        <div class="ui-message ui-messages-error ui-corner-all errorMsgStyle"
+                            *ngIf="form.controls.passwords.controls['newPassword'].touched && form.controls.passwords.controls['newPassword'].hasError('required')">
+                            {{passValidMsg}}
+                        </div>
+                        <div class="ui-message ui-messages-error ui-corner-all errorMsgStyle"
+                            *ngIf="form.controls.passwords.controls['newPassword'].touched && form.controls.passwords.controls['newPassword'].hasError('pattern')">
+                            {{passwordInvalidMsg}}
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-6"><label for="rnpwd">{{rePWDLabelFa}}</label>
+
+                    </div>
+                    <div class="ui-grid-col-6">
+                        <input pInputText id="rnpwd" [(ngModel)]="currentUser.reNewPassword" type="password"
+                            formControlName="confirmPassword" />
+                        <div class="ui-message ui-messages-error ui-corner-all errorMsgStyle"
+                            *ngIf="form.controls.passwords.controls['confirmPassword'].touched && form.controls.passwords.controls['confirmPassword'].hasError('required')">
+                            {{passValidMsg}}
+                        </div>
+                        <div class="ui-message ui-messages-error ui-corner-all errorMsgStyle"
+                            *ngIf="form.controls.passwords.controls['confirmPassword'].touched && form.controls.passwords?.errors?.theSampePasswordError">
+                            {{passNotTheSame}}
+                        </div>
+                    </div>
+
+                </div>
+            </fieldset>
+
+        </div>
+
+    </form>
+    <footer>
+
+        <loadingCmp [loading]="loading" spinnerStyleClass="spinnerClassBlack" iconSize=2></loadingCmp>
+
+        <div align="center">
+            <button type="submit" pButton icon="fa-check" (click)="changePass(currentUser)" label="{{saveLabel}}"
+                [disabled]="!form.valid || loading"></button>
+        </div>
+        <div *ngIf="showErrorMsgInPanel">
+
+            <div *ngFor="let msg of errorMsgInPanel">
+                <div class="ui-grid-col-12">
+                    <div class="ui-message ui-messages-error ui-corner-all errorMsgStyle">{{msg}}</div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+</p-dialog>
+
+<p-dialog header="{{shared.tempCode}}" [(visible)]="displayTempCodePanel" [responsive]="true" showEffect="fade"
+    [modal]="true" [rtl]="true" width="500">
+    <form [formGroup]="tempCodeForm" (ngSubmit)="generateTempCode()">
+        <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+
+
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-4">
+                    <label>
+                        <i class="fa fa-mobile font-icon-style"></i>
+                        {{shared.mobileLabel}}
+                    </label>
+                </div>
+                <div class="ui-grid-col-8">
+                    <input pInputText id="mobile" [(ngModel)]="mobileNumber" type="text" size="12"
+                        pKeyFilter="pint"
+                        formControlName="mobileNumber" class="ltrDirection" />
+                </div>
+            </div>
+            <div class="ui-grid-row">
+
+                <div class="ui-grid-col-12">
+                    <div class="ui-g-6">
+                        <p-radioButton name="roleGroup" value="0" [label]="shared.userLabel" [(ngModel)]="userRole"
+                            formControlName="role"></p-radioButton>
+                    </div>
+                    <div class="ui-g-6">
+                        <p-radioButton name="roleGroup" value="1" [label]="shared.workerLabel" [(ngModel)]="userRole"
+                            formControlName="role"></p-radioButton>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <loadingCmp [loading]="loading" spinnerStyleClass="spinnerClassBlack" iconSize=2></loadingCmp>
+
+        <div align="center">
+            <button type="submit" pButton icon="fa-check" label="{{sendLabel}}"
+                [disabled]="!tempCodeForm.valid || loading"></button>
+        </div>
+        <div *ngIf="showErrorMsgInPanel">
+            <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+
+
+                <div class="ui-grid-row">
+                    <p-messages [value]="innerPannelGMessage" [closable]="true"></p-messages>
+                </div>
+            </div>
+        </div>
+        <br/>
+        <div *ngIf="showResultCode">
+            <b>{{loginCode}}</b>
+            <div class="ui-message ui-messages-info ui-corner-all" style="text-align:center;width: 100%;">{{resultCode}}</div>
+
+        </div>
+
+    </form>
+
+
+</p-dialog>

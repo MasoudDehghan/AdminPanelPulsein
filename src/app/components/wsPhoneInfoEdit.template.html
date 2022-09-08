@@ -1,0 +1,29 @@
+<form [formGroup]="workStationPhoneForm" (ngSubmit)="onSubmitWPhoneform()">
+
+    <div class="ui-grid ui-grid-responsive ui-fluid ui-grid-pad" *ngIf="workStationPhone">
+        <div class="ui-grid-row">
+            <div class="ui-grid-col-4"><label for="pnumberID">{{numberLabel}}</label></div>
+            <div class="ui-grid-col-8"><input pInputText id="pnumberID" [(ngModel)]="workStationPhone.number" formControlName="phoneNumber" class="ltrDirection"
+                /></div>
+        </div>
+        <div class="ui-grid-row">
+            <div class="ui-grid-col-4"><label for="ptypeID">{{typeLabel}}</label></div>
+            <div class="ui-grid-col-8">
+                <p-dropdown id="ptypeID" [(ngModel)]="workStationPhone.phoneType.id" [options]="filterPhoneTypeList" [autoWidth]="false"
+                    [style]="{'width':'100%'}" required="true" formControlName="phoneTypeCntrl"></p-dropdown>
+            </div>
+        </div>
+    </div>
+    <br/>
+    <br/>
+    <p-footer>
+        <div align="center">
+            <button type="submit" pButton icon="fa-save" label="{{saveLabel}}" class="ui-button turquoise-btn"></button>
+        </div>
+    </p-footer>
+</form>
+<p-dialog [(visible)]="loading" responsive="true" [resizable]="false" showEffect="fade" width="300"
+     [rtl]="true" [modal]="true"
+    [showHeader]="false" styleClass="ui-dialog" [style]="{'z-index':'9990'}">
+    <loadingCmp [loading]="loading" spinnerStyleClass="spinnerClassBlack"></loadingCmp>
+</p-dialog>

@@ -1,0 +1,17 @@
+
+.panelHeaderStyle{
+   font-size:20px;
+   font-weight: bold;
+   
+}
+.panelBodyStyle{
+   font-size:14px;
+   font-weight: bold;
+}
+.linkTag{
+    color: white;
+}
+.linkTag:hover{
+    color: lightgreen;
+    cursor: pointer;
+}

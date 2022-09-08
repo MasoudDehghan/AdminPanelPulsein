@@ -1,0 +1,34 @@
+export class RequestView{
+    id:number;
+	code:string;
+	title:string;
+	cat3:string;
+	state:string;
+	registerTime:string;
+	updateTime:string;
+	clientFirstName:string;
+	clientLastName:string;
+	clientMobileNumber:string;
+	area:string;
+	region:string;
+	workerCode:string;
+	workerFirstName:string;
+	workerLastName:string;
+	workerMobileNumber:string;
+	offerTime:string;
+	suggestionTime:string;
+	cash:boolean;
+	preInvoiceId:number;
+	preInvoiceTotal:number;
+	proformaInvoiceId:number;
+	proformaInvoiceTotal:number;
+	finalInvoiceId:number;
+	finalInvoiceTotal:number;
+	priceScore:number;
+	satisfactionScore:number;
+	timeScore:number;
+	clientReqCntSuc:number;
+	clientReqCntFail:number;
+	sourceType : number;
+	requestStateID: number;
+}

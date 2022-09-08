@@ -1,0 +1,243 @@
+<loadingCmp [loading]="loading" spinnerStyleClass="spinnerClassBlack"></loadingCmp>
+
+<div *ngIf="!loading" style="margin-right:1%;margin-left:1%">
+  <p-panel id="discountViewPanelID" [style]="{'width':'99%'}">
+    <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+      <div class="ui-grid-row">
+        <div class="ui-grid-col-5">
+          <label>
+            <i class="fa fa-info-circle font-icon-style"></i>
+            {{shared.discountType}}
+          </label>
+        </div>
+        <div class="ui-grid-col-7 textPlaceHolderStyle">
+          <span *ngIf="discount?.detail.type == 0">
+            نرمال
+          </span>
+          <span *ngIf="discount?.detail.type == 1">
+            عمومی
+          </span>
+          <span *ngIf="discount?.detail.type == 2">
+            یک بار مصرف
+          </span>
+        </div>
+      </div>
+      <div class="ui-grid-row">
+        <div class="ui-grid-col-5">
+          <label>
+            <i class="fa fa-info-circle font-icon-style"></i>
+            {{shared.codeLabel}}
+          </label>
+        </div>
+        <div class="ui-grid-col-7 textPlaceHolderStyle ltrDirection">
+          {{discount?.code}}
+        </div>
+      </div>
+      <div class="ui-grid-row">
+        <div class="ui-grid-col-5">
+          <label>
+            <i class="fa fa-info-circle font-icon-style"></i>
+            {{shared.discountPercent}}
+          </label>
+        </div>
+        <div class="ui-grid-col-7 textPlaceHolderStyle ltrDirection">
+          {{discount?.percent}} %
+        </div>
+      </div>
+
+
+      <div class="ui-grid-row">
+        <div class="ui-grid-col-5">
+          <label>
+            <i class="fa fa-info-circle font-icon-style"></i>
+            {{shared.maxCreditLabel}}
+          </label>
+        </div>
+        <div class="ui-grid-col-7 textPlaceHolderStyle ltrDirection">
+          {{discount?.maxCredit | currency:'AFN':''}}
+        </div>
+      </div>
+      <div class="ui-grid-row">
+        <div class="ui-grid-col-5">
+          <label>
+            <i class="fa fa-info-circle font-icon-style"></i>
+            {{shared.totalCounterLabel}}
+          </label>
+        </div>
+        <div class="ui-grid-col-7 textPlaceHolderStyle ltrDirection">
+          {{discount?.totalCnt}}
+        </div>
+      </div>
+
+      <div class="ui-grid-row">
+        <div class="ui-grid-col-5">
+          <label>
+            <i class="fa fa-info-circle font-icon-style"></i>
+            {{shared.userLabel}}
+          </label>
+        </div>
+        <div class="ui-grid-col-7 textPlaceHolderStyle" *ngIf="discount?.detail?.user!=null">
+          {{discount?.detail?.user?.personalData?.firstName}} {{discount?.detail?.user?.personalData?.lastName}}
+        </div>
+        <div class="ui-grid-col-7 textPlaceHolderStyle"
+          *ngIf="discount?.detail?.user==null || discount?.detail?.user==undefined">
+          {{shared.allClientsLabel}}
+        </div>
+      </div>
+
+      <div class="ui-grid-row" *ngIf="discount?.detail?.cat2 != undefined">
+        <div class="ui-grid-col-5">
+          <label>
+            <i class="fa fa-info-circle font-icon-style"></i>
+            {{shared.job_Category2Label}}
+          </label>
+        </div>
+        <div class="ui-grid-col-7 textPlaceHolderStyle">
+          {{discount?.detail?.cat2}}
+        </div>
+      </div>
+
+      <div class="ui-grid-row" *ngIf="discount?.detail?.cat3 != undefined">
+        <div class="ui-grid-col-5">
+          <label>
+            <i class="fa fa-info-circle font-icon-style"></i>
+            {{shared.job_Category3Label}}
+          </label>
+        </div>
+        <div class="ui-grid-col-7 textPlaceHolderStyle">
+          {{discount?.detail?.cat3}}
+        </div>
+      </div>
+
+      <div class="ui-grid-row">
+        <div class="ui-grid-col-5">
+          <label>
+            <i class="fa fa-info-circle font-icon-style"></i>
+            {{shared.state}}
+          </label>
+        </div>
+
+        <div class="ui-grid-col-7 textPlaceHolderStyle" *ngIf="discount?.active">
+          {{shared.activeLabel}}
+        </div>
+        <div class="ui-grid-col-7 textPlaceHolderStyle" *ngIf="!discount?.active">
+          {{shared.inactiveLabel}}
+        </div>
+      </div>
+
+      <div class="ui-grid-row">
+        <div class="ui-grid-col-5">
+          <label>
+            <i class="fa fa-info-circle font-icon-style"></i>
+            {{shared.stopWorkingHourLabel}}
+          </label>
+        </div>
+        <div class="ui-grid-col-7 textPlaceHolderStyle ltrDirection">
+          {{discount?.endTime}}
+        </div>
+      </div>
+      <div class="ui-grid-row" *ngIf="discount?.detail?.province != undefined">
+        <div class="ui-grid-col-5">
+          <label>
+            <i class="fa fa-info-circle font-icon-style"></i>
+            {{shared.provinceLabel}}
+          </label>
+        </div>
+        <div class="ui-grid-col-7 textPlaceHolderStyle">
+          {{discount?.detail?.province}}
+        </div>
+      </div>
+
+      <div class="ui-grid-row" *ngIf="discount?.detail?.city != undefined">
+        <div class="ui-grid-col-5">
+          <label>
+            <i class="fa fa-info-circle font-icon-style"></i>
+            {{shared.cityLabel}}
+          </label>
+        </div>
+        <div class="ui-grid-col-7 textPlaceHolderStyle">
+          {{discount?.detail?.city}}
+        </div>
+      </div>
+
+      <div class="ui-grid-row">
+        <div class="ui-grid-col-5">
+          <label>
+            <i class="fa fa-info-circle font-icon-style"></i>
+            {{shared.descLabel}}
+          </label>
+        </div>
+        <div class="ui-grid-col-7 textPlaceHolderStyle">
+          {{discount?.detail?.description}}
+        </div>
+      </div>
+      <div class="ui-grid-row">
+        <div class="ui-grid-col-10">
+          <label>
+            <i class="fa fa-info-circle font-icon-style"></i>
+            {{shared.multiUseLabel}}
+          </label>
+        </div>
+        <div class="ui-grid-col-2 textPlaceHolderStyle" *ngIf="discount?.detail?.multyUse">
+          {{shared.activeLabel}}
+        </div>
+        <div class="ui-grid-col-2 textPlaceHolderStyle" *ngIf="!discount?.detail?.multyUse">
+          {{shared.inactiveLabel}}
+        </div>
+      </div>
+      <div class="ui-grid-row">
+        <div class="ui-grid-col-12">
+          <label>
+            <i class="fa fa-info-circle font-icon-style"></i>
+            {{shared.discountSource}}
+          </label>
+        </div>
+        <div class="ui-grid-col-2 textPlaceHolderStyle" >
+          
+          <span *ngIf="discount?.detail.sourceType == 0">
+            Pulsien
+          </span>
+          <span *ngIf="discount?.detail.sourceType == 1">
+            Netbarg
+          </span>
+          <span *ngIf="discount?.detail.sourceType == 2">
+            Takhfifan
+          </span>
+          <span *ngIf="discount?.detail.sourceType == 3">
+            Mopon
+          </span>
+          <span *ngIf="discount?.detail.sourceType == 4">
+            TopCoppon
+          </span>
+          <span *ngIf="discount?.detail.sourceType == 5">
+            OffChannel
+          </span>
+        </div>
+
+      </div>
+      <div class="ui-grid-row" *ngIf="discount?.detail?.image">
+        <div class="ui-grid-col-4">
+          <label>
+            <i class="fa fa-info-circle font-icon-style"></i>
+            {{shared.showPhotoLabel}}
+          </label>
+        </div>
+        <div class="ui-grid-col-8" >
+          <p-panel [style]="{'text-align':'center'}">
+            <a class="wsCatalogImageStyle" (click)="showProfileImage()">
+                <img src="{{baseImagePath}}/{{discount?.detail?.image}}" style="width:50px;height:50px" />
+            </a>
+            <hr class="ui-widget-content" style="border-top:0">
+            <i class="fa fa-search" (click)="showProfileImage()" style="cursor:pointer"></i>
+        </p-panel>
+        </div>
+
+      </div>
+
+    </div>
+
+  </p-panel>
+
+
+
+</div>

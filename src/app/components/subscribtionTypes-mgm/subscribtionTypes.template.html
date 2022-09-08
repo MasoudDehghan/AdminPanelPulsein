@@ -1,0 +1,166 @@
+
+<p-growl [value]="hmsgs" life="6000"></p-growl>
+
+<div class="ui-g ui-g-pad dashboard">
+    <div class="ui-g-12">
+        <p-toolbar styleClass="toolbarstyle">
+            <div class="ui-toolbar-group-right headerLabel">
+                <img src="../assets/images/doc.png" style="vertical-align: middle;" /> {{activeLabel}}
+            </div>
+            <div class="ui-toolbar-group-left">
+                    <button type="button" pButton icon="fa-plus" (click)="showDialogToAdd()" [pTooltip]="shared.createNewSubType"></button>
+                <button type="button" pButton icon="fa-refresh" (click)="rtvSubTypeList()" [pTooltip]="shared.refreshLabel"></button>
+                
+            </div>
+        </p-toolbar>
+
+        <div align="center">
+            <p-dataTable [value]="subTypes" [hidden]="!showSubTypeList" selectionMode="single" [(selection)]="selectedSubscriptionType"
+                (onRowSelect)="onRowSelect($event)" [paginator]="true" rows="10" [alwaysShowPaginator]="false" [emptyMessage]="shared.emptyListMsg" [style]="{'width':'90%'}">
+                <p-column [style]="{'width':'20%'}" field="name" header="{{shared.subTypeLabelFa}}"></p-column>
+                <p-column [style]="{'width':'20%'}" field="jobPricePercent" header="{{shared.jobPricePercentLabel}}"></p-column>
+                <p-column [style]="{'width':'20%'}" field="notificationPercent" header="{{shared.notificationPercentLabel}}"></p-column>
+                <p-column [style]="{'width':'15%'}" field="notificationPrice" header="{{shared.notificationPriceLabel}}"></p-column>
+                <p-column [style]="{'width':'15%'}" field="price" header="{{shared.servicePriceLabel}}"></p-column>
+                <p-column header="{{shared.changeLabel}}" [style]="{'width':'10%'}">
+                    <ng-template let-col let-subt="rowData" pTemplate="body">
+                        <button type="button" pButton icon="fa-close" class="pink-btn" (click)="delete(subt)" [pTooltip]="shared.delLabelFa"></button>
+                        <button type="button" pButton icon="fa-edit" (click)="edit(subt)" [pTooltip]="shared.editLabelFa"></button>
+                    </ng-template>
+                </p-column>
+            </p-dataTable>
+        </div>
+    </div>
+</div>
+<p-confirmDialog header="{{shared.confirmHeader}}" width="425" rtl="true" #cd>
+    <p-footer>
+        <button type="button" pButton icon="fa-close"  [label]="shared.noLabel" (click)="cd.reject()" style="margin-right: 30%;"></button>
+        <button type="button" pButton icon="fa-check" [label]="shared.yesLabel" (click)="cd.accept()"></button>
+    </p-footer>
+</p-confirmDialog>
+
+<p-dialog header="{{shared.editPanelLabel}}" [(visible)]="displayDialog" [responsive]="true" [resizable]="false" showEffect="fade"
+    [modal]="true" [rtl]="true" [width]="500">
+    <form [formGroup]="form" (submit)="save();">
+        <div class="ui-grid ui-grid-responsive  ui-grid-pad" *ngIf="subType">
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-8">
+                    <label for="subName"><i class="fa fa-dot-circle-o font-icon-style"></i>
+                    {{shared.subTypeLabelFa}}
+                    </label>
+                </div>
+                <div class="ui-grid-col-4">
+                    <input pInputText id="subName" [(ngModel)]="subType.name" type="text" formControlName="name" />
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-12">
+                    <div class="ui-message ui-messages-error ui-corner-all" *ngIf="form.controls['name'].touched && form.controls['name'].hasError('required')">
+                        {{shared.requiredMsg}}
+                    </div>
+                    <div class="ui-message ui-messages-error ui-corner-all" *ngIf="form.controls['name'].touched && form.controls['name'].hasError('minlength')">
+                        {{shared.minLengthValidatorNameMsg}} : {{form.controls['name'].errors.minlength.requiredLength}} {{shared.charLabel}}
+                    </div>
+                    <div class="ui-message ui-messages-error ui-corner-all" *ngIf="form.controls['name'].touched && form.controls['name'].hasError('maxlength')">
+                        {{shared.maxLengthValidatorNameMsg}} : {{form.controls['name'].errors.maxlength.requiredLength}} {{shared.charLabel}}
+                    </div>
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-8">
+                    <label for="jobPricePercent">
+                        <i class="fa fa-dot-circle-o font-icon-style"></i>{{shared.jobPricePercentLabel}} %</label>
+                </div>
+                <div class="ui-grid-col-4">
+                    <input pInputText id="jobPricePercent" [(ngModel)]="subType.jobPricePercent" type="number" formControlName="jobPricePercent"
+                    />
+                    <p-slider [(ngModel)]="subType.jobPricePercent" [min]="0" [max]="100" [style]="{'width':'100%'}" formControlName="jobPricePercent"
+                        [animate]="true"></p-slider>
+
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-12">
+                    <div class="ui-message ui-messages-error ui-corner-all" *ngIf="form.controls['jobPricePercent'].touched && form.controls['jobPricePercent'].hasError('required')">
+                        {{shared.requiredMsg}}
+                    </div>
+                    <div class="ui-message ui-messages-error ui-corner-all" *ngIf="form.controls['jobPricePercent'].touched && form.controls['jobPricePercent'].hasError('percentFormat')">
+                        {{shared.percentPatternMsg}}
+                    </div>
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-8"><label for="notificationPercent">
+                    <i class="fa fa-dot-circle-o font-icon-style"></i>
+                    {{shared.notificationPercentLabel}} %</label></div>
+                <div class="ui-grid-col-4">
+                    <input pInputText id="notificationPercent" [(ngModel)]="subType.notificationPercent" type="number" formControlName="notificationPercent"
+                    />
+                    <p-slider [(ngModel)]="subType.notificationPercent" [min]="0" [max]="100" [style]="{'width':'100%'}" formControlName="notificationPercent"
+                        [animate]="true"></p-slider>
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-12">
+                    <div class="ui-message ui-messages-error ui-corner-all" *ngIf="form.controls['notificationPercent'].touched && form.controls['notificationPercent'].hasError('required')">
+                        {{shared.requiredMsg}}
+                    </div>
+                    <div class="ui-message ui-messages-error ui-corner-all" *ngIf="form.controls['notificationPercent'].touched && form.controls['notificationPercent'].hasError('percentFormat')">
+                        {{shared.percentPatternMsg}}
+                    </div>
+                </div>
+            </div>
+
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-8"><label for="notificationPrice">
+                    <i class="fa fa-dot-circle-o font-icon-style"></i>
+                    {{shared.notificationPriceLabel}} ({{shared.rialLabel}})</label></div>
+                <div class="ui-grid-col-4">
+                    <input pInputText id="notificationPrice" [(ngModel)]="subType.notificationPrice" type="number" formControlName="notificationPrice"
+                        style="width:100%" />
+
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-12">
+                    <div class="ui-message ui-messages-error ui-corner-all" *ngIf="form.controls['notificationPrice'].touched && form.controls['notificationPrice'].hasError('required')">
+                        {{shared.requiredMsg}}
+                    </div>
+                    <div class="ui-message ui-messages-error ui-corner-all" *ngIf="form.controls['notificationPrice'].touched && form.controls['notificationPrice'].hasError('pattern')">
+                        {{shared.moneyPatternMsg}}
+                    </div>
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-8"><label for="price">
+                    <i class="fa fa-dot-circle-o font-icon-style"></i>
+                    {{shared.servicePriceLabel}} ({{shared.rialLabel}})</label></div>
+                <div class="ui-grid-col-4">
+                    <input pInputText id="price" [(ngModel)]="subType.price" type="number" formControlName="price" style="width:100%" />
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-12">
+                    <div class="ui-message ui-messages-error ui-corner-all" *ngIf="form.controls['price'].touched && form.controls['price'].hasError('required')">
+                        {{shared.requiredMsg}}
+                    </div>
+                    <div class="ui-message ui-messages-error ui-corner-all" *ngIf="form.controls['price'].touched && form.controls['price'].hasError('pattern')">
+                        {{shared.moneyPatternMsg}}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer>
+            <div align="center">
+                <button type="submit" pButton icon="fa-check" label="{{shared.saveLabel}}" [disabled]="!form.valid"></button>
+            </div>
+            <p-messages [value]="innerPannelGMessage" [closable]="true"></p-messages>
+        </footer>
+    </form>
+
+
+</p-dialog>
+<p-dialog [(visible)]="loading" responsive="true" [resizable]="false" showEffect="fade" width="300" [rtl]="true" modal="modal"
+    [showHeader]="false" styleClass="ui-dialog">
+    <loadingCmp [loading]="loading" spinnerStyleClass="spinnerClassBlack"></loadingCmp>
+</p-dialog>

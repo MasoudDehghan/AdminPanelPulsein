@@ -1,0 +1,150 @@
+<p-growl [value]="msgs" life="3000"></p-growl>
+
+<form [formGroup]="filterForm" (ngSubmit)="onSubmitFilterform()">
+    <p-accordion>
+        <p-accordionTab id="filterRequestID" [header]="shared.transactionViewLabel" [selected]="true">
+            <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-4">
+                        <label>
+                            <i class="fa fa-dot-circle-o font-icon-style"></i>
+                            {{shared.transactionAmountLabel}}
+                        </label>
+                    </div>
+
+                    <div class="ui-grid-col-8">
+                            <div *ngIf="selectedFilter.f_amount">{{shared.applyFilterLabel}}</div>
+                            <div *ngIf="!selectedFilter.f_amount">{{shared.notApplyFilterLabel}}</div>
+                        <p-inputSwitch  formControlName="transactionAmountActiveFormCntrl"
+                            [(ngModel)]="selectedFilter.f_amount"></p-inputSwitch>
+                        <h5>{{selectedTransactionAmountRange[1] + ' ---------------------------------------------- ' + selectedTransactionAmountRange[0]}}</h5>
+
+
+                        <p-slider [min]="0" [max]="1000000" [range]="true" [step]="1000" [(ngModel)]="selectedTransactionAmountRange" formControlName="transactionAmountRangeFormCntrl"
+                            [style]="{'width':'100%'}" [animate]="true"></p-slider>
+                    </div>
+                </div>
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-4">
+                        <label>
+                            <i class="fa fa-dot-circle-o font-icon-style"></i>
+                            {{shared.registerPeriodTimeLabel}}
+                        </label>
+                    </div>
+                    <div class="ui-grid-col-4">
+                            <dp-date-picker [(ngModel)]="_registerStartDate" mode="daytime" [config]="datePickerConfig" theme="dp-material" [ngModelOptions]="{standalone: true}">
+                            </dp-date-picker>
+                    </div>
+                    <div class="ui-grid-col-4">
+                        <dp-date-picker [(ngModel)]="_registerStopDate" mode="daytime" [config]="datePickerConfig" theme="dp-material" [ngModelOptions]="{standalone: true}">
+                        </dp-date-picker>
+                    </div>
+                </div>
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-4">
+                        <label>
+                            <i class="fa fa-dot-circle-o font-icon-style"></i>
+                            {{shared.paymentMethodLabel}}
+                        </label>
+                    </div>
+
+                    <div class="ui-grid-col-8">
+                        <div class="ui-g-6">
+                            <p-radioButton name="pmGroup" value="2" [label]="shared.withCreditLabel" [(ngModel)]="selectedPaymentMethodID" formControlName="PaymentMethodFormCntrl"></p-radioButton>
+                        </div>
+                        <div class="ui-g-6">
+                            <p-radioButton name="pmGroup" value="1" [label]="shared.cacheLabel" [(ngModel)]="selectedPaymentMethodID" formControlName="PaymentMethodFormCntrl"></p-radioButton>
+                        </div>
+                    </div>
+                </div>
+                <div class="ui-grid-row">
+                        <div class="ui-grid-col-4">
+                            <label for="trTypeID">
+                                        <i class="fa fa-dot-circle-o font-icon-style"></i>
+                                        {{shared.typeLabel}}
+                                    </label>
+                        </div>
+                        <div class="ui-grid-col-8">
+                            <p-dropdown id="trTypeIDp" [(ngModel)]="selectedPaymentTypeID"
+                                [options]="transactionTypeList" 
+                                appendTo="body" [style]="{'width':'100%'}"
+                                formControlName="PaymentTypeFormCntrl" filter="filter"></p-dropdown>
+                        </div>
+                    </div>
+
+                    <div class="ui-grid-row">
+                            <div class="ui-grid-col-4">
+                                <label for="systemUserListID">
+                                             <i class="fa fa-info-circle font-icon-style"></i>
+                                            {{shared.registerWsUserName}}                                   
+                                        </label>
+                            </div>
+                            <div class="ui-grid-col-8">
+                                <p-dropdown id="systemUserListID" [(ngModel)]="selectedReferenceUserID"
+                                    [options]="systemUsersList"
+                                    [style]="{'width':'100%'}" formControlName="ReferenceUserFormCntrl"
+                                    appendTo="body" filter="filter"></p-dropdown>
+                            </div>
+                        </div>
+                        <div class="ui-grid-row">
+                            <div class="ui-grid-col-4">
+                                <label for="firstName">
+                                             <i class="fa fa-info-circle font-icon-style"></i>
+                                            {{shared.trackingCodeLabel}}                                   
+                                        </label>
+                            </div>
+                            <div class="ui-grid-col-8">
+                                <input pInputText id="firstName" [(ngModel)]="selectedTrackingCode" type="text"  formControlName="trackingCodeFormCntrl"
+                                    class="width100p" />
+                            </div>
+                        </div>
+          
+          
+          
+                </div>
+
+
+
+        </p-accordionTab>
+        <p-accordionTab id="filterClientPersonalID" [header]="shared.clientViewLabel">
+                <div formGroupName="personalData" class="ui-grid ui-grid-responsive  ui-grid-pad">
+                    <div class="ui-grid-row">
+                        <div class="ui-grid-col-4">
+                            <label for="firstName">
+                                         <i class="fa fa-info-circle font-icon-style"></i>
+                                        {{shared.firstNameLabel}}                                   
+                                    </label>
+                        </div>
+                        <div class="ui-grid-col-8">
+                            <input pInputText id="firstName" [(ngModel)]="selectedFirstName" type="text" size="30" formControlName="firstName"
+                                class="width100p" />
+                        </div>
+                    </div>
+                    <div class="ui-grid-row">
+                        <div class="ui-grid-col-4">
+                            <label for="lastName">
+                                         <i class="fa fa-info-circle font-icon-style"></i>
+                                        {{shared.lastNameLabel}}
+                                    </label>
+                        </div>
+                        <div class="ui-grid-col-8">
+                            <input pInputText id="lastName" [(ngModel)]="selectedLastName"
+                               type="text" size="30" formControlName="lastName" class="width100p"
+                            />
+                        </div>
+                    </div>
+    
+                </div>
+            </p-accordionTab>
+
+    </p-accordion>
+    <div align="center" style="padding:4px">
+        <button type="submit" pButton icon="fa-save" label="{{shared.showFilter}}" class="ui-button turquoise-btn"></button>
+    </div>
+
+
+</form>
+<p-dialog [(visible)]="loading" responsive="true" [resizable]="false" width="300" [rtl]="true" [showHeader]="false" styleClass="ui-dialog">
+    <loadingCmp [loading]="loading" spinnerStyleClass="spinnerClassBlack"></loadingCmp>
+</p-dialog>

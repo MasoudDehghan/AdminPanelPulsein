@@ -1,0 +1,10 @@
+.ui-panel-titlebar{
+    font-size: xx-small!important;
+}
+
+.header-text-style{
+    text-align:center;
+    white-space: nowrap; 
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

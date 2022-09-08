@@ -1,0 +1,866 @@
+<p-growl [value]="hmsgs" life="6000"></p-growl>
+<div *ngIf="loading">
+  <p-dialog [(visible)]="loading" responsive="true" [resizable]="false" width="300" [rtl]="true" [showHeader]="false"
+    styleClass="ui-dialog">
+    <loadingCmp [loading]="loading" spinnerStyleClass="spinnerClassBlack"></loadingCmp>
+  </p-dialog>
+</div>
+<div class="ui-g ui-g-pad ui-g-reponsive dashboard">
+  <div class="ui-g-12">
+    <p-toolbar styleClass="toolbarstyle">
+      <div class="ui-toolbar-group-right headerLabel">
+        <img src="../assets/images/discount.png" style="vertical-align: middle;" /> {{activeLabel}}
+        <span class="totalFilteredClass">
+          {{shared.totalNumberLabel}} : {{discountItemsLength}}
+        </span>
+      </div>
+      <div class="ui-toolbar-group-left">
+        <button type="button" class="ui-button deep-purple-btn" pButton icon="fa-plus" (click)="showDialogToAdd()"
+          label="{{shared.registerDiscount}}" *ngIf="editCapable"></button>
+        <button type="button" pButton icon="fa-filter" (click)="showFilterDialog()"
+          label="{{shared.showFilter}}"></button>
+        <button type="button" pButton icon="fa-file-excel-o" iconPos="left" pTooltip="Excel" (click)="exportExcel()"
+          *ngIf="editCapable"></button>
+        <button type="button" pButton icon="fa-refresh" (click)="rtvList()"></button>
+
+      </div>
+    </p-toolbar>
+  </div>
+  <div class="ui-g-12">
+    <div class="ui-toolbar ui-widget ui-widget-header ui-corner-all ui-helper-clearfix"
+      *ngIf="chipsFilterValues?.length>0">
+      <div class="ui-chips ui-widget">
+        <ul class="ui-inputtext ui-state-default ui-corner-all">
+          <li *ngFor="let ci of chipsFilterValues;let i=index" class="ui-chips-token ui-state-highlight ui-corner-all">
+            <span class="ui-chips-token-label" (click)="onRemoveChip(i)">{{ci}}
+              <span class="ui-chips-token-icon fa fa-fw fa-close"></span>
+            </span>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <p-table [value]="discountItems" [rows]="9" [paginator]="true" [loading]="loading" [pageLinks]="5"
+      [alwaysShowPaginator]="false" sortMode="single" sortField="registerTime" sortOrder="-1" #dt>
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width:20%">{{shared.codeLabel}}</th>
+          <th style="width:15%">{{shared.stopWorkingHourLabel}}</th>
+          <th style="width:10%">{{shared.discountPercent}}</th>
+          <th style="width:10%">{{shared.maxCreditLabel}}</th>
+          <th style="width:10%">{{shared.totalCounterLabel}}</th>
+          <th style="width:10%">{{shared.usedCounterLabel}}</th>
+          <th style="width:15%" [pSortableColumn]="'registerTime'">
+            {{shared.registerTimeLabel}}
+            <p-sortIcon [field]="'registerTime'"></p-sortIcon>
+          </th>
+          <th *ngIf="editCapable" style="width:10%">{{shared.controlLabel}}</th>
+
+        </tr>
+        <tr>
+          <th style="width:20%">
+            <input pInputText type="text" (input)="dt.filter($event.target.value, 'code', 'contains')">
+          </th>
+          <th style="width:15%">
+            <input pInputText type="text" (input)="dt.filter($event.target.value, 'endTime', 'contains')">
+          </th>
+          <th style="width:10%">
+            <input pInputText type="number" size="2" style="width:70%"
+              (input)="dt.filter($event.target.value, 'percent', 'contains')">
+          </th>
+          <th style="width:10%">
+            <input pInputText type="text" style="width:70%"
+              (input)="dt.filter($event.target.value, 'maxCredit', 'contains')">
+          </th>
+          <th style="width:10%">
+            <input pInputText type="number" style="width:70%"
+              (input)="dt.filter($event.target.value, 'totalCnt', 'contains')">
+          </th>
+          <th style="width:5%">
+            <input pInputText type="number" style="width:60%"
+              (input)="dt.filter($event.target.value, 'usedCnt', 'contains')">
+          </th>
+          <th style="width:15%">
+            <input pInputText type="number" (input)="dt.filter($event.target.value, 'registerTime', 'contains')">
+          </th>
+          <th *ngIf="editCapable" style="width:10%"></th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-discount>
+        <tr>
+          <td>
+
+            <div *ngIf="discount.active" pTooltip="{{shared.activeLabel}}" style="float: right">
+              <fa name="fas fa-flag" style="color:green"></fa>
+            </div>
+            <div *ngIf="!discount.active" pTooltip="{{shared.inactiveLabel}}" style="float: right">
+              <fa name="fas fa-flag" style="color:gray"></fa>
+            </div>
+            <a (click)="showDiscountDetail(discount)">
+              <span class="latinFontStyle">{{discount.code}}</span>
+            </a>
+          </td>
+          <td style="direction: ltr">
+            {{discount.endTime}}
+          </td>
+          <td>
+            <div style="direction: ltr;float:left">
+              {{discount.percent}} %
+            </div>
+          </td>
+          <td>
+            <div style="float:left">
+              {{discount.maxCredit | currency:'AFN':''}}
+            </div>
+          </td>
+          <td>
+            <div style="float:left">
+              {{discount.totalCnt}}
+            </div>
+          </td>
+          <td>
+            <div style="float:left">
+              <a (click)="showDiscountUsage(discount)">
+                {{discount.usedCnt}}
+              </a>
+
+            </div>
+          </td>
+          <td style="direction: ltr">
+            {{discount.registerTime}}
+          </td>
+          <td *ngIf="editCapable">
+            <div align="center">
+              <button type="button" pButton icon="fa-edit" class="green-btn" (click)="showDialogToEdit(discount)"
+                [pTooltip]="shared.editLabelFa"></button>
+              <button type="button" pButton icon="fa-close" class="pink-btn" (click)="delete(discount)"
+                [pTooltip]="shared.delLabelFa"></button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td [attr.colspan]="7">
+            {{shared.emptyListMsg}}
+          </td>
+        </tr>
+      </ng-template>
+
+    </p-table>
+  </div>
+
+</div>
+<div *ngIf="displayDiscountEdit">
+  <p-dialog [(visible)]="displayDiscountEdit" responsive="true" [resizable]="false" width="600" [rtl]="true"
+    [modal]="true" [header]="shared.editDiscount" styleClass="ui-dialog">
+    <form [formGroup]="editForm" (ngSubmit)="onSubmitEditform()">
+      <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+
+
+        <div class="ui-grid-row">
+          <div class="ui-grid-col-4">
+            <label for="spercentID">
+              <i class="fa fa-info-circle font-icon-style"></i>
+              {{shared.discountPercent}}
+            </label>
+          </div>
+          <div class="ui-grid-col-8">
+            <input pInputText id="spercentID" [(ngModel)]="selectedDiscount.percent" type="number" size="30"
+              formControlName="percent" class="width100p latinFontStyle" />
+            <div class="ui-message ui-messages-error ui-corner-all width100p"
+              *ngIf="editForm.controls['percent'].touched && editForm.controls['percent'].hasError('required')">
+              {{shared.requiredMsgLabel}}
+            </div>
+            <div class="ui-message ui-messages-error ui-corner-all width100p"
+              *ngIf="editForm.controls['percent'].touched && editForm.controls['percent'].hasError('pattern')">
+              {{shared.percentValidMsg}}
+            </div>
+
+          </div>
+        </div>
+        <div class="ui-grid-row">
+          <div class="ui-grid-col-4">
+            <label for="smaxCreditID">
+              <i class="fa fa-info-circle font-icon-style"></i>
+              {{shared.maxCreditLabel}}
+            </label>
+          </div>
+          <div class="ui-grid-col-8">
+            <input pInputText id="smaxCreditID" [(ngModel)]="selectedDiscount.maxCredit" type="number" size="30"
+              formControlName="maxCredit" class="width100p latinFontStyle" />
+            <div class="ui-message ui-messages-error ui-corner-all width100p"
+              *ngIf="editForm.controls['maxCredit'].touched && editForm.controls['maxCredit'].hasError('required')">
+              {{shared.requiredMsgLabel}}
+            </div>
+          </div>
+        </div>
+        <div class="ui-grid-row" *ngIf="selectedDiscountType == discountType.Normal">
+          <div class="ui-grid-col-4">
+            <label for="stotalCntID">
+              <i class="fa fa-info-circle font-icon-style"></i>
+              {{shared.totalCounterLabel}}
+            </label>
+          </div>
+          <div class="ui-grid-col-8">                                        
+            <input pInputText id="stotalCntID" [(ngModel)]="selectedDiscount.totalCnt" type="number" size="30"
+              formControlName="totalCnt" class="width100p latinFontStyle" />
+            <div class="ui-message ui-messages-error ui-corner-all width100p"
+              *ngIf="editForm.controls['totalCnt'].touched && editForm.controls['totalCnt'].hasError('required')">
+              {{shared.requiredMsgLabel}}
+            </div>
+          </div>
+        </div>
+        <div class="ui-grid-row" *ngIf="selectedDiscountType == discountType.Normal">
+          <div class="ui-grid-col-4">
+            <label>
+              <i class="fa fa-dot-circle-o font-icon-style"></i>
+              {{shared.mobileLabel}}
+            </label>
+          </div>
+          <div class="ui-grid-col-8">
+
+            <input pInputText id="clientID" [(ngModel)]="selectedClientMobileNumber" type="text" size="12"
+              formControlName="clientUserListFormCntrl" class="width100p latinFontStyle" />
+          </div>
+        </div>
+        <div class="ui-grid-row" *ngIf="selectedDiscountType == discountType.Normal">
+          <div class="ui-grid-col-4">
+            <label for="sjc1FilterID">
+              <i class="fa fa-dot-circle-o font-icon-style"></i>
+              {{shared.job_Category1Label}}
+            </label>
+          </div>
+          <div class="ui-grid-col-8">
+            <p-dropdown id="sjc1FilterID" [(ngModel)]="selectedJobCategory1ID"
+              [options]="basicData.editJobCategory1List" (onChange)="onJobCategory1EditChange($event)" appendTo="body"
+              [style]="{'width':'100%'}" formControlName="jobCategory1FormCntrl" filter="filter"></p-dropdown>
+          </div>
+        </div>
+        <div class="ui-grid-row" *ngIf="selectedDiscountType == discountType.Normal">
+          <div class="ui-grid-col-4">
+            <label for="sjc2FilterID">
+              <i class="fa fa-dot-circle-o font-icon-style"></i>
+              {{shared.job_Category2Label}}
+            </label>
+          </div>
+          <div class="ui-grid-col-8">
+            <p-dropdown id="sjc2FilterID" [(ngModel)]="selectedJobCategory2ID" [options]="editJobCategory2List"
+              (onChange)="onJobCategory2EditChange($event)" appendTo="body" [style]="{'width':'100%'}"
+              formControlName="jobCategory2FormCntrl" filter="filter"></p-dropdown>
+          </div>
+        </div>
+        <div class="ui-grid-row" *ngIf="selectedDiscountType == discountType.Normal">
+          <div class="ui-grid-col-4">
+            <label for="sjc3FilterID">
+              <i class="fa fa-dot-circle-o font-icon-style"></i>
+              {{shared.job_Category3Label}}
+            </label>
+          </div>
+          <div class="ui-grid-col-8">
+            <p-dropdown id="sjc3FilterID" [(ngModel)]="selectedJobCategory3ID" [options]="editJobCategory3List"
+              [style]="{'width':'100%'}" formControlName="jobCategory3FormCntrl" appendTo="body" filter="filter">
+            </p-dropdown>
+          </div>
+        </div>
+        <div class="ui-grid-row">
+          <div class="ui-grid-col-4">
+            <label>
+              <i class="fa fa-dot-circle-o font-icon-style"></i>
+              {{shared.state}}
+            </label>
+          </div>
+          <div class="ui-grid-col-8">
+
+            <p-checkbox [(ngModel)]="selectedDiscount.active" binary="true" formControlName="active"></p-checkbox>
+
+
+            <div class="ui-message ui-messages-error ui-corner-all width100p"
+              *ngIf="editForm.controls['active'].touched && editForm.controls['active'].hasError('required')">
+              {{shared.requiredMsgLabel}}
+            </div>
+          </div>
+        </div>
+        <div class="ui-grid-row" *ngIf="selectedDiscountType == discountType.Normal">
+          <div class="ui-grid-col-4">
+            <label>
+              <i class="fa fa-dot-circle-o font-icon-style"></i>
+              {{shared.stopWorkingHourLabel}}
+            </label>
+          </div>
+          <div class="ui-grid-col-8">
+            <dp-date-picker [(ngModel)]="endTime" mode="daytime" [config]="datePickerConfig2" theme="dp-material"
+              [ngModelOptions]="{standalone: true}">
+            </dp-date-picker>
+            <div class="ui-message ui-messages-error ui-corner-all width100p" *ngIf="endTimeError">
+              {{shared.requiredMsgLabel}}
+            </div>
+          </div>
+
+        </div>
+        <div class="ui-grid-row" *ngIf="selectedDiscountType == discountType.Normal">
+          <div class="ui-grid-col-4">
+            <label for="sfeprovinceID">
+              <i class="fa fa-dot-circle-o font-icon-style"></i>
+              {{shared.provinceLabel}}
+            </label>
+          </div>
+          <div class="ui-grid-col-8">
+            <p-dropdown id="sfeprovinceID" [(ngModel)]="selectedDiscount.detail.provinceId"
+              [options]="basicData.editProvinceList" (onChange)="onProvinceChange($event)" appendTo="body"
+              [style]="{'width':'100%'}" formControlName="province" filter="filter"></p-dropdown>
+          </div>
+
+        </div>
+        <div class="ui-grid-row" *ngIf="selectedDiscountType == discountType.Normal">
+          <div class="ui-grid-col-4">
+            <label for="sfetownshipID">
+              <i class="fa fa-dot-circle-o font-icon-style"></i>
+              {{shared.townshipLabel}}
+            </label>
+          </div>
+          <div class="ui-grid-col-8">
+            <p-dropdown id="sfetownshipID" [(ngModel)]="selectedDiscount.detail.townshipId" [options]="townshipList"
+              (onChange)="onTownshipChange($event)" appendTo="body" [style]="{'width':'100%'}"
+              formControlName="township" filter="filter"></p-dropdown>
+          </div>
+
+        </div>
+        <div class="ui-grid-row" *ngIf="selectedDiscountType == discountType.Normal">
+          <div class="ui-grid-col-4">
+            <label for="sfecityID">
+              <i class="fa fa-dot-circle-o font-icon-style"></i>
+              {{shared.cityLabel}}
+            </label>
+          </div>
+          <div class="ui-grid-col-8">
+            <p-dropdown id="sfecityID" [(ngModel)]="selectedDiscount.detail.cityId" [options]="editCityList"
+              (onChange)="onEditCityChange($event)" [style]="{'width':'100%'}" appendTo="body" formControlName="city"
+              filter="filter"></p-dropdown>
+          </div>
+        </div>
+        <div class="ui-grid-row" *ngIf="selectedDiscountType == discountType.General || selectedDiscountType == discountType.FirstUse">
+          <div class="ui-grid-col-4">
+            <label>
+              <i class="fa fa-dot-circle-o font-icon-style"></i>
+              {{shared.uploadImageLabel}}
+            </label>
+          </div>
+          <div class="ui-grid-col-8">
+            <div *ngIf="selectedUserImagePath!=''">
+              <p-panel [style]="{'text-align':'center'}">
+                <a class="wsCatalogImageStyle" (click)="showProfileImage()">
+                  <img src="{{selectedUserImagePath}}" style="width:50px;height:50px" />
+                </a>
+                <hr class="ui-widget-content" style="border-top:0">
+                <i class="fa fa-search" (click)="showProfileImage()" style="cursor:pointer"></i>
+
+                <i class="fa fa-remove" (click)="deleteProfileImage()" style="cursor:pointer"></i>
+              </p-panel>
+
+            </div>
+            <p-fileUpload name="demo" [url]="uploadURL" (onUpload)="onUpload($event)" accept="image/*"
+              [invalidFileSizeMessageSummary]="shared.invalidFileSize"
+              [invalidFileSizeMessageDetail]="shared.invalidFileSizeMessageDetail"
+              [chooseLabel]="shared.chooseFileLabel" [uploadLabel]="shared.uploadLabel"
+              [cancelLabel]="shared.cancelLabel" [maxFileSize]="shared.maximumFileSize">
+              <ng-template pTemplate="content">
+                <ul *ngIf="uploadedFiles?.length" style="font-family:Arial">
+                  <li *ngFor="let file of uploadedFiles">{{file.name}} - {{file.size}}
+                    {{shared.byteLabel}}</li>
+                </ul>
+              </ng-template>
+            </p-fileUpload>
+          </div>
+        </div>
+        <div class="ui-grid-row">
+          <div class="ui-grid-col-4">
+            <label for="sdscID">
+              <i class="fa fa-dot-circle-o font-icon-style"></i>
+              {{shared.descLabel}}
+            </label>
+          </div>
+          <div class="ui-grid-col-8">
+            <textarea pInputTextarea id="sdscID" [(ngModel)]="selectedDiscount.detail.description"
+              formControlName="description" class="width100p" rows="3"></textarea>
+            <div class="ui-message ui-messages-error ui-corner-all width100p"
+              *ngIf="editForm.controls['description'].touched && editForm.controls['description'].hasError('required')">
+              {{shared.requiredMsgLabel}}
+            </div>
+          </div>
+        </div>
+        <div class="ui-grid-row"
+          *ngIf="selectedDiscountType == discountType.Normal && discountItemType == 'single' ? true:false">
+          <div class="ui-grid-col-8">
+            <label for="smultiUseID">
+              <i class="fa fa-dot-circle-o font-icon-style"></i>
+              {{shared.multiUseLabel}}
+            </label>
+          </div>
+          <div class="ui-grid-col-4">
+            <p-checkbox id="smultiUseID" binary="true" [(ngModel)]="selectedDiscount.detail.multyUse"
+              formControlName="multiUse"></p-checkbox>
+
+          </div>
+        </div>
+        <div class="ui-grid-row">
+          <div class="ui-grid-col-4">
+            <label for="dcID">
+              <i class="fa fa-dot-circle-o font-icon-style"></i>
+              {{shared.discountSource}}
+            </label>
+          </div>
+          <div class="ui-grid-col-8">
+            <p-dropdown id="dcID" [(ngModel)]="selectedDiscount.detail.sourceType" [options]="discountSourceList"
+              [style]="{'width':'100%'}" appendTo="body" formControlName="discountSource" filter="filter"></p-dropdown>
+
+          </div>
+        </div>
+      </div>
+      <div align="center" style="padding:4px">
+        <button type="submit" pButton icon="fa-save" label="{{shared.saveLabelFa}}" class="ui-button turquoise-btn"
+          [disabled]="!editForm.valid"></button>
+      </div>
+    </form>
+  </p-dialog>
+</div>
+
+<div *ngIf="displayRegisterDialog">
+  <p-dialog [(visible)]="displayRegisterDialog" responsive="true" [resizable]="false" width="600" [rtl]="true"
+    [modal]="true" [header]="shared.registerDiscount" styleClass="ui-dialog">
+    <form [formGroup]="form" (ngSubmit)="onSubmitRegisterform()">
+      <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+        <div class="ui-grid-row">
+          <div class="ui-grid-col-4">
+            <label for="dctID">
+              <i class="fa fa-dot-circle-o font-icon-style"></i>
+              {{shared.discountType}}
+            </label>
+          </div>
+          <div class="ui-grid-col-8">
+            <p-dropdown id="dctID" [(ngModel)]="newDiscount.detail.type" [options]="discountTypeList"
+              [style]="{'width':'100%'}" appendTo="body" formControlName="discountType"
+              (onChange)="onDiscountTypeChange($event)" filter="filter"></p-dropdown>
+          </div>
+        </div>
+        <div class="ui-grid-row" *ngIf="selectedDiscountType == discountType.Normal">
+          <div class="ui-grid-col-4">
+            <label>
+              <i class="fa fa-dot-circle-o font-icon-style"></i>
+              {{shared.typeLabel}}*
+            </label>
+          </div>
+          <div class="ui-grid-col-8">
+            <div class="ui-g-6">
+              <p-radioButton name="typeGroup" value="single" [label]="shared.singleLabel" [(ngModel)]="discountItemType"
+                formControlName="type"></p-radioButton>
+            </div>
+            <div class="ui-g-6">
+              <p-radioButton name="typeGroup" value="multiple" [label]="shared.groupLabel"
+                [(ngModel)]="discountItemType" formControlName="type"></p-radioButton>
+            </div>
+            <div class="ui-message ui-messages-error ui-corner-all width100p"
+              *ngIf="form.controls['active'].touched && form.controls['active'].hasError('required')">
+              {{shared.requiredMsgLabel}}
+            </div>
+          </div>
+        </div>
+        <div class="ui-grid-row" *ngIf="discountItemType == 'multiple' ? true:false">
+          <div class="ui-grid-col-4">
+            <label>
+              <i class="fa fa-info-circle font-icon-style"></i>
+              {{shared.totalNumberLabel}}*
+            </label>
+          </div>
+          <div class="ui-grid-col-8">
+            <input pInputText [(ngModel)]="numberOfMultipleDiscountItem" type="number" size="30"
+              formControlName="discountItemCnt" class="width100p latinFontStyle" />
+          </div>
+        </div>
+        <div class="ui-grid-row" *ngIf="discountItemType == 'single' ? true:false">
+          <div class="ui-grid-col-4">
+            <label for="discountCodeID">
+              <i class="fa fa-info-circle font-icon-style"></i>
+              {{shared.codeLabel}}
+            </label>
+          </div>
+          <div class="ui-grid-col-8">
+            <input pInputText id="discountCodeID" [(ngModel)]="newDiscount.code" type="text" size="8"
+              maxlength="8"
+              formControlName="code" class="width100p latinFontStyle" pKeyFilter="alpha" />
+
+          </div>
+        </div>
+
+        <div class="ui-grid-row">
+          <div class="ui-grid-col-4">
+            <label for="percentID">
+              <i class="fa fa-info-circle font-icon-style"></i>
+              {{shared.discountPercent}}*
+            </label>
+          </div>
+          <div class="ui-grid-col-8">
+            <input pInputText id="percentID" [(ngModel)]="newDiscount.percent" type="number" size="30"
+              formControlName="percent" class="width100p latinFontStyle" />
+            <div class="ui-message ui-messages-error ui-corner-all width100p"
+              *ngIf="form.controls['percent'].touched && form.controls['percent'].hasError('required')">
+              {{shared.requiredMsgLabel}}
+            </div>
+            <div class="ui-message ui-messages-error ui-corner-all width100p"
+              *ngIf="form.controls['percent'].touched && form.controls['percent'].hasError('pattern')">
+              {{shared.percentValidMsg}}
+            </div>
+
+          </div>
+        </div>
+        <div class="ui-grid-row">
+          <div class="ui-grid-col-4">
+            <label for="maxCreditID">
+              <i class="fa fa-info-circle font-icon-style"></i>
+              {{shared.maxCreditLabel}}*
+            </label>
+          </div>
+          <div class="ui-grid-col-8">
+            <input pInputText id="maxCreditID" [(ngModel)]="newDiscount.maxCredit" type="number" size="30"
+              formControlName="maxCredit" class="width100p latinFontStyle" />
+            <div class="ui-message ui-messages-error ui-corner-all width100p"
+              *ngIf="form.controls['maxCredit'].touched && form.controls['maxCredit'].hasError('required')">
+              {{shared.requiredMsgLabel}}
+            </div>
+          </div>
+        </div>
+        <div class="ui-grid-row" *ngIf="selectedDiscountType == discountType.Normal && 
+          discountItemType == 'single' ? true:false">
+          <div class="ui-grid-col-4">
+            <label for="totalCntID">
+              <i class="fa fa-info-circle font-icon-style"></i>
+              {{shared.totalCounterLabel}}*
+            </label>
+          </div>
+          <div class="ui-grid-col-8">
+            <input pInputText id="totalCntID" [(ngModel)]="newDiscount.totalCnt" type="number" size="30"
+              formControlName="totalCnt" class="width100p latinFontStyle" />
+            <div class="ui-message ui-messages-error ui-corner-all width100p"
+              *ngIf="form.controls['totalCnt'].touched && form.controls['totalCnt'].hasError('required')">
+              {{shared.requiredMsgLabel}}
+            </div>
+          </div>
+        </div>
+        <div class="ui-grid-row" *ngIf="selectedDiscountType == discountType.Normal">
+          <div class="ui-grid-col-4">
+            <label>
+              <i class="fa fa-dot-circle-o font-icon-style"></i>
+              {{shared.mobileLabel}}
+            </label>
+          </div>
+          <div class="ui-grid-col-8">
+
+            <input pInputText id="clientID" [(ngModel)]="selectedClientMobileNumber" type="text" size="12"
+              formControlName="clientUserListFormCntrl" class="width100p latinFontStyle" />
+          </div>
+        </div>
+        <div class="ui-grid-row">
+          <div class="ui-grid-col-4">
+            <label for="jcF1ID">
+              <i class="fa fa-dot-circle-o font-icon-style"></i>
+              {{shared.job_Category1Label}}
+            </label>
+          </div>
+          <div class="ui-grid-col-8">
+            <p-dropdown id="jcF1ID" [(ngModel)]="selectedJobCategory1" [options]="basicData.jobCategory1List"
+              (onChange)="onJobCategory1Change($event)" appendTo="body" [style]="{'width':'100%'}"
+              formControlName="jobCategory1FormCntrl" filter="filter"></p-dropdown>
+          </div>
+        </div>
+        <div class="ui-grid-row">
+          <div class="ui-grid-col-4">
+            <label for="jc2FilterID">
+              <i class="fa fa-dot-circle-o font-icon-style"></i>
+              {{shared.job_Category2Label}}
+            </label>
+          </div>
+          <div class="ui-grid-col-8">
+            <p-dropdown id="jc2FilterID" [(ngModel)]="selectedJobCategory2" [options]="jobCategory2List"
+              (onChange)="onJobCategory2Change($event)" appendTo="body" [style]="{'width':'100%'}"
+              formControlName="jobCategory2FormCntrl" filter="filter"></p-dropdown>
+          </div>
+        </div>
+        <div class="ui-grid-row">
+          <div class="ui-grid-col-4">
+            <label for="jc3FilterID">
+              <i class="fa fa-dot-circle-o font-icon-style"></i>
+              {{shared.job_Category3Label}}
+            </label>
+          </div>
+          <div class="ui-grid-col-8">
+            <p-dropdown id="jc3FilterID" [(ngModel)]="selectedJobCategory3" [options]="jobCategory3List"
+              [style]="{'width':'100%'}" formControlName="jobCategory3FormCntrl" appendTo="body" filter="filter">
+            </p-dropdown>
+          </div>
+        </div>
+        <div class="ui-grid-row">
+          <div class="ui-grid-col-4">
+            <label>
+              <i class="fa fa-dot-circle-o font-icon-style"></i>
+              {{shared.state}}*
+            </label>
+          </div>
+          <div class="ui-grid-col-8">
+            <div class="ui-g-6">
+              <p-radioButton name="stateGroup" value="false" [label]="shared.inactiveLabel"
+                [(ngModel)]="newDiscount.active" formControlName="active"></p-radioButton>
+            </div>
+            <div class="ui-g-6">
+              <p-radioButton name="stateGroup" value="true" [label]="shared.activeLabel"
+                [(ngModel)]="newDiscount.active" formControlName="active"></p-radioButton>
+            </div>
+            <div class="ui-message ui-messages-error ui-corner-all width100p"
+              *ngIf="form.controls['active'].touched && form.controls['active'].hasError('required')">
+              {{shared.requiredMsgLabel}}
+            </div>
+          </div>
+        </div>
+        <div class="ui-grid-row" *ngIf="selectedDiscountType == discountType.Normal">
+          <div class="ui-grid-col-4">
+            <label>
+              <i class="fa fa-dot-circle-o font-icon-style"></i>
+              {{shared.stopWorkingHourLabel}}*
+            </label>
+          </div>
+          <div class="ui-grid-col-8">
+            <dp-date-picker [(ngModel)]="endTime" mode="daytime" [config]="datePickerConfig" theme="dp-material"
+              [ngModelOptions]="{standalone: true}">
+            </dp-date-picker>
+            <div class="ui-message ui-messages-error ui-corner-all width100p" *ngIf="endTimeError">
+              {{shared.requiredMsgLabel}}
+            </div>
+          </div>
+
+        </div>
+        <div class="ui-grid-row" *ngIf="selectedDiscountType == discountType.Normal">
+          <div class="ui-grid-col-4">
+            <label for="feprovinceID">
+              <i class="fa fa-dot-circle-o font-icon-style"></i>
+              {{shared.provinceLabel}}*
+            </label>
+          </div>
+          <div class="ui-grid-col-8">
+            <p-dropdown id="feprovinceID" [(ngModel)]="selectedProvinceID" [options]="basicData.provinceList"
+              (onChange)="onProvinceChange($event)" appendTo="body" [style]="{'width':'100%'}"
+              formControlName="province" filter="filter"></p-dropdown>
+          </div>
+
+        </div>
+        <div class="ui-grid-row" *ngIf="selectedDiscountType == discountType.Normal">
+          <div class="ui-grid-col-4">
+            <label for="fetownshipID">
+              <i class="fa fa-dot-circle-o font-icon-style"></i>
+              {{shared.townshipLabel}}*
+            </label>
+          </div>
+          <div class="ui-grid-col-8">
+            <p-dropdown id="fetownshipID" [(ngModel)]="selectedTownshipID" [options]="townshipList"
+              (onChange)="onTownshipChange($event)" appendTo="body" [style]="{'width':'100%'}"
+              formControlName="township" filter="filter"></p-dropdown>
+          </div>
+
+        </div>
+        <div class="ui-grid-row" *ngIf="selectedDiscountType == discountType.Normal">
+          <div class="ui-grid-col-4">
+            <label for="fecityID">
+              <i class="fa fa-dot-circle-o font-icon-style"></i>
+              {{shared.cityLabel}}*
+            </label>
+          </div>
+          <div class="ui-grid-col-8">
+            <p-dropdown id="fecityID" [(ngModel)]="selectedCity" [options]="cityList" (onChange)="onCityChange($event)"
+              [style]="{'width':'100%'}" appendTo="body" formControlName="city" filter="filter"></p-dropdown>
+          </div>
+        </div>
+        <div class="ui-grid-row"
+          *ngIf="selectedDiscountType == discountType.General || selectedDiscountType == discountType.FirstUse">
+          <div class="ui-grid-col-4">
+            <label>
+              <i class="fa fa-dot-circle-o font-icon-style"></i>
+              {{shared.uploadImageLabel}}
+            </label>
+          </div>
+          <div class="ui-grid-col-8">
+            <p-fileUpload name="demo" [url]="uploadURL" (onUpload)="onUpload($event)" accept="image/*"
+              [invalidFileSizeMessageSummary]="shared.invalidFileSize"
+              [invalidFileSizeMessageDetail]="shared.invalidFileSizeMessageDetail"
+              [chooseLabel]="shared.chooseFileLabel" [uploadLabel]="shared.uploadLabel"
+              [cancelLabel]="shared.cancelLabel" [maxFileSize]="shared.maximumFileSize">
+              <ng-template pTemplate="content">
+                <ul *ngIf="uploadedFiles?.length" style="font-family:Arial">
+                  <li *ngFor="let file of uploadedFiles">{{file.name}} - {{file.size}}
+                    {{shared.byteLabel}}</li>
+                </ul>
+              </ng-template>
+            </p-fileUpload>
+          </div>
+        </div>
+        <div class="ui-grid-row">
+          <div class="ui-grid-col-4">
+            <label for="dscID">
+              <i class="fa fa-dot-circle-o font-icon-style"></i>
+              {{shared.descLabel}}*
+            </label>
+          </div>
+          <div class="ui-grid-col-8">
+            <textarea pInputTextarea id="dscID" [(ngModel)]="newDiscount.detail.description"
+              formControlName="description" class="width100p" rows="3"></textarea>
+            <div class="ui-message ui-messages-error ui-corner-all width100p"
+              *ngIf="form.controls['description'].touched && form.controls['description'].hasError('required')">
+              {{shared.requiredMsgLabel}}
+            </div>
+          </div>
+        </div>
+        <div class="ui-grid-row"
+          *ngIf="selectedDiscountType == discountType.Normal && discountItemType == 'single' ? true:false">
+          <div class="ui-grid-col-8">
+            <label for="multiUseID">
+              <i class="fa fa-dot-circle-o font-icon-style"></i>
+              {{shared.multiUseLabel}}
+            </label>
+          </div>
+          <div class="ui-grid-col-4">
+            <p-checkbox id="multiUseID" binary="true" [(ngModel)]="newDiscount.detail.multyUse"
+              formControlName="multiUse"></p-checkbox>
+
+          </div>
+        </div>
+
+        <div class="ui-grid-row">
+          <div class="ui-grid-col-4">
+            <label for="dcID">
+              <i class="fa fa-dot-circle-o font-icon-style"></i>
+              {{shared.discountSource}}
+            </label>
+          </div>
+          <div class="ui-grid-col-8">
+            <p-dropdown id="dcID" [(ngModel)]="newDiscount.detail.sourceType" [options]="discountSourceList"
+              [style]="{'width':'100%'}" appendTo="body" formControlName="discountSource" filter="filter"></p-dropdown>
+
+          </div>
+        </div>
+      </div>
+      <div align="center" style="padding:4px">
+        <button type="submit" pButton icon="fa-save" label="{{shared.saveLabelFa}}" class="ui-button turquoise-btn"
+          [disabled]="!form.valid"></button>
+      </div>
+    </form>
+  </p-dialog>
+</div>
+
+<p-confirmDialog header="{{shared.confirmHeader}}" width="425" rtl="true" #cd>
+  <p-footer>
+    <button type="button" pButton icon="fa-close" [label]="shared.noLabel" (click)="cd.reject()"
+      style="margin-right: 30%;"></button>
+    <button type="button" pButton icon="fa-check" [label]="shared.yesLabel" (click)="cd.accept()"></button>
+  </p-footer>
+</p-confirmDialog>
+<div *ngIf="displayDiscountView">
+  <p-dialog [(visible)]="displayDiscountView" [resizable]="false" [closable]="true" [responsive]="true" [modal]="true"
+    [positionTop]="0" [width]="550" [header]="shared.discountViewLabel">
+    <app-discount-view [discount]="selectedDiscount" [loading]="loadingDialog" (onShowImage)="onShowImageD($event)"></app-discount-view>
+  </p-dialog>
+</div>
+<div *ngIf="displayDiscountUsage">
+  <p-dialog [(visible)]="displayDiscountUsage" [resizable]="false" [closable]="true" [responsive]="true" [modal]="true"
+    [positionTop]="0" [width]="750" header="{{shared.discountUsageLabel}} {{selectedDiscount.code}}">
+    <p-table [value]="selectedDiscountUsage" [rows]="7" [paginator]="true" [loading]="loadingDialog" [pageLinks]="5"
+      [alwaysShowPaginator]="false">
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width:20%">{{shared.codeLabel}}</th>
+          <th style="width:20%">{{shared.firstNameLabel}}</th>
+          <th style="width:20%">{{shared.lastNameLabel}}</th>
+          <th style="width:20%">{{shared.mobileLabel}}</th>
+          <th style="width:20%">{{shared.discountAmountLabel}}</th>
+          <th style="width:20%">{{shared.registerTimeLabel}}</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-discount>
+        <tr>
+          <td>
+            <a (click)="showRequestDetail(discount.requestId,discount.requestCode)">
+              {{discount.requestCode}}
+            </a>
+          </td>
+          <td>
+            {{discount.userFirstName}}
+          </td>
+          <td>
+            {{discount.userLastName}}
+          </td>
+          <td>
+            {{discount.userMobileNumber}}
+          </td>
+          <td>
+            <div class="ltrDirection">
+              {{discount.usedAmount | currency:'AFN':''}}
+            </div>
+          </td>
+          <td>
+            <div style="float:left">
+              {{discount.useTime}}
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td [attr.colspan]="6">
+            {{shared.emptyListMsg}}
+          </td>
+        </tr>
+      </ng-template>
+
+    </p-table>
+  </p-dialog>
+</div>
+<div *ngIf="displayRequestView">
+
+  <p-dialog [(visible)]="displayRequestView" [resizable]="false" [closable]="true" [responsive]="true" [modal]="true"
+    [rtl]="true" [positionTop]="0" width="950">
+    <p-header>
+      {{shared.requestViewLabel}} {{selectedRequestCode}}
+
+    </p-header>
+    <app-request-view [requestp]="selectedRequestP" [loading]="loadingDialog" (onShowImage)="onShowImage($event)">
+    </app-request-view>
+  </p-dialog>
+</div>
+<div *ngIf="displayDisountFilter">
+  <p-dialog [(visible)]="displayDisountFilter" responsive="true" [positionTop]="0" [resizable]="false" width="600"
+    [rtl]="true" [modal]="true" [header]="shared.showFilter" styleClass="ui-dialog">
+    <app-discount-filter [selectedCode]="filteredCode" [selectedType]="filteredDiscountType" [selectedActive]="filteredActive"
+      [selectedMultyUse]="filteredMultyUse" [selectedEndTimeStart]="filteredEndTimeStart"
+      [selectedEndTimeEnd]="filteredEndTimeEnd" [selectedPercentRange]="filteredPercentRange"
+      [selectedMaxCreditRange]="filteredMaxCreditRange" [selectedTotalCntRange]="filteredTotalCntRange"
+      [selectedUsedCntRange]="filteredUsedCntRange" [selectedCat2Id]="filteredCat2Id" [selectedCat3Id]="filteredCat3Id"
+      [selectedProvinceId]="filteredProvinceId" [selectedCityId]="filteredCityId"
+      [selectedDescription]="filteredDiscription" [selectedRegisterTimeStart]="filteredRegisterTimeStart"
+      [selectedRegisterTimeEnd]="filteredRegisterTimeEnd"
+      (onSearch)="onSearchFilterPanel($event)"
+      (onError)="onErrorFilterPanel($event)">
+    </app-discount-filter>
+  </p-dialog>
+</div>
+<div *ngIf="displayImageDialog">
+  <p-dialog [(visible)]="displayImageDialog" [positionTop]="0" [responsive]="true" [modal]="true" [resizable]="false"
+    [showHeader]="false" [closable]="true" [dismissableMask]="true">
+    <div class="ui-grid ui-grid-responsive ui-grid-pad">
+      <div class="ui-grid-row">
+        <div class="ui-grid-col-12" style="text-align:center">
+          <img src="{{selectedImagePath}}" style="max-width:256px;height:auto">
+        </div>
+      </div>
+    </div>
+  </p-dialog>
+</div>
+<p-dialog [(visible)]="displayProfileImageDialog" [responsive]="true" [resizable]="false" showEffect="explode"
+  [modal]="true" [rtl]="true">
+  <img src="{{selectedUserImagePath}}" />
+</p-dialog>

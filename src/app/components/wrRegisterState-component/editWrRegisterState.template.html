@@ -1,0 +1,109 @@
+<p-growl [value]="msgs" life="3000"></p-growl>
+<loadingCmp [loading]="loading" spinnerStyleClass="spinnerClassBlack"></loadingCmp>
+<div *ngIf="!loading">
+    <form [formGroup]="registerStateForm" (ngSubmit)="onSubmit()">
+        <p-panel id="registerStateFormPanelID" [style]="{'width':'97%'}">
+            <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+                <div class="ui-grid-row">
+                    <div class="{{editMode ? 'ui-grid-col-4':'ui-grid-col-5'}}">
+                        <label for="workStationName">
+                            <i class="fa fa-info-circle font-icon-style"></i>
+                            {{shared.state}}
+                        </label>
+                    </div>
+                    <div *ngIf="!editMode" class="ui-grid-col-7 textPlaceHolderStyle">
+                        {{selectedWorker?.registerState.name}}
+                    </div>
+                    <div *ngIf="editMode" class="ui-grid-col-8">
+                        <p-dropdown id="registerStateTypeID" [(ngModel)]="selectedWorker.registerState"
+                            [options]="registerStateList" formControlName="state" appendTo="body"
+                            [style]="{'width':'100%'}"></p-dropdown>
+                    </div>
+                </div>
+                <div class="ui-grid-row">
+                    <div class="{{editMode ? 'ui-grid-col-4':'ui-grid-col-5'}}">
+                        <label for="workStationName">
+                            <i class="fa fa-info-circle font-icon-style"></i>
+                            {{shared.descLabel}}
+                        </label>
+                    </div>
+                    <div *ngIf="!editMode" class="ui-grid-col-7 textPlaceHolderStyle">
+                        {{selectedWorker?.regStateInfo}}
+                    </div>
+                    <div *ngIf="editMode" class="ui-grid-col-8">
+                        <textarea pInputTextarea id="infoId" [(ngModel)]="selectedWorker.regStateInfo"
+                            formControlName="desc" class="width100p" rows="3"></textarea>
+                    </div>
+
+                </div>
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-4">
+                        <label>
+                            <i class="fa fa-dot-circle-o font-icon-style"></i>
+                            {{shared.bondLabel}}
+                        </label>
+                    </div>
+                    <div *ngIf="!editMode" class="ui-grid-col-8">
+                        <div *ngIf="selectedWorker.haveBond;else noBond" pTooltip="{{shared.bondLabel}}"
+                            style="float: right">
+                            <fa name="fas fa-money" style="color:greenyellow"></fa>
+                        </div>
+                        <ng-template #noBond>
+                            <fa name="fas fa-money" style="color:gray"></fa>
+                        </ng-template>
+                    </div>
+                    <div *ngIf="editMode" class="ui-grid-col-8">
+                        <div class="ui-g-6">
+                            <p-radioButton name="bondGroup" value="false" label="ندارد"
+                                [(ngModel)]="selectedWorker.haveBond" formControlName="haveBond"></p-radioButton>
+                        </div>
+                        <div class="ui-g-6">
+                            <p-radioButton name="bondGroup" value="true" label="دارد"
+                                [(ngModel)]="selectedWorker.haveBond" formControlName="haveBond"></p-radioButton>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="ui-grid-row">
+                    <div class="ui-grid-col-4">
+                        <label>
+                            <i class="fa fa-dot-circle-o font-icon-style"></i>
+                           توقف ارسال پیشنهاد
+                        </label>
+                    </div>
+                    <div *ngIf="editMode" class="ui-grid-col-8">
+                        <div class="ui-g-6">
+                            <p-radioButton name="offerBlockGroup" value="false" [label]="shared.inactiveLabel"
+                                [(ngModel)]="selectedWorker.offerBlock" formControlName="offerBlock"></p-radioButton>
+                        </div>
+                        <div class="ui-g-6">
+                            <p-radioButton name="offerBlockGroup" value="true" [label]="shared.activeLabel"
+                                [(ngModel)]="selectedWorker.offerBlock" formControlName="offerBlock"></p-radioButton>
+                        </div>
+
+                    </div>
+                    <div *ngIf="!editMode" class="ui-grid-col-8">
+                        <div *ngIf="selectedWorker.offerBlock;else noBlock" pTooltip="{{shared.offerBlockLabel}}"
+                            style="float: right">
+                            <fa name="fas fa-ban" style="color:red"></fa>
+                        </div>
+                        <ng-template #noBlock>
+                            <fa name="fas fa-ban" style="color:gray"></fa>
+                        </ng-template>
+                    </div>
+                </div>
+            </div>
+
+<p-footer>
+    <div *ngIf="editMode" align="center" style="padding:4px">
+        <button type="submit" pButton icon="fa-save" label="{{shared.saveLabel}}"
+            class="ui-button turquoise-btn"></button>
+    </div>
+    <div *ngIf="!editMode" align="center" style="padding:4px">
+        <button type="submit" pButton icon="fa-close" label="{{shared.closeLabel}}" class="ui-button"></button>
+    </div>
+</p-footer>
+</p-panel>
+
+</form>
+</div>

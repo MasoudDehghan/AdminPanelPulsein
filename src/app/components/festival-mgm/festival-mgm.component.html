@@ -1,0 +1,170 @@
+<p-growl [value]="hmsgs" life="6000"></p-growl>
+<div *ngIf="loading">
+  <p-dialog [(visible)]="loading" responsive="true" [resizable]="false" width="300" [rtl]="true" [showHeader]="false"
+    styleClass="ui-dialog">
+    <loadingCmp [loading]="loading" spinnerStyleClass="spinnerClassBlack"></loadingCmp>
+  </p-dialog>
+</div>
+<div class="ui-g ui-g-pad ui-g-reponsive dashboard">
+  <div class="ui-g-12">
+    <p-toolbar styleClass="toolbarstyle">
+      <div class="ui-toolbar-group-right headerLabel">
+        <img src="../assets/images/pulse.png" style="vertical-align: middle;" /> {{activeLabel}}
+        <span class="totalFilteredClass">
+          {{shared.totalNumberLabel}} : {{winnersLength}}
+        </span>
+
+      </div>
+      <div class="ui-toolbar-group-left">
+
+        <button type="button" pButton icon="fa-file-excel-o" iconPos="left" pTooltip="Excel" (click)="exportExcel()"
+          *ngIf="editCapable"></button>
+        <button type="button" pButton icon="fa-refresh" pTooltip="Refresh" (click)="rtvList()"></button>
+
+      </div>
+    </p-toolbar>
+  </div>
+  <div class="ui-g-12">
+
+    <p-table [value]="winners" [loading]="loading" sortMode="single" sortField="confirmedGrade" sortOrder="1" #dt>
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width:10%" [pSortableColumn]="'firstName'">{{shared.firstNameLabel}}</th>
+          <th style="width:10%" [pSortableColumn]="'lastName'">{{shared.lastNameLabel}}</th>
+          <th style="width:10%" [pSortableColumn]="'mobileNumber'">{{shared.mobileLabel2}}</th>
+          <th style="width:5%" [pSortableColumn]="'questionScore'">{{shared.questionScoreLabel}}</th>
+          <th style="width:5%" [pSortableColumn]="'invitationScore'">{{shared.invitationScoreLabel}}</th>
+          <th style="width:5%" [pSortableColumn]="'requestScore'">{{shared.requestScoreLabel}}</th>
+          <th style="width:5%" [pSortableColumn]="'totalScore'">{{shared.totalScoreLabel}}</th>
+          <th style="width:5%" [pSortableColumn]="'grade'">{{shared.gradeLabel}}</th>
+          <th style="width:5%" [pSortableColumn]="'todayInviteCnt'">{{shared.todayInviteCntLabel}}</th>
+
+
+          <th *ngIf="editCapable" style="width:5%">{{shared.editLabelFa}}</th>
+
+        </tr>
+        <tr>
+          <th style="width:10%">
+            <input pInputText type="text" style="width:70%" (input)="dt.filter($event.target.value, 'firstName', 'contains')">
+          </th>
+          <th style="width:10%">
+            <input pInputText type="text" style="width:70%" (input)="dt.filter($event.target.value, 'lastName', 'contains')">
+          </th>
+          <th style="width:10%">
+            <input pInputText type="text" style="width:70%" (input)="dt.filter($event.target.value, 'mobileNumber', 'contains')">
+          </th>
+          <th style="width:5%">
+            <input pInputText type="number" style="width:70%"
+              (input)="dt.filter($event.target.value, 'questionScore', 'contains')">
+          </th>
+          <th style="width:5%">
+            <input pInputText type="number" style="width:70%"
+              (input)="dt.filter($event.target.value, 'invitationScore', 'contains')">
+          </th>
+          <th style="width:5%">
+            <input pInputText type="number" style="width:70%"
+              (input)="dt.filter($event.target.value, 'requestScore', 'contains')">
+          </th>
+          <th style="width:5%">
+            <input pInputText type="number" style="width:70%"
+              (input)="dt.filter($event.target.value, 'totalScore', 'contains')">
+          </th>
+          <th style="width:5%">
+            <input pInputText type="number" style="width:70%"
+              (input)="dt.filter($event.target.value, 'grade', 'contains')">
+          </th>
+          <th style="width:5%">
+            <input pInputText type="number" style="width:70%"
+              (input)="dt.filter($event.target.value, 'todayInviteCnt', 'contains')">
+          </th>
+  
+          <th *ngIf="editCapable" style="width:5%"></th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-winner>
+        <tr>
+
+          <td>
+            {{winner.firstName}}
+          </td>
+          <td>
+            {{winner.lastName}}
+          </td>
+          <td>
+            {{winner.mobileNumber}}
+          </td>
+          <td>
+            {{winner.questionScore}}
+          </td>
+          <td>
+            {{winner.invitationScore}}
+          </td>
+          <td>
+            {{winner.requestScore}}
+          </td>
+          <td>
+            {{winner.totalScore}}
+          </td>
+          <td>
+            {{winner.grade}}
+          </td>
+          <td>
+            {{winner.todayInviteCnt}}
+          </td>
+          
+          <td *ngIf="editCapable">
+            <div align="center">
+              <button type="button" pButton icon="fa-edit" class="green-btn" (click)="showDialogToEdit(winner)"
+                [pTooltip]="shared.editLabelFa"></button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td [attr.colspan]="13">
+            {{shared.emptyListMsg}}
+          </td>
+        </tr>
+      </ng-template>
+
+    </p-table>
+  </div>
+</div>
+<div *ngIf="displayEditDialog">
+  <p-dialog [(visible)]="displayEditDialog" responsive="true" [resizable]="false" width="600" [rtl]="true"
+    [modal]="true" [header]="shared.editLabelFa" styleClass="ui-dialog">
+    <form [formGroup]="editForm" (ngSubmit)="onSubmitEditform()">
+      <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+        <div class="ui-grid-row">
+          <div class="ui-grid-col-4">
+            <label for="invitationScoreID">
+              <i class="fa fa-info-circle font-icon-style"></i>
+              {{shared.invitationScoreLabel}}
+            </label>
+          </div>
+          <div class="ui-grid-col-8">
+            <input pInputText id="invitationScoreID" type="number" size="5"
+              formControlName="invitationScore" class="width100p latinFontStyle" />
+          </div>
+        </div>
+
+      </div>
+      <div align="center" style="padding:4px">
+        <button type="submit" pButton icon="fa-save" label="{{shared.saveLabelFa}}" class="ui-button turquoise-btn"
+          [disabled]="!editForm.valid"></button>
+      </div>
+    </form>
+  </p-dialog>
+</div>
+
+
+
+<p-confirmDialog header="{{shared.confirmHeader}}" width="425" rtl="true" #cd>
+  <p-footer>
+    <button type="button" pButton icon="fa-close" [label]="shared.noLabel" (click)="cd.reject()"
+      style="margin-right: 30%;"></button>
+    <button type="button" pButton icon="fa-check" [label]="shared.yesLabel" (click)="cd.accept()"></button>
+  </p-footer>
+</p-confirmDialog>

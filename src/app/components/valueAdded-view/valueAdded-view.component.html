@@ -1,0 +1,221 @@
+<p-panel [header]="shared.sellerInfoLabel">
+  <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+    <div class="ui-grid-row">
+      <div class="ui-grid-col-4">
+        <b>
+          {{shared.legalPersonLabel}}
+        </b>
+        <span>:</span>
+        {{shared.companyName}}
+      </div>
+
+      <div class="ui-grid-col-4">
+        <b>
+          {{shared.economyCodeLabel}}
+        </b>
+        <span>:</span>
+        {{shared.economyNumber}}
+      </div>
+
+      <div class="ui-grid-col-4">
+        <b>
+          {{shared.officeRegisterCodeLabel}} / {{shared.officeNationalCodeLabel}}
+        </b>
+        <span>:</span>
+        {{shared.nationalNumber}}
+      </div>
+
+    </div>
+    <div class="ui-grid-row">
+      <div class="ui-grid-col-4">
+        <b>
+          {{shared.townshipLabel}}
+        </b>
+        <span>:</span>
+        {{shared.tehranLabel}}
+
+      </div>
+
+      <div class="ui-grid-col-4">
+        <b>
+          {{shared.postalCodeLabel}}
+        </b>
+        <span>:</span>
+        {{shared.postalCode}}
+      </div>
+
+    </div>
+    <div class="ui-grid-row">
+      <div class="ui-grid-col-8">
+        <b>
+          {{shared.addressLabel}}
+        </b>
+        <span>:</span>
+        {{shared.companyAddress}}
+      </div>
+
+      <div class="ui-grid-col-4">
+        <b>
+          {{shared.telLabel}} / نمابر
+        </b>
+        <span>:</span>
+        {{shared.companyTel}}
+      </div>
+
+    </div>
+  </div>
+</p-panel>
+<p-panel [header]="shared.buyerInfoLabel">
+  <div class="ui-grid ui-grid-responsive  ui-grid-pad">
+    <div class="ui-grid-row">
+      <div class="ui-grid-col-4">
+        <b>
+          {{shared.realPersonLabel}}
+        </b>
+        <span>:</span>
+        {{workerName}}
+      </div>
+
+      <div class="ui-grid-col-4">
+        <b>
+          {{shared.economyCodeLabel}} 
+        </b>
+        <span>:</span>
+
+      </div>
+
+      <div class="ui-grid-col-4">
+        <b>
+          {{shared.officeNationalCodeLabel}}
+        </b>
+        <span>:</span>
+        {{nationalCode}}
+      </div>
+
+    </div>
+    <div class="ui-grid-row">
+      <div class="ui-grid-col-4">
+        <b>
+          {{shared.townshipLabel}}
+        </b>
+        <span>:</span>
+        {{province}}
+      </div>
+
+      <div class="ui-grid-col-4">
+        <b>
+          {{shared.postalCodeLabel}}
+        </b>
+        <span>:</span>
+        {{postalCode}}
+      </div>
+
+    </div>
+    <div class="ui-grid-row">
+      <div class="ui-grid-col-8">
+        <b>
+          {{shared.addressLabel}}
+        </b>
+        <span>:</span>
+      {{address}}
+      </div>
+
+      <div class="ui-grid-col-4">
+        <b>
+          {{shared.telLabel}} / نمابر
+        </b>
+        <span>:</span>
+        {{mobileNumber}}
+      </div>
+
+    </div>
+  </div>
+</p-panel>
+<p-panel [header]="shared.productInfoLabel">
+  <p-table [value]="selectedProductViewList" [loading]="dataTableLoading" loadingIcon="fa-spinner">
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="width:10%">{{shared.indexLabel}}</th>
+        <th style="width:40%">{{shared.serviceTypeLabel}}</th>
+        <th style="width:10%">{{shared.totalNumberLabel}}</th>
+        <th style="width:10%">{{shared.unitLabel}}</th>
+        <th style="width:10%">{{shared.commisionLabel}}</th>
+        <th style="width:10%">{{shared.totalTaxValueAdded}}</th>
+        <th style="width:10%">{{shared.totalx}}</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-report>
+      <tr>
+        <td>{{report.index}}</td>
+        <td>
+          {{report.name}}
+          <i class="pi pi-info-circle" style="color:red" *ngIf="report.noAccountNumber" pTooltip="این سند ثبت نشده است"></i>
+        </td>
+        <td>{{report.count}}</td>
+        <td>{{report.unit}}</td>
+        <td>{{report.commision}}</td>
+        <td>{{report.tax}}</td>
+        <td>{{report.total}}</td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="footer">
+      <tr>
+        <td colspan="4">{{shared.totalLabel}}</td>
+        <td>{{commision}}</td>
+        <td>{{valueAdded}}</td>
+        <td>{{totalCommision}}</td>
+      </tr>
+      <tr  rowspan="2">
+        <td colspan="2">
+          <div class="ui-g">
+            <div class="ui-g-4">
+              شرایط و نحوه فروش :
+            </div>
+            <div class="ui-g-2">
+              نقدی
+            </div>
+            <div class="ui-g-2" style="font-size: 20px;">
+              &#9633;
+            </div>
+            <div class="ui-g-2">
+              غیر نقدی
+            </div>
+            <div class="ui-g-2" style="font-size: 20px;">
+              &#9633;
+            </div>
+          </div>
+        </td>
+        <td colspan="5">
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2">
+         :توضیحات 
+        </td>
+        <td colspan="5">
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2">
+        <div align="center">
+          <h4>مهر و امضا فروشنده</h4>
+        </div>
+        </td>
+        <td colspan="5">
+          <div align="center">
+            <h4>مهر و امضا خریدار</h4>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td [attr.colspan]="7">
+          {{shared.emptyListMsg}}
+        </td>
+      </tr>
+    </ng-template>
+
+  </p-table>
+
+</p-panel>
